@@ -17,11 +17,13 @@ from .notes_txt import scan_into
 
 SOURCE_TYPE = "resume"
 
-# First-line-is-the-name heuristic: 2-4 capitalized words, no digits or '@'.
-# Deliberately narrow — "Curriculum Vitae" fails the title-case-word count
-# check below only if it matches... it doesn't (see _NOT_NAMES).
-_NAME_LINE_RE = re.compile(r"^(?:[A-Z][a-zA-Z'.\-]+)(?:\s+[A-Z][a-zA-Z'.\-]+){1,3}$")
-_NOT_NAMES = {"curriculum vitae", "resume", "cv"}
+# First-line-is-the-name heuristic: 2-4 words, each starting uppercase, no
+# digits/@/|. Word bodies allow unicode letters so "Carlos Núñez" qualifies;
+# headings like "Curriculum Vitae" match the shape and are excluded by name.
+_NAME_LINE_RE = re.compile(
+    r"^(?:[A-Z][^\s\d@|,;:]{1,24})(?:\s+[A-Z][^\s\d@|,;:]{1,24}){1,3}$"
+)
+_NOT_NAMES = {"curriculum vitae", "resume", "cv", "personal profile"}
 
 
 def detect(path: Path) -> bool:

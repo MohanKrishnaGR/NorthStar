@@ -1,0 +1,10 @@
+{
+  "login": "averystone",
+  "name": "Avery Stone",
+  "bio": "Data platforms at Marigold",
+  "html_url": "https://github.com/averystone",
+  "blog": "https://averystone.dev",
+  "email": null,
+  "location": "San Francisco, United States",
+  "languages": {"Python": 120000, "Go": 80000}
+}

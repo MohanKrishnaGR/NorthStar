@@ -33,7 +33,8 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
 
     def cell(row: dict, name: str) -> str:
         raw = row.get(headers.get(name, ""), "") or ""
-        return text.nfc(raw)
+        s = text.nfc(raw)
+        return "" if text.is_null_marker(s) else s
 
     for i, row in enumerate(reader, start=1):
         res.records_read += 1

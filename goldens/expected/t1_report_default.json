@@ -1,0 +1,491 @@
+{
+  "merges": {
+    "clusters": [
+      {
+        "cluster_id": "github_averystone.json#user",
+        "match_keys_used": [
+          "email:avery.stone@example.com",
+          "link:github.com/averystone",
+          "link:linkedin.com/in/averystone"
+        ],
+        "record_ids": [
+          "github_averystone.json#user",
+          "linkedin_averystone.json#profile",
+          "notes_p01.txt#file",
+          "resume_p01.docx#file",
+          "t1_ats.json#idx=0",
+          "t1_ats.json#idx=1",
+          "t1_roster.csv#row=1"
+        ]
+      },
+      {
+        "cluster_id": "github_rhoardley.json#user",
+        "match_keys_used": [
+          "email:rhea.h@example.com",
+          "link:github.com/rhoardley"
+        ],
+        "record_ids": [
+          "github_rhoardley.json#user",
+          "notes_p17.txt#file",
+          "t1_ats.json#idx=11"
+        ]
+      },
+      {
+        "cluster_id": "linkedin_hanasuzuki.json#profile",
+        "match_keys_used": [
+          "link:linkedin.com/in/hanasuzuki"
+        ],
+        "record_ids": [
+          "linkedin_hanasuzuki.json#profile",
+          "t1_ats.json#idx=5"
+        ]
+      },
+      {
+        "cluster_id": "notes_broken.txt#file",
+        "match_keys_used": [],
+        "record_ids": [
+          "notes_broken.txt#file"
+        ]
+      },
+      {
+        "cluster_id": "notes_chain.txt#file",
+        "match_keys_used": [
+          "email:casey.chen@example.com",
+          "phone:+14155552673"
+        ],
+        "record_ids": [
+          "notes_chain.txt#file",
+          "t1_ats.json#idx=8",
+          "t1_roster.csv#row=14"
+        ]
+      },
+      {
+        "cluster_id": "notes_ghost.txt#file",
+        "match_keys_used": [],
+        "record_ids": [
+          "notes_ghost.txt#file"
+        ]
+      },
+      {
+        "cluster_id": "notes_gossip.txt#file",
+        "match_keys_used": [],
+        "record_ids": [
+          "notes_gossip.txt#file"
+        ]
+      },
+      {
+        "cluster_id": "notes_p07.txt#file",
+        "match_keys_used": [
+          "email:ishaan.verma@example.com"
+        ],
+        "record_ids": [
+          "notes_p07.txt#file",
+          "resume_p07.docx#file"
+        ]
+      },
+      {
+        "cluster_id": "notes_p18.txt#file",
+        "match_keys_used": [
+          "email:tomas.eder@example.com"
+        ],
+        "record_ids": [
+          "notes_p18.txt#file",
+          "resume_p18.docx#file",
+          "t1_ats.json#idx=12"
+        ]
+      },
+      {
+        "cluster_id": "resume_p03.docx#file",
+        "match_keys_used": [
+          "email:carlos.nunez@example.com"
+        ],
+        "record_ids": [
+          "resume_p03.docx#file",
+          "t1_roster.csv#row=3"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=10",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_ats.json#idx=10"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=13",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_ats.json#idx=13"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=2",
+        "match_keys_used": [
+          "email:binarao@gmail.com"
+        ],
+        "record_ids": [
+          "t1_ats.json#idx=2",
+          "t1_roster.csv#row=2"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=3",
+        "match_keys_used": [
+          "email:devi.iyer@example.com"
+        ],
+        "record_ids": [
+          "t1_ats.json#idx=3",
+          "t1_roster.csv#row=4"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=4",
+        "match_keys_used": [
+          "email:grace.obi@example.com"
+        ],
+        "record_ids": [
+          "t1_ats.json#idx=4",
+          "t1_roster.csv#row=6"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=6",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_ats.json#idx=6"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=7",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_ats.json#idx=7"
+        ]
+      },
+      {
+        "cluster_id": "t1_ats.json#idx=9",
+        "match_keys_used": [
+          "email:blair.novak@example.com"
+        ],
+        "record_ids": [
+          "t1_ats.json#idx=9",
+          "t1_roster.csv#row=15"
+        ]
+      },
+      {
+        "cluster_id": "t1_cp1252.csv#row=1",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_cp1252.csv#row=1"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=10",
+        "match_keys_used": [
+          "soft:lena novak|brightpath"
+        ],
+        "record_ids": [
+          "t1_roster.csv#row=10",
+          "t1_roster.csv#row=9"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=11",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=11"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=12",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=12"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=13",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=13"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=16",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=16"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=5",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=5"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=7",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=7"
+        ]
+      },
+      {
+        "cluster_id": "t1_roster.csv#row=8",
+        "match_keys_used": [],
+        "record_ids": [
+          "t1_roster.csv#row=8"
+        ]
+      }
+    ],
+    "refusals": [
+      {
+        "key": "email:referrals@agency.example",
+        "reason": "suspect_shared_identifier",
+        "records": [
+          "t1_ats.json#idx=7",
+          "t1_roster.csv#row=11"
+        ]
+      },
+      {
+        "key": "email:taro.tanaka@example.jp",
+        "reason": "suspect_shared_identifier",
+        "records": [
+          "t1_ats.json#idx=10",
+          "t1_roster.csv#row=16"
+        ]
+      },
+      {
+        "key": "phone:+14155552672",
+        "reason": "suspect_shared_identifier",
+        "records": [
+          "t1_roster.csv#row=12",
+          "t1_roster.csv#row=13"
+        ]
+      },
+      {
+        "key": "phone:+14155552674",
+        "reason": "suspect_shared_identifier",
+        "records": [
+          "notes_broken.txt#file",
+          "t1_ats.json#idx=9"
+        ]
+      }
+    ]
+  },
+  "run": {
+    "as_of": "2026-08",
+    "config_fields": [
+      "candidate_id",
+      "full_name",
+      "emails",
+      "phones",
+      "location",
+      "links",
+      "headline",
+      "years_experience",
+      "skills",
+      "experience",
+      "education"
+    ],
+    "default_region": null
+  },
+  "sources": [
+    {
+      "errors": [],
+      "evidence_emitted": 7,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "github_averystone.json",
+      "source_type": "github_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 4,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "github_rhoardley.json",
+      "source_type": "github_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 6,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "linkedin_averystone.json",
+      "source_type": "linkedin_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 7,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "linkedin_hanasuzuki.json",
+      "source_type": "linkedin_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 2,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_broken.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 3,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_chain.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 2,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_ghost.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 3,
+      "flags": [
+        "multi_identity_source"
+      ],
+      "records_read": 1,
+      "source_id": "notes_gossip.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 5,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_p01.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 2,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_p07.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 4,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_p17.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 3,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_p18.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 7,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "resume_p01.docx",
+      "source_type": "resume",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 5,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "resume_p03.docx",
+      "source_type": "resume",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 3,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "resume_p07.docx",
+      "source_type": "resume",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 6,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "resume_p18.docx",
+      "source_type": "resume",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 90,
+      "flags": [],
+      "records_read": 14,
+      "source_id": "t1_ats.json",
+      "source_type": "ats_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 4,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "t1_cp1252.csv",
+      "source_type": "recruiter_csv",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 51,
+      "flags": [],
+      "records_read": 16,
+      "source_id": "t1_roster.csv",
+      "source_type": "recruiter_csv",
+      "status": "ok"
+    }
+  ],
+  "unparseable": [
+    {
+      "field": "experience",
+      "raw_value": "Chrono Corp: 2022-05 -> 2021-01",
+      "reason": "inverted_date_range",
+      "source_id": "t1_ats.json"
+    },
+    {
+      "field": "experience",
+      "raw_value": "Tomorrow Inc: 2030-01 -> present",
+      "reason": "future_dated_range",
+      "source_id": "t1_ats.json"
+    },
+    {
+      "field": "phones",
+      "raw_value": "98123 45699",
+      "reason": "no_region_context",
+      "source_id": "t1_roster.csv"
+    }
+  ],
+  "unrecognized_files": [],
+  "validation": []
+}

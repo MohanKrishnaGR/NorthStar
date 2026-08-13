@@ -1,0 +1,2077 @@
+[
+  {
+    "candidate_id": "03b272a774fc4362",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.985,
+        "full_name": 0.985,
+        "location": 0.9,
+        "skills": 0.765
+      },
+      "overall": 0.591471
+    },
+    "education": [],
+    "emails": [
+      "bina.rao+jobs@gmail.com",
+      "binarao@googlemail.com",
+      "bina.rao@gmail.com"
+    ],
+    "experience": [
+      {
+        "company": "Copper Analytics",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Senior Data Analyst"
+      }
+    ],
+    "full_name": "Bina Rao",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": {
+      "city": "Pune",
+      "country": "IN",
+      "region": null
+    },
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[1]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[2]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": false,
+        "confidence": 0.765,
+        "name": "excel",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "sql",
+        "sources": [
+          "t1_ats.json"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "04363e94f5d9eff4",
+    "confidence": {
+      "fields": {
+        "emails": 0.985,
+        "experience": 0.985,
+        "full_name": 0.462857,
+        "phones": 0.945,
+        "skills": 0.425
+      },
+      "overall": 0.532563
+    },
+    "education": [],
+    "emails": [
+      "casey.chen@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Streamline AI",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Senior Platform Engineer"
+      }
+    ],
+    "full_name": "C. Chen",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+14155552673"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [
+          "Casey Chen"
+        ],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "kafka",
+        "sources": [
+          "notes_chain.txt"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "kubernetes",
+        "sources": [
+          "notes_chain.txt"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "0ab9ee53d9ea1a9e",
+    "confidence": {
+      "fields": {
+        "full_name": 0.45,
+        "skills": 0.425
+      },
+      "overall": 0.129412
+    },
+    "education": [],
+    "emails": [],
+    "experience": [],
+    "full_name": "Noor Zaidi",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "regex:labeled_name_v1",
+        "source": "notes_ghost.txt"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "sql",
+        "sources": [
+          "notes_ghost.txt"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "201d57ee7b1407fd",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.4
+    },
+    "education": [],
+    "emails": [
+      "referrals@agency.example"
+    ],
+    "experience": [
+      {
+        "company": "Quill Media",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Copywriter"
+      }
+    ],
+    "full_name": "Sam Ortiz",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "22b883bb1189adb8",
+    "confidence": {
+      "fields": {
+        "education": 0.8,
+        "emails": 0.9,
+        "experience": 0.98,
+        "full_name": 0.98,
+        "headline": 0.8,
+        "links": 0.98,
+        "location": 0.98,
+        "years_experience": 0.6
+      },
+      "overall": 0.691765
+    },
+    "education": [
+      {
+        "degree": "M.Eng",
+        "end_year": 2014,
+        "field": "Computer Science",
+        "institution": "Kyoto University"
+      }
+    ],
+    "emails": [
+      "hana.suzuki@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Kite Systems",
+        "end": null,
+        "is_current": true,
+        "start": "2023-04",
+        "summary": null,
+        "title": "Engineering Manager"
+      },
+      {
+        "company": "Nova Labs",
+        "end": "2023-12",
+        "is_current": false,
+        "start": "2022-01",
+        "summary": null,
+        "title": "Advisor"
+      },
+      {
+        "company": "Kite Systems",
+        "end": "2023-03",
+        "is_current": false,
+        "start": "2020-01",
+        "summary": null,
+        "title": "Senior Engineer"
+      }
+    ],
+    "full_name": "Hana Suzuki",
+    "headline": "Engineering Manager at Kite Systems",
+    "links": {
+      "github": null,
+      "linkedin": "https://www.linkedin.com/in/hanasuzuki",
+      "other": [],
+      "portfolio": null
+    },
+    "location": {
+      "city": "Tokyo",
+      "country": "JP",
+      "region": null
+    },
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "direct_field",
+        "source": "linkedin_hanasuzuki.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[2]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "headline",
+        "method": "direct_field",
+        "source": "linkedin_hanasuzuki.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.linkedin",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [],
+    "years_experience": 6.7
+  },
+  {
+    "candidate_id": "2758c53443bfe3b7",
+    "confidence": {
+      "fields": {
+        "emails": 0.985,
+        "experience": 0.985,
+        "full_name": 0.985,
+        "phones": 0.9
+      },
+      "overall": 0.569412
+    },
+    "education": [],
+    "emails": [
+      "blair.novak@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Streamline AI",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "SRE II"
+      }
+    ],
+    "full_name": "Blair Novak",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+14155552674"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "32e3dd5de07552f8",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.9,
+        "full_name": 0.9,
+        "years_experience": 0.6
+      },
+      "overall": 0.458824
+    },
+    "education": [],
+    "emails": [
+      "uma.reddy@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Tomorrow Inc",
+        "end": null,
+        "is_current": true,
+        "start": "2030-01",
+        "summary": null,
+        "title": "Engineer"
+      },
+      {
+        "company": "Chrono Corp",
+        "end": "2021-01",
+        "is_current": false,
+        "start": "2022-05",
+        "summary": null,
+        "title": "Analyst"
+      },
+      {
+        "company": "Solid Corp",
+        "end": "2020-03",
+        "is_current": false,
+        "start": "2020-03",
+        "summary": null,
+        "title": "Analyst"
+      }
+    ],
+    "full_name": "Uma Reddy",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[2]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [],
+    "years_experience": 0.1
+  },
+  {
+    "candidate_id": "3390a8625df5bcbe",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85,
+        "phones": 0.85
+      },
+      "overall": 0.5
+    },
+    "education": [],
+    "emails": [
+      "renee.fontaine@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Café Lumière",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Chef de Projet"
+      }
+    ],
+    "full_name": "Renée Fontaine",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+33612345678"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_cp1252.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_cp1252.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_cp1252.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_cp1252.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "3d5115404363458b",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.9,
+        "full_name": 0.9,
+        "years_experience": 0.24
+      },
+      "overall": 0.437647
+    },
+    "education": [],
+    "emails": [
+      "jorge.silva@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Vega Bank",
+        "end": null,
+        "is_current": true,
+        "start": "2021-06",
+        "summary": null,
+        "title": "Quant Developer"
+      }
+    ],
+    "full_name": "Jorge Silva",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [
+          "15"
+        ],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [],
+    "years_experience": 5.3
+  },
+  {
+    "candidate_id": "45ad041ad11888fe",
+    "confidence": {
+      "fields": {
+        "education": 0.98,
+        "emails": 0.996947,
+        "experience": 0.99939,
+        "full_name": 0.999847,
+        "headline": 0.412903,
+        "links": 0.98,
+        "location": 0.995,
+        "phones": 0.99445,
+        "skills": 0.969901,
+        "years_experience": 0.6
+      },
+      "overall": 0.934457
+    },
+    "education": [
+      {
+        "degree": "B.S.",
+        "end_year": 2016,
+        "field": "EECS",
+        "institution": "UC Berkeley"
+      }
+    ],
+    "emails": [
+      "avery.stone@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Marigold Data",
+        "end": null,
+        "is_current": true,
+        "start": "2021-02",
+        "summary": null,
+        "title": "Staff Data Engineer"
+      }
+    ],
+    "full_name": "Avery Stone",
+    "headline": "Staff Data Engineer at Marigold Data",
+    "links": {
+      "github": "https://github.com/averystone",
+      "linkedin": "https://www.linkedin.com/in/averystone",
+      "other": [
+        "https://averystone.dev"
+      ],
+      "portfolio": null
+    },
+    "location": {
+      "city": "San Francisco",
+      "country": "US",
+      "region": null
+    },
+    "phones": [
+      "+14155552671"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [
+          "Data platforms at Marigold"
+        ],
+        "field": "headline",
+        "method": "direct_field",
+        "source": "linkedin_averystone.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.github",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.linkedin",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.969901,
+        "name": "python",
+        "sources": [
+          "github_averystone.json",
+          "notes_p01.txt",
+          "resume_p01.docx",
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.945274,
+        "name": "airflow",
+        "sources": [
+          "notes_p01.txt",
+          "resume_p01.docx",
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.904825,
+        "name": "sql",
+        "sources": [
+          "resume_p01.docx",
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.45,
+        "name": "go",
+        "sources": [
+          "github_averystone.json"
+        ]
+      }
+    ],
+    "years_experience": 5.6
+  },
+  {
+    "candidate_id": "47665b8c51e06042",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85,
+        "phones": 0.85
+      },
+      "overall": 0.5
+    },
+    "education": [],
+    "emails": [
+      "omar.h@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Harbor Health",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Backend Engineer"
+      }
+    ],
+    "full_name": "Omar Haddad",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+14155552672"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "57c82c62f9424139",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.4
+    },
+    "education": [],
+    "emails": [
+      "farid.khan@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Skyline Apps",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Mobile Engineer"
+      }
+    ],
+    "full_name": "Farid Khan",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "5b49372a6828b98c",
+    "confidence": {
+      "fields": {
+        "emails": 0.945,
+        "experience": 0.9,
+        "full_name": 0.945,
+        "links": 0.975,
+        "skills": 0.87075
+      },
+      "overall": 0.599206
+    },
+    "education": [],
+    "emails": [
+      "rhea.h@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Datapile",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Analytics Engineer"
+      }
+    ],
+    "full_name": "Rhea Hoardley",
+    "headline": null,
+    "links": {
+      "github": "https://github.com/rhoardley",
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.github",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.87075,
+        "name": "python",
+        "sources": [
+          "github_rhoardley.json",
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "go",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "kubernetes",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": false,
+        "confidence": 0.765,
+        "name": "ms office",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "react",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "typescript",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": false,
+        "confidence": 0.45,
+        "name": "jupyter notebook",
+        "sources": [
+          "github_rhoardley.json"
+        ]
+      },
+      {
+        "canonical": false,
+        "confidence": 0.45,
+        "name": "yaml",
+        "sources": [
+          "github_rhoardley.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "pytorch",
+        "sources": [
+          "notes_p17.txt"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "scikit-learn",
+        "sources": [
+          "notes_p17.txt"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "75e032860def2665",
+    "confidence": {
+      "fields": {
+        "emails": 0.985,
+        "experience": 0.9,
+        "full_name": 0.462857,
+        "skills": 0.765
+      },
+      "overall": 0.451387
+    },
+    "education": [],
+    "emails": [
+      "grace.obi@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Helios Retail",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Senior Analyst"
+      },
+      {
+        "company": "Helios Retail Group",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Lead Analyst"
+      }
+    ],
+    "full_name": "Grace Obi",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [
+          "Grace N. Obi"
+        ],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "python",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "sql",
+        "sources": [
+          "t1_ats.json"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "92c73914863a6627",
+    "confidence": {
+      "fields": {
+        "emails": 0.97965,
+        "experience": 0.963,
+        "full_name": 0.963,
+        "links": 0.963,
+        "skills": 0.425,
+        "years_experience": 0.6
+      },
+      "overall": 0.598056
+    },
+    "education": [],
+    "emails": [
+      "tomas.eder@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Pixelforge",
+        "end": null,
+        "is_current": true,
+        "start": "2023",
+        "summary": null,
+        "title": "Frontend Lead"
+      }
+    ],
+    "full_name": "Tomas Eder",
+    "headline": null,
+    "links": {
+      "github": "https://github.com/teder",
+      "linkedin": "https://linkedin.com/in/tomas-eder",
+      "other": [
+        "https://tomas.dev"
+      ],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.github",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [
+          "https://www.linkedin.com/in/tomas-eder-alt?utm_source=share",
+          "https://www.linkedin.com/in/tomas-eder?utm_campaign=profile"
+        ],
+        "field": "links.linkedin",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "react",
+        "sources": [
+          "notes_p18.txt"
+        ]
+      }
+    ],
+    "years_experience": 3.7
+  },
+  {
+    "candidate_id": "98ede1f9056d7d1a",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.4
+    },
+    "education": [],
+    "emails": [
+      "kiran.patel@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Aurora Labs",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "QA Engineer"
+      }
+    ],
+    "full_name": "Kiran Patel",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "a69cdfc9b24db73a",
+    "confidence": {
+      "fields": {
+        "emails": 0.7965,
+        "experience": 0.63,
+        "full_name": 0.45,
+        "years_experience": 0.6
+      },
+      "overall": 0.329382
+    },
+    "education": [],
+    "emails": [
+      "ishaan.verma@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Meridian Partners",
+        "end": "2021-11",
+        "is_current": false,
+        "start": "2021",
+        "summary": null,
+        "title": "Consultant"
+      },
+      {
+        "company": "Quanta Insights",
+        "end": "2021",
+        "is_current": false,
+        "start": "2019",
+        "summary": null,
+        "title": "Analyst"
+      }
+    ],
+    "full_name": "Ishaan Verma",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "regex:email_v1",
+        "source": "resume_p07.docx"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "regex:experience_line_v1",
+        "source": "resume_p07.docx"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "regex:experience_line_v1",
+        "source": "resume_p07.docx"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "regex:labeled_name_v1",
+        "source": "notes_p07.txt"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [],
+    "years_experience": 3.0
+  },
+  {
+    "candidate_id": "a79a769c971f8510",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.9,
+        "full_name": 0.9
+      },
+      "overall": 0.423529
+    },
+    "education": [],
+    "emails": [
+      "referrals@agency.example"
+    ],
+    "experience": [
+      {
+        "company": "Nimbus Press",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Editor"
+      }
+    ],
+    "full_name": "Dana Kim",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "abb6a0d675335cbd",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85,
+        "phones": 0.85
+      },
+      "overall": 0.5
+    },
+    "education": [],
+    "emails": [
+      "petra.v@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Harbor Health",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Data Engineer"
+      }
+    ],
+    "full_name": "Petra Vogel",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+14155552672"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "b391f540a9e9535e",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.4
+    },
+    "education": [],
+    "emails": [
+      "kpatel@example.org"
+    ],
+    "experience": [
+      {
+        "company": "Aurora Labs",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "QA Engineer"
+      }
+    ],
+    "full_name": "Kiran Patel",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "b738d19b1b2ecfc4",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.9,
+        "full_name": 0.9,
+        "phones": 0.9,
+        "skills": 0.765
+      },
+      "overall": 0.619412
+    },
+    "education": [],
+    "emails": [
+      "taro.tanaka@example.jp"
+    ],
+    "experience": [
+      {
+        "company": "Sakura Robotics",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "ML Engineer"
+      }
+    ],
+    "full_name": "田中太郎",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+819012345678"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": false,
+        "confidence": 0.765,
+        "name": "",
+        "sources": [
+          "t1_ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "python",
+        "sources": [
+          "t1_ats.json"
+        ]
+      }
+    ],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "b9f48a75c5c82cfa",
+    "confidence": {
+      "fields": {
+        "emails": 0.9445,
+        "experience": 0.9445,
+        "full_name": 0.488176,
+        "skills": 0.595,
+        "years_experience": 0.6
+      },
+      "overall": 0.469237
+    },
+    "education": [],
+    "emails": [
+      "carlos.nunez@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Vertex Cloud",
+        "end": null,
+        "is_current": true,
+        "start": "2022",
+        "summary": null,
+        "title": "Platform Engineer"
+      }
+    ],
+    "full_name": "Núñez, Carlos",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [
+          "Carlos Núñez"
+        ],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.595,
+        "name": "kubernetes",
+        "sources": [
+          "resume_p03.docx"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.595,
+        "name": "terraform",
+        "sources": [
+          "resume_p03.docx"
+        ]
+      }
+    ],
+    "years_experience": 4.7
+  },
+  {
+    "candidate_id": "c017937cbe09464c",
+    "confidence": {
+      "fields": {
+        "full_name": 0.45,
+        "phones": 0.45
+      },
+      "overall": 0.132353
+    },
+    "education": [],
+    "emails": [],
+    "experience": [],
+    "full_name": "Priya Patel",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+14155552674"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "regex:labeled_name_v1",
+        "source": "notes_broken.txt"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "regex:phone_v1",
+        "source": "notes_broken.txt"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "c94a4fea546b3c85",
+    "confidence": {
+      "fields": {
+        "emails": 0.985,
+        "experience": 0.985,
+        "full_name": 0.985,
+        "location": 0.9,
+        "phones": 0.95535
+      },
+      "overall": 0.628865
+    },
+    "education": [],
+    "emails": [
+      "devi.iyer@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Chennai Fintech",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Data Scientist"
+      }
+    ],
+    "full_name": "Devi Iyer",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": {
+      "city": "Chennai",
+      "country": "IN",
+      "region": null
+    },
+    "phones": [
+      "+919812345678"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "phones_pass2:IN",
+        "source": "t1_ats.json"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "c9666a0a73f6d3a8",
+    "confidence": {
+      "fields": {
+        "emails": 0.45
+      },
+      "overall": 0.079412
+    },
+    "education": [],
+    "emails": [
+      "avery.stone@example.com",
+      "grace.obi@example.com",
+      "xavier.new@example.com"
+    ],
+    "experience": [],
+    "full_name": null,
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "regex:email_v1",
+        "source": "notes_gossip.txt"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[1]",
+        "method": "regex:email_v1",
+        "source": "notes_gossip.txt"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[2]",
+        "method": "regex:email_v1",
+        "source": "notes_gossip.txt"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "d3fee5f0b67916cc",
+    "confidence": {
+      "fields": {
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.25
+    },
+    "education": [],
+    "emails": [],
+    "experience": [
+      {
+        "company": "Brightpath",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Designer"
+      }
+    ],
+    "full_name": "Lena Novak",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "f71bec7ba86d5220",
+    "confidence": {
+      "fields": {
+        "emails": 0.85,
+        "experience": 0.85,
+        "full_name": 0.85
+      },
+      "overall": 0.4
+    },
+    "education": [],
+    "emails": [
+      "taro.tanaka@example.jp"
+    ],
+    "experience": [
+      {
+        "company": "Sakura Robotics",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "ML Engineer"
+      }
+    ],
+    "full_name": "田中 太郎",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "t1_roster.csv"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  }
+]

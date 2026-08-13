@@ -15,6 +15,8 @@ from __future__ import annotations
 SOURCE_TRUST: dict[str, float] = {
     "ats_json": 0.90,
     "recruiter_csv": 0.85,
+    "linkedin_json": 0.80,  # self-reported but platform-structured (recorded fixture)
+    "github_json": 0.75,    # platform-verified login; profile fields self-authored
     "resume": 0.70,
     "notes_txt": 0.50,
     "derived": 1.00,

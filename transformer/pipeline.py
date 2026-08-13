@@ -58,8 +58,10 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
     for src in source_results:
         unparseable.extend(dict(u, source_id=src.source_id) for u in src.unparseable)
 
+    contested = resolution.contested_keys
     for cluster in resolution.clusters:
         cluster = dict(cluster)
+        cluster["contested_keys"] = contested
         cluster["flags"] = sorted({
             f for rid in cluster["record_ids"]
             for f in resolution.record_flags.get(rid, [])

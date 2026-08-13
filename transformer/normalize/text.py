@@ -18,6 +18,18 @@ def fold(s: str) -> str:
     return nfc(s).casefold()
 
 
+# Strings that mean "no value" in real exports. Checked at adapter intake so
+# "N/A" never becomes someone's phone number or employer (GOLDEN_DATASET §8.4).
+NULL_MARKERS = frozenset({
+    "", "-", "--", "—", "–", "n/a", "n.a", "na", "none", "null", "nil",
+    "tbd", "unknown", "?",
+})
+
+
+def is_null_marker(s: object) -> bool:
+    return fold(str(s)).strip(" .") in NULL_MARKERS
+
+
 def strip_accents(s: str) -> str:
     """Accent-insensitive comparison form ("José" ~ "Jose"). Comparison only —
     stored values always keep their accents."""

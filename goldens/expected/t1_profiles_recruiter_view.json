@@ -1,0 +1,347 @@
+[
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.985,
+        "primary_email": 0.9,
+        "skills": 0.765
+      },
+      "overall": 0.591471
+    },
+    "full_name": "Bina Rao",
+    "phone": null,
+    "primary_email": "bina.rao+jobs@gmail.com",
+    "skills": [
+      "excel",
+      "sql"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.462857,
+        "phone": 0.945,
+        "primary_email": 0.985,
+        "skills": 0.425
+      },
+      "overall": 0.532563
+    },
+    "full_name": "C. Chen",
+    "phone": "+14155552673",
+    "primary_email": "casey.chen@example.com",
+    "skills": [
+      "kafka",
+      "kubernetes"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.4
+    },
+    "full_name": "Sam Ortiz",
+    "phone": null,
+    "primary_email": "referrals@agency.example",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.98,
+        "primary_email": 0.9
+      },
+      "overall": 0.691765
+    },
+    "full_name": "Hana Suzuki",
+    "phone": null,
+    "primary_email": "hana.suzuki@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.985,
+        "phone": 0.9,
+        "primary_email": 0.985
+      },
+      "overall": 0.569412
+    },
+    "full_name": "Blair Novak",
+    "phone": "+14155552674",
+    "primary_email": "blair.novak@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.9,
+        "primary_email": 0.9
+      },
+      "overall": 0.458824
+    },
+    "full_name": "Uma Reddy",
+    "phone": null,
+    "primary_email": "uma.reddy@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "phone": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.5
+    },
+    "full_name": "Renée Fontaine",
+    "phone": "+33612345678",
+    "primary_email": "renee.fontaine@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.9,
+        "primary_email": 0.9
+      },
+      "overall": 0.437647
+    },
+    "full_name": "Jorge Silva",
+    "phone": null,
+    "primary_email": "jorge.silva@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.999847,
+        "phone": 0.99445,
+        "primary_email": 0.996947,
+        "skills": 0.969901
+      },
+      "overall": 0.934457
+    },
+    "full_name": "Avery Stone",
+    "phone": "+14155552671",
+    "primary_email": "avery.stone@example.com",
+    "skills": [
+      "python",
+      "airflow",
+      "sql",
+      "go"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "phone": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.5
+    },
+    "full_name": "Omar Haddad",
+    "phone": "+14155552672",
+    "primary_email": "omar.h@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.4
+    },
+    "full_name": "Farid Khan",
+    "phone": null,
+    "primary_email": "farid.khan@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.945,
+        "primary_email": 0.945,
+        "skills": 0.87075
+      },
+      "overall": 0.599206
+    },
+    "full_name": "Rhea Hoardley",
+    "phone": null,
+    "primary_email": "rhea.h@example.com",
+    "skills": [
+      "python",
+      "go",
+      "kubernetes",
+      "ms office",
+      "react",
+      "typescript",
+      "jupyter notebook",
+      "yaml",
+      "pytorch",
+      "scikit-learn"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.462857,
+        "primary_email": 0.985,
+        "skills": 0.765
+      },
+      "overall": 0.451387
+    },
+    "full_name": "Grace Obi",
+    "phone": null,
+    "primary_email": "grace.obi@example.com",
+    "skills": [
+      "python",
+      "sql"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.963,
+        "primary_email": 0.97965,
+        "skills": 0.425
+      },
+      "overall": 0.598056
+    },
+    "full_name": "Tomas Eder",
+    "phone": null,
+    "primary_email": "tomas.eder@example.com",
+    "skills": [
+      "react"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.4
+    },
+    "full_name": "Kiran Patel",
+    "phone": null,
+    "primary_email": "kiran.patel@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.45,
+        "primary_email": 0.7965
+      },
+      "overall": 0.329382
+    },
+    "full_name": "Ishaan Verma",
+    "phone": null,
+    "primary_email": "ishaan.verma@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.9,
+        "primary_email": 0.9
+      },
+      "overall": 0.423529
+    },
+    "full_name": "Dana Kim",
+    "phone": null,
+    "primary_email": "referrals@agency.example",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "phone": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.5
+    },
+    "full_name": "Petra Vogel",
+    "phone": "+14155552672",
+    "primary_email": "petra.v@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.4
+    },
+    "full_name": "Kiran Patel",
+    "phone": null,
+    "primary_email": "kpatel@example.org",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.9,
+        "phone": 0.9,
+        "primary_email": 0.9,
+        "skills": 0.765
+      },
+      "overall": 0.619412
+    },
+    "full_name": "田中太郎",
+    "phone": "+819012345678",
+    "primary_email": "taro.tanaka@example.jp",
+    "skills": null
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.488176,
+        "primary_email": 0.9445,
+        "skills": 0.595
+      },
+      "overall": 0.469237
+    },
+    "full_name": "Núñez, Carlos",
+    "phone": null,
+    "primary_email": "carlos.nunez@example.com",
+    "skills": [
+      "kubernetes",
+      "terraform"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.985,
+        "phone": 0.95535,
+        "primary_email": 0.985
+      },
+      "overall": 0.628865
+    },
+    "full_name": "Devi Iyer",
+    "phone": "+919812345678",
+    "primary_email": "devi.iyer@example.com",
+    "skills": []
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.85,
+        "primary_email": 0.85
+      },
+      "overall": 0.4
+    },
+    "full_name": "田中 太郎",
+    "phone": null,
+    "primary_email": "taro.tanaka@example.jp",
+    "skills": []
+  }
+]

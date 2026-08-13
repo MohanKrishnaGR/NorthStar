@@ -27,7 +27,7 @@ python -m transformer run --input samples \
   --config configs/recruiter_view.json \
   --out out/profiles_recruiter_view.json --report out/run_report_recruiter_view.json
 
-python -m pytest -q      # 129 tests
+python -m pytest -q      # 171 tests incl. golden-persona, hostile, metamorphic, scale suites
 ```
 
 The `out/` directory contains exactly what these two commands produce on the
@@ -108,8 +108,10 @@ transformer/
   constants.py    trust/reliability/weight tables, with rationale
   normalize/      NFC text, emails, phones (2-pass E.164), dates ({year,month?}),
                   country ISO-3166, skills alias dict, URLs, idempotent registry
-  adapters/       CSV, ATS JSON, notes .txt, resume .docx/.pdf (optional extra)
-  identity.py     blocking + union-find, contradiction & multi-identity guards
+  adapters/       CSV, ATS JSON, notes .txt, resume .docx/.pdf (optional extra),
+                  recorded-response github_*.json / linkedin_*.json (ADR-017)
+  identity.py     blocking + union-find (email/phone/profile-URL keys),
+                  contradiction & multi-identity guards
   merge.py        survivorship, atomic location, interval-union years, phone pass 2
   confidence.py   noisy-OR scoring
   projection/     4-construct path DSL, config compile, projector, schema builder
@@ -117,5 +119,11 @@ transformer/
 configs/          default.json (identity projection) + recruiter_view.json
 samples/          sample inputs (see table above)
 out/              committed outputs of the two quickstart commands
-tests/            129 tests incl. determinism and gold-output suites
+goldens/          golden dataset: t1/ 20 mechanism-named personas across all six
+                  source types, t2/ hostile corpus, expected/ pinned outputs,
+                  TRUTH.md (per-persona expectations and why — see GOLDEN_DATASET.md)
+tools/            fixture (re)builders + gen_scale.py, the seeded Tier-3 generator
+                  with planted ground truth (recall/false-merge/runtime gate)
+tests/            171 tests: unit, e2e, determinism, golden personas, hostile
+                  corpus, metamorphic invariants, scale gate
 ```

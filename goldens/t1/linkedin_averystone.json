@@ -1,0 +1,13 @@
+{
+  "fullName": "Avery Stone",
+  "headline": "Staff Data Engineer at Marigold Data",
+  "publicProfileUrl": "https://www.linkedin.com/in/averystone",
+  "location": {"city": "San Francisco", "country": "United States"},
+  "positions": [
+    {"companyName": "Marigold Data", "title": "Staff Data Engineer",
+     "startDate": {"year": 2021, "month": 2}, "isCurrent": true}
+  ],
+  "educations": [
+    {"schoolName": "UC Berkeley", "degreeName": "B.S.", "fieldOfStudy": "EECS", "endYear": 2016}
+  ]
+}

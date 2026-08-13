@@ -7,9 +7,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import ats_json, notes_txt, recruiter_csv
+from . import ats_json, github_json, linkedin_json, notes_txt, recruiter_csv
 
-_ADAPTERS = (recruiter_csv, ats_json, notes_txt)  # fixed order = deterministic
+# Fixed order = deterministic. The recorded-response adapters claim their
+# filename prefixes before the generic .json adapter sees the file.
+_ADAPTERS = (recruiter_csv, github_json, linkedin_json, ats_json, notes_txt)
 
 
 def detect_adapter(path: Path):

@@ -122,9 +122,14 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
                 record_id=raw_atom.record_id, order_index=raw_atom.order_index,
             ))
         else:
+            # Diagnose honestly: a number that *had* region context (+CC or a
+            # cluster country) and still failed is invalid, not context-less.
+            s = str(raw_atom.value).strip()
+            reason = ("invalid_number" if s.startswith("+") or cluster_country
+                      else "no_region_context")
             notes.append({
                 "source_id": raw_atom.source_id, "field": "phones",
-                "raw_value": str(raw_atom.value), "reason": "no_region_context",
+                "raw_value": str(raw_atom.value), "reason": reason,
             })
     phones = element_set("phones", sorted(phone_atoms, key=Evidence.sort_key))
 
@@ -170,7 +175,7 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
 
     # ------------------------------------------------------------- experience
     experience, exp_confs, exp_intervals = _merge_experience(
-        by_field.get("experience", []), ordered, as_of, prov
+        by_field.get("experience", []), ordered, as_of, prov, notes
     )
     if exp_confs:
         field_conf["experience"] = round(max(exp_confs), 6)
@@ -248,7 +253,7 @@ def _same_job(a: dict, b: dict, as_of) -> bool:
     return bool(ta and tb and text.strip_accents(ta) == text.strip_accents(tb))
 
 
-def _merge_experience(atoms, ordered, as_of, prov):
+def _merge_experience(atoms, ordered, as_of, prov, notes):
     if not atoms:
         return [], [], []
     idx_parent = list(range(len(atoms)))
@@ -299,10 +304,22 @@ def _merge_experience(atoms, ordered, as_of, prov):
             ends = [a.value["end"] for a in g if a.value.get("end")]
             end = best_date(ends, "end", max) if ends else None
         if start and (end or (is_current and as_of)):
-            intervals.append((
-                dates.month_index(start, "start"),
-                dates.month_index(end or as_of, "end"),
-            ))
+            s_idx = dates.month_index(start, "start")
+            e_idx = dates.month_index(end or as_of, "end")
+            if e_idx >= s_idx:
+                intervals.append((s_idx, e_idx))
+            else:
+                # End-before-start would contribute *negative* months to
+                # years_experience — dropped from the sum, reported, but the
+                # entry itself is still emitted with its raw dates (honest).
+                notes.append({
+                    "source_id": by_pref[0].source_id,
+                    "field": "experience",
+                    "raw_value": f"{pick('company')}: {dates.render(start)}"
+                                 f" -> {dates.render(end) or 'present'}",
+                    "reason": ("future_dated_range" if end is None
+                               else "inverted_date_range"),
+                })
         entries.append({
             "company": pick("company"),
             "title": pick("title"),
@@ -383,13 +400,18 @@ def _candidate_id(cluster, by_field, full_name):
         return hashlib.sha256(
             f"record:{cluster['cluster_id']}".encode("utf-8")
         ).hexdigest()[:16]
+    contested = cluster.get("contested_keys", frozenset())
     email_keys = sorted({
-        emails_mod.match_key(a.value) for a in by_field.get("emails", [])
+        k for a in by_field.get("emails", [])
+        if f"email:{(k := emails_mod.match_key(a.value))}" not in contested
     })
     if email_keys:
         seed = f"email:{email_keys[0]}"
     else:
-        phone_keys = sorted({str(a.value) for a in by_field.get("phones", [])})
+        phone_keys = sorted({
+            str(a.value) for a in by_field.get("phones", [])
+            if f"phone:{a.value}" not in contested
+        })
         if phone_keys:
             seed = f"phone:{phone_keys[0]}"
         elif full_name:

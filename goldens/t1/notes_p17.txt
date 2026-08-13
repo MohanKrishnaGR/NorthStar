@@ -1,0 +1,4 @@
+Name: Rhea Hoardley
+
+Let's go over the rest of the spring plan before the review.
+Hands-on with PyTorch and scikit-learn. rhea.h@example.com

@@ -337,6 +337,13 @@ python -m transformer run \
 
 **Trade-offs.** A handful of rules to remember instead of one. The alternative — discovering each leak when the byte-compare test flakes across a month boundary or after a file copy — is exactly the class of silent nondeterminism this ADR exists to name and kill.
 
+### ADR-017 · Profile-URL match keys + recorded-response API adapters (golden-dataset amendment)
+
+**Context.** Designing the golden dataset (GOLDEN_DATASET.md) forced the question ADR-002 deferred: how does a recorded GitHub/LinkedIn payload *join its person's cluster*? Such payloads usually carry no email or phone — without a linking mechanism every API fixture becomes an orphan profile, which makes covering those source types in the dataset meaningless.
+
+**Decision.** Personal profile URLs are identifiers: `links.github` and `links.linkedin` values become a third match-key kind (**link**, strength between phone and soft), normalized for matching only (scheme/www/query/fragment/trailing-slash stripped — `github.com/alice?tab=repos` ≡ `https://www.github.com/alice/`). `links.portfolio`/`other` are **not** keys — an agency site is shared. The contradiction and multi-identity guards apply to link keys exactly as to emails/phones (two distinct GitHub links in one notes file ⇒ `multi_identity_source`). Two recorded-response adapters ship behind a filename convention (`github_<login>.json`, `linkedin_<slug>.json` — the fetcher that records the response names the file, and the convention doubles as deterministic detection before the generic ATS `.json` rule): GitHub at trust 0.75 (login never promoted to full_name — `name` is often null and stays null; repo languages → skills at *derived* reliability so they can never outvote a resume's explicit skills), LinkedIn at trust 0.80 (export-style payloads only; no sanctioned live API exists).
+**Trade-offs.** A stale recorded payload can join a cluster it no longer describes — inherent to recorded data, mitigated by trust weights, in-band recency, and provenance making the origin visible. Filename-convention detection is a contract with the (hypothetical) fetcher, documented in the adapter headers.
+
 ---
 
 ## 5. Edge-case handling matrix
@@ -358,6 +365,11 @@ python -m transformer run \
 | 13 | Promotion: same company, sequential ranges, different titles | Two experience entries (append); dateless duplicates merge only when titles also match | ADR-006 |
 | 14 | Duration of a current job ("Present") | Interval closes at the pinned `as-of` date, never the wall clock | ADR-016 |
 | 15 | Candidate missing a field the config marks `required` (notes-only, no email) | Record excluded from `profiles.json`, listed in validation report; batch continues | ADR-012 |
+| 16 | Inverted (end-before-start) or future-dated range | Dropped from the `years_experience` sum with reason `inverted_date_range` / `future_dated_range`; the entry itself still emitted with its raw dates | ADR-006/016 |
+| 17 | Valid-looking `+CC` phone that fails validation | Reported as `invalid_number`, not the misleading `no_region_context` | ADR-009 |
+| 18 | Null-marker strings ("N/A", "—", "tbd") in any field | Filtered at adapter intake — never become values, never counted as evidence | ADR-013 |
+| 19 | CJK name spacing variants ("田中太郎" vs "田中 太郎") | Token predicate sees no overlap ⇒ guard refuses the merge — a documented false *split* (recoverable), kept visible in the golden truth sheet; script-aware compatibility is a scoped follow-up | ADR-005 |
+| 20 | Refusal-split clusters share the contested identifier (shared inbox, CJK pair) | Contested keys are excluded from `candidate_id` seeding — otherwise both clusters hash to the same id; fallback is name+company, then record seed | ADR-016 |
 
 ---
 

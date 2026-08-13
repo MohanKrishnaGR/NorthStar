@@ -1,0 +1,17 @@
+name,email,phone,current_company,title
+Avery Stone,avery.stone@example.com,+1 415 555 2671,Marigold Data,Staff Data Engineer
+Bina Rao,bina.rao@gmail.com,,Copper Analytics,Data Analyst
+"Núñez, Carlos",carlos.nunez@example.com,,Vertex Cloud,Platform Engineer
+Devi Iyer,devi.iyer@example.com,98123 45678,Chennai Fintech,Data Scientist
+Farid Khan,farid.khan@example.com,98123 45699,Skyline Apps,Mobile Engineer
+Grace N. Obi,grace.obi@example.com,,Helios Retail,Senior Analyst
+Kiran Patel,kiran.patel@example.com,,Aurora Labs,QA Engineer
+Kiran Patel,kpatel@example.org,,Aurora Labs,QA Engineer
+Lena Novak,,,Brightpath,Designer
+Lena Novak,,—,Brightpath,—
+Sam Ortiz,referrals@agency.example,,Quill Media,Copywriter
+Omar Haddad,omar.h@example.com,+1 415 555 2672,Harbor Health,Backend Engineer
+Petra Vogel,petra.v@example.com,+1 415 555 2672,Harbor Health,Data Engineer
+Casey Chen,casey.chen@example.com,,Streamline AI,Platform Engineer
+Blair Novak,blair.novak@example.com,,Streamline AI,SRE
+田中 太郎,taro.tanaka@example.jp,,Sakura Robotics,ML Engineer

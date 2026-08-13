@@ -1,0 +1,16 @@
+{
+  "fullName": "Hana Suzuki",
+  "headline": "Engineering Manager at Kite Systems",
+  "publicProfileUrl": "https://www.linkedin.com/in/hanasuzuki",
+  "location": {"city": "Tokyo", "country": "Japan"},
+  "positions": [
+    {"companyName": "Kite Systems", "title": "Engineering Manager",
+     "startDate": {"year": 2023, "month": 4}, "isCurrent": true},
+    {"companyName": "Kite Systems", "title": "Senior Engineer",
+     "startDate": {"year": 2020, "month": 1},
+     "endDate": {"year": 2023, "month": 3}}
+  ],
+  "educations": [
+    {"schoolName": "Kyoto University", "degreeName": "M.Eng", "fieldOfStudy": "Computer Science", "endYear": 2014}
+  ]
+}

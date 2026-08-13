@@ -17,8 +17,13 @@ from .constants import UNSTRUCTURED_TYPES
 from .models import SourceRecord
 from .normalize import emails as emails_mod
 from .normalize import text
+from .normalize import urls as urls_mod
 
-_KEY_STRENGTH = {"email": 0, "phone": 1, "soft": 2}
+# Personal profile URLs (linkedin/github) are identifiers in their own right —
+# it's how a recorded API payload joins the cluster that referenced it
+# (ADR-017). Portfolio/other links are NOT keys: an agency site is shared.
+_LINK_KEY_FIELDS = ("links.github", "links.linkedin")
+_KEY_STRENGTH = {"email": 0, "phone": 1, "link": 2, "soft": 3}
 _TOKEN_RE = re.compile(r"[^\w]+")
 
 
@@ -27,6 +32,13 @@ class Resolution:
     clusters: list = field(default_factory=list)  # {cluster_id, record_ids, match_keys_used}
     refusals: list = field(default_factory=list)  # {records, key, reason}
     record_flags: dict = field(default_factory=dict)  # record_id -> [flags]
+
+    @property
+    def contested_keys(self) -> set[str]:
+        """Identifiers involved in a refused union. Two clusters split by the
+        contradiction guard share such a key — neither may seed its
+        candidate_id from it, or both would hash to the same id."""
+        return {r["key"] for r in self.refusals}
 
 
 def name_tokens(name: str) -> list[str]:
@@ -57,8 +69,16 @@ def _record_keys(rec: SourceRecord, resolution: Resolution) -> list[tuple[str, s
     phone_keys = sorted(
         {str(e.value) for e in rec.evidence if e.field_path == "phones"}
     )
+    link_keys_by_kind = {
+        f: sorted({
+            urls_mod.match_key(str(e.value))
+            for e in rec.evidence if e.field_path == f
+        })
+        for f in _LINK_KEY_FIELDS
+    }
     if rec.source_type in UNSTRUCTURED_TYPES and (
         len(email_keys) >= 2 or len(phone_keys) >= 2
+        or any(len(v) >= 2 for v in link_keys_by_kind.values())
     ):
         # One-candidate-per-file assumption violated: this source would union
         # into several people's clusters and transitively fuse them. Its keys
@@ -67,7 +87,12 @@ def _record_keys(rec: SourceRecord, resolution: Resolution) -> list[tuple[str, s
             "multi_identity_source"
         )
         return []
-    keys = [("email", k) for k in email_keys] + [("phone", k) for k in phone_keys]
+    link_keys = sorted({k for v in link_keys_by_kind.values() for k in v})
+    keys = (
+        [("email", k) for k in email_keys]
+        + [("phone", k) for k in phone_keys]
+        + [("link", k) for k in link_keys]
+    )
     if not keys:
         name = next(
             (e.value for e in rec.evidence if e.field_path == "full_name"), None

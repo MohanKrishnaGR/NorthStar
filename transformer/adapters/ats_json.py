@@ -73,45 +73,62 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
             order += 1
 
         for foreign, target in _SCALAR_MAP.items():
-            if entry.get(foreign):
-                add(target, text.nfc(str(entry[foreign])), entry[foreign])
+            v = _s(entry, foreign)
+            if v:
+                add(target, v, entry[foreign])
 
         for k in _EMAIL_KEYS:
-            if entry.get(k):
-                norm = emails.normalize(entry[k])
+            v = _s(entry, k)
+            if v:
+                norm = emails.normalize(v)
                 if norm:
                     add("emails", norm, entry[k])
                 else:
                     res.note_unparseable("emails", entry[k], "not_an_email")
 
         for k in _PHONE_KEYS:
-            if entry.get(k):
-                e164 = phones.to_e164(entry[k], ctx.get("default_region"))
+            v = _s(entry, k)  # also coerces JSON-number phones to strings
+            if v:
+                e164 = phones.to_e164(v, ctx.get("default_region"))
                 if e164:
                     add("phones", e164, entry[k])
                 else:
-                    add("phones_raw", str(entry[k]), entry[k], normalized=False)
+                    add("phones_raw", v, entry[k], normalized=False)
 
         for k in _URL_KEYS:
             for u in entry.get(k) or []:
                 bucket, cleaned = urls.classify(str(u))
                 add(f"links.{bucket}", cleaned, u)
 
-        for raw_skill in entry.get("skills") or []:
+        raw_skills = entry.get("skills") or []
+        if isinstance(raw_skills, str):
+            # Some ATS exports join skills into one string; never iterate a
+            # string as characters.
+            raw_skills = [p for p in raw_skills.split(",") if p.strip()]
+        for raw_skill in raw_skills:
+            if text.is_null_marker(raw_skill):
+                continue
             name, canonical = skills.canonicalize(raw_skill)
             add("skills", {"name": name, "canonical": canonical}, raw_skill,
                 method="dict:skill_alias_v1")
+
+        for k in ("totalYearsExperience", "yearsOfExperience", "experience_years"):
+            v = entry.get(k)
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                # A *stated* claim — the merge stage prefers range-derived
+                # values and records this as an alternative (ADR-006).
+                add("years_experience", v, v)
+                break
 
         loc = _location_of(entry)
         if loc:
             add("location", loc, json.dumps(loc, sort_keys=True))
 
-        cur_company = entry.get("currentEmployer") or entry.get("current_employer")
-        cur_title = entry.get("designation") or entry.get("jobTitle")
+        cur_company = _s(entry, "currentEmployer", "current_employer")
+        cur_title = _s(entry, "designation", "jobTitle")
         if cur_company or cur_title:
             add("experience", {
-                "company": text.nfc(str(cur_company)) if cur_company else None,
-                "title": text.nfc(str(cur_title)) if cur_title else None,
+                "company": cur_company, "title": cur_title,
                 "start": None, "end": None, "is_current": True, "summary": None,
             }, f"{cur_company}|{cur_title}")
 
@@ -149,8 +166,12 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
 
 def _s(d: dict, *keys: str) -> str | None:
     for k in keys:
-        if d.get(k):
-            return text.nfc(str(d[k]))
+        v = d.get(k)
+        if v is None:
+            continue
+        s = text.nfc(str(v))
+        if s and not text.is_null_marker(s):
+            return s
     return None
 
 

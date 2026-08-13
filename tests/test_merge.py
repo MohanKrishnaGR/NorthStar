@@ -167,6 +167,39 @@ def test_skills_union_with_flags_and_sources():
     assert profile["skills"][0]["name"] == "python"  # corroborated first
 
 
+def test_inverted_range_dropped_from_years_and_reported():
+    profile, notes = run([
+        ("ats.json#idx=0", "ats_json", None, [
+            ("experience", exp_entry("Chrono", "Analyst",
+                                     (2022, 5), (2021, 1), False), "direct_field"),
+            ("experience", exp_entry("Solid Corp", "Analyst",
+                                     (2020, 1), (2020, 12), False), "direct_field"),
+        ]),
+    ])
+    assert profile["years_experience"] == 1.0  # only the sane 12-month job
+    assert len(profile["experience"]) == 2  # entry still emitted, honestly
+    assert any(n["reason"] == "inverted_date_range" for n in notes)
+
+
+def test_future_dated_current_job_reported_not_negative():
+    profile, notes = run([
+        ("ats.json#idx=0", "ats_json", None, [
+            ("experience", exp_entry("Tomorrow Inc", "Engineer",
+                                     (2030, 1), None, True), "direct_field"),
+        ]),
+    ])  # as_of is 2026-08: start is beyond it
+    assert profile["years_experience"] is None
+    assert notes[0]["reason"] == "future_dated_range"
+
+
+def test_invalid_plus_cc_phone_gets_honest_reason():
+    _, notes = run([
+        ("r.csv#row=1", "recruiter_csv", None,
+         [("phones_raw", "+1 555 555 5555", "direct_field")]),
+    ])
+    assert notes[0]["reason"] == "invalid_number"  # not no_region_context
+
+
 def test_candidate_id_is_content_derived_and_stable():
     spec = [("r.csv#row=1", "recruiter_csv", None,
              [("emails", "alice.fern@gmail.com", "direct_field")])]

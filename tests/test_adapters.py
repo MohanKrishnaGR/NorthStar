@@ -84,6 +84,35 @@ def test_notes_extracts_labeled_and_scanned_fields():
     assert not _fields(rec, "phones_raw")  # "2018 - 2021" is not a phone
 
 
+def test_null_markers_never_become_values(tmp_path):
+    f = tmp_path / "markers.csv"
+    f.write_text(
+        "name,email,phone,current_company,title\n"
+        'Nolan Marker,nolan@example.com,N/A,—,tbd\n',
+        encoding="utf-8",
+    )
+    res = run_adapter(recruiter_csv, f, CTX)
+    rec = res.records[0]
+    assert not _fields(rec, "phones") and not _fields(rec, "phones_raw")
+    assert not _fields(rec, "experience")  # "—" company + "tbd" title filtered
+    assert res.unparseable == []  # filtered silently, not reported as junk
+
+
+def test_ats_skills_as_string_and_numeric_phone(tmp_path):
+    f = tmp_path / "odd.json"
+    f.write_text(
+        '{"candidateName": "Skye String", "skills": "SQL, Python",'
+        ' "phoneNumber": 9876543210, "designation": "n/a"}',
+        encoding="utf-8",
+    )
+    res = run_adapter(ats_json, f, CTX)
+    rec = res.records[0]
+    names = {e.value["name"] for e in _fields(rec, "skills")}
+    assert names == {"sql", "python"}  # not iterated as characters
+    assert _fields(rec, "phones_raw")[0].value == "9876543210"  # str-coerced
+    assert not _fields(rec, "experience")  # "n/a" designation filtered
+
+
 def test_garbage_json_is_contained():
     res = run_adapter(ats_json, SAMPLES / "garbage.json", CTX)
     assert res.status == "skipped" and res.errors and not res.records

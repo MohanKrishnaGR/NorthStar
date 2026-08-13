@@ -1,0 +1,143 @@
+{
+  "candidates": [
+    {
+      "candidateName": "Avery Stone",
+      "emailAddress": "avery.stone@example.com",
+      "phoneNumber": "+1 415 555 2671",
+      "currentEmployer": "Marigold Data",
+      "designation": "Staff Data Engineer",
+      "skills": ["Python", "SQL", "Airflow"],
+      "workHistory": [
+        {"org": "Marigold Data", "role": "Staff Data Engineer", "from": "2021-02", "to": "Present"}
+      ],
+      "schooling": [
+        {"school": "UC Berkeley", "degree": "B.S.", "fieldOfStudy": "EECS", "endYear": 2016}
+      ],
+      "city": "San Francisco",
+      "country": "United States",
+      "lastUpdated": "2026-06-01",
+      "profileUrls": ["https://github.com/averystone", "https://www.linkedin.com/in/averystone"]
+    },
+    {
+      "candidateName": "Avery Stone",
+      "emailAddress": "avery.stone@example.com",
+      "phoneNumber": "+1 415 555 2671",
+      "currentEmployer": "Marigold Data",
+      "designation": "Staff Data Engineer",
+      "skills": ["Python", "SQL", "Airflow"],
+      "workHistory": [
+        {"org": "Marigold Data", "role": "Staff Data Engineer", "from": "2021-02", "to": "Present"}
+      ],
+      "schooling": [
+        {"school": "UC Berkeley", "degree": "B.S.", "fieldOfStudy": "EECS", "endYear": 2016}
+      ],
+      "city": "San Francisco",
+      "country": "United States",
+      "lastUpdated": "2026-06-01",
+      "profileUrls": ["https://github.com/averystone", "https://www.linkedin.com/in/averystone"]
+    },
+    {
+      "candidateName": "Bina Rao",
+      "emailAddress": "bina.rao+jobs@gmail.com",
+      "email_id": "binarao@googlemail.com",
+      "currentEmployer": "Copper Analytics",
+      "designation": "Senior Data Analyst",
+      "skills": ["SQL", "Excel"],
+      "city": "Pune",
+      "country": "India",
+      "lastUpdated": "2026-02-11"
+    },
+    {
+      "candidateName": "Devi Iyer",
+      "emailAddress": "devi.iyer@example.com",
+      "phoneNumber": 9812345678,
+      "currentEmployer": "Chennai Fintech",
+      "designation": "Data Scientist",
+      "city": "Chennai",
+      "country": "India"
+    },
+    {
+      "candidateName": "Grace Obi",
+      "emailAddress": "grace.obi@example.com",
+      "currentEmployer": "Helios Retail Group",
+      "designation": "Lead Analyst",
+      "headline": null,
+      "skills": "SQL, Python",
+      "lastUpdated": "2026-03-10"
+    },
+    {
+      "candidateName": "Hana Suzuki",
+      "emailAddress": "hana.suzuki@example.com",
+      "profileUrls": ["https://www.linkedin.com/in/hanasuzuki"],
+      "workHistory": [
+        {"org": "Kite Systems", "role": "Engineering Manager", "from": "2023-04", "to": "Present"},
+        {"org": "Kite Systems", "role": "Senior Engineer", "from": "2020-01", "to": "2023-03"},
+        {"org": "Nova Labs", "role": "Advisor", "from": "2022-01", "to": "2023-12"}
+      ],
+      "city": "Tokyo",
+      "country": "Japan"
+    },
+    {
+      "candidateName": "Jorge Silva",
+      "emailAddress": "jorge.silva@example.com",
+      "designation": "",
+      "headline": null,
+      "totalYearsExperience": 15,
+      "workHistory": [
+        {"org": "Vega Bank", "role": "Quant Developer", "from": "2021-06", "to": "Present"}
+      ]
+    },
+    {
+      "candidateName": "Dana Kim",
+      "emailAddress": "referrals@agency.example",
+      "currentEmployer": "Nimbus Press",
+      "designation": "Editor"
+    },
+    {
+      "candidateName": "C. Chen",
+      "emailAddress": "casey.chen@example.com",
+      "phoneNumber": "+1 415 555 2673",
+      "currentEmployer": "Streamline AI",
+      "designation": "Senior Platform Engineer"
+    },
+    {
+      "candidateName": "Blair Novak",
+      "emailAddress": "blair.novak@example.com",
+      "phoneNumber": "+1 415 555 2674",
+      "currentEmployer": "Streamline AI",
+      "designation": "SRE II"
+    },
+    {
+      "candidateName": "田中太郎",
+      "emailAddress": "taro.tanaka@example.jp",
+      "phoneNumber": "+81 90 1234 5678",
+      "currentEmployer": "Sakura Robotics",
+      "designation": "ML Engineer",
+      "skills": ["機械学習", "Python"]
+    },
+    {
+      "candidateName": "Rhea Hoardley",
+      "emailAddress": "rhea.h@example.com",
+      "profileUrls": ["https://github.com/rhoardley"],
+      "currentEmployer": "Datapile",
+      "designation": "Analytics Engineer",
+      "skills": ["ReactJS", "react.js", "Python 3.11", "K8s", "Golang", "MS Office", "TS"]
+    },
+    {
+      "candidateName": "Tomas Eder",
+      "emailAddress": "tomas.eder@example.com",
+      "profileUrls": ["https://linkedin.com/in/tomas-eder", "https://github.com/teder"],
+      "currentEmployer": "Pixelforge",
+      "designation": "Frontend Lead"
+    },
+    {
+      "candidateName": "Uma Reddy",
+      "emailAddress": "uma.reddy@example.com",
+      "workHistory": [
+        {"org": "Tomorrow Inc", "role": "Engineer", "from": "2030-01", "to": "Present"},
+        {"org": "Chrono Corp", "role": "Analyst", "from": "2022-05", "to": "2021-01"},
+        {"org": "Solid Corp", "role": "Analyst", "from": "2020-03", "to": "2020-03"}
+      ]
+    }
+  ]
+}
