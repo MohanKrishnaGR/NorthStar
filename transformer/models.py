@@ -26,6 +26,11 @@ class Evidence:
     record_id: str           # per-candidate record, e.g. "recruiters.csv#row=2"
     order_index: int = 0     # stable position within the record
     normalized: bool = True  # False => value kept raw, surfaced in run report
+    # Where in the source this atom was seen (UI grounding — UI_DESIGN §6):
+    # {"kind": "cell", "row": int, "col": str} | {"kind": "path", "path": str}
+    # | {"kind": "span", "start": int, "end": int} | None. Never serialized
+    # into profiles/report — only the optional UI bundle reads it.
+    locator: object = None
 
     def sort_key(self):
         # Canonical evidence sort key (PLAN.md §3.1): the one ordering every

@@ -34,6 +34,9 @@ def main(argv: list[str] | None = None) -> int:
                            "no value means such phones are never guessed")
     runp.add_argument("--strict", action="store_true",
                       help="development aid: re-raise adapter errors")
+    runp.add_argument("--emit-ui", default=None, metavar="PATH",
+                      help="also write a self-contained explorer HTML "
+                           "(requires the built template in ui/dist)")
     args = ap.parse_args(argv)
 
     try:
@@ -63,9 +66,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"input not found: {root}", file=sys.stderr)
         return 2
 
+    template = None
+    if args.emit_ui:
+        template = (Path(__file__).resolve().parent.parent / "ui" / "dist"
+                    / "explorer_template.html")
+        if not template.exists():
+            print("--emit-ui needs the built template at ui/dist/"
+                  "explorer_template.html (run: python tools/build_ui.py)",
+                  file=sys.stderr)
+            return 2
+
     result = run_pipeline(
         inputs, cfg, default_region=args.default_region, as_of=as_of,
-        strict=args.strict,
+        strict=args.strict, collect_ui=bool(args.emit_ui),
     )
     if result.readable_sources == 0:
         print("no readable sources in input", file=sys.stderr)
@@ -73,6 +86,19 @@ def main(argv: list[str] | None = None) -> int:
 
     write_json(args.out, result.profiles)
     write_json(args.report, result.report)
+    if args.emit_ui:
+        import json as _json
+
+        # "</" must not terminate the inline <script> holding the data.
+        payload = _json.dumps(result.ui_bundle, ensure_ascii=False,
+                              sort_keys=True).replace("</", "<\\/")
+        html = template.read_text(encoding="utf-8").replace(
+            "\"__RUN_DATA_JSON__\"", payload)
+        out_path = Path(args.emit_ui)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(html)
+        print(f"explorer -> {args.emit_ui}")
     excluded = len(result.report["validation"])
     print(
         f"{len(result.profiles)} profile(s) -> {args.out}"

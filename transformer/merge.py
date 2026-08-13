@@ -10,8 +10,10 @@ from __future__ import annotations
 import hashlib
 from decimal import ROUND_HALF_UP, Decimal
 
+import json
+
 from . import confidence
-from .constants import SOURCE_TRUST, method_reliability
+from .constants import SOURCE_TRUST, method_reliability, strength
 from .models import Evidence, SourceRecord, value_repr
 from .normalize import dates
 from .normalize import emails as emails_mod
@@ -50,6 +52,19 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
 
     provenance: list[dict] = []
     field_conf: dict[str, float] = {}
+    # Per-field evidence detail for the UI bundle (UI_DESIGN §6). Popped by
+    # the pipeline before projection — never serialized into profiles/report.
+    debug: dict[str, dict] = {}
+
+    def atom_info(a: Evidence) -> dict:
+        return {
+            "source_id": a.source_id, "source_type": a.source_type,
+            "method": a.method, "record_id": a.record_id,
+            "value": json.loads(value_repr(a.value)),
+            "raw": None if a.raw_value is None else str(a.raw_value)[:300],
+            "locator": a.locator, "normalized": a.normalized,
+            "strength": round(strength(a.source_type, a.method), 6),
+        }
 
     def prov(field: str, atom: Evidence, alternatives: list) -> None:
         provenance.append({
@@ -66,7 +81,10 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
         winners = [a for a in atoms if value_repr(a.value) == value_repr(best.value)]
         alts = sorted({value_repr(a.value) for a in atoms} - {value_repr(best.value)})
         prov(field, best, [_unrepr(v) for v in alts])
-        field_conf[field] = confidence.scalar_confidence(atoms, winners)
+        trace = confidence.scalar_trace(atoms, winners)
+        field_conf[field] = trace["confidence"]
+        debug[field] = {"kind": "scalar", "winner": best.value, "trace": trace,
+                        "atoms": [atom_info(a) for a in ordered(atoms)]}
         return best.value
 
     full_name = scalar("full_name")
@@ -85,7 +103,11 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
         winners = [a for a in loc_atoms if value_repr(a.value) == value_repr(best.value)]
         alts = sorted({value_repr(a.value) for a in loc_atoms} - {value_repr(best.value)})
         prov("location", best, [_unrepr(v) for v in alts])
-        field_conf["location"] = confidence.scalar_confidence(loc_atoms, winners)
+        trace = confidence.scalar_trace(loc_atoms, winners)
+        field_conf["location"] = trace["confidence"]
+        debug["location"] = {"kind": "scalar", "winner": dict(best.value),
+                             "trace": trace,
+                             "atoms": [atom_info(a) for a in ordered(loc_atoms)]}
         location = dict(best.value)
 
     # ------------------------------------------------ sets: emails and phones
@@ -98,12 +120,16 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
             key=lambda cv: (-cv[0], cv[1]),
         )
         values = [v for _, v in scored]
+        elements = []
         for i, (conf, v) in enumerate(scored):
             best = ordered(groups[v])[0]
             prov(f"{field}[{i}]", best, [])
+            elements.append({"value": v, "confidence": conf,
+                             "atoms": [atom_info(a) for a in ordered(groups[v])]})
         if scored:
             # Field-level score = the best-attested element (emails[0]).
             field_conf[field] = scored[0][0]
+            debug[field] = {"kind": "set", "elements": elements}
         return values
 
     emails = element_set("emails", by_field.get("emails", []))
@@ -120,6 +146,7 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
                 source_id=raw_atom.source_id, source_type=raw_atom.source_type,
                 method=f"phones_pass2:{cluster_country}",
                 record_id=raw_atom.record_id, order_index=raw_atom.order_index,
+                locator=raw_atom.locator,
             ))
         else:
             # Diagnose honestly: a number that *had* region context (+CC or a
@@ -143,7 +170,12 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
             winners = [a for a in atoms if a.value == best.value]
             alts = sorted({str(a.value) for a in atoms} - {str(best.value)})
             prov(f"links.{bucket}", best, alts)
-            link_confs.append(confidence.scalar_confidence(atoms, winners))
+            trace = confidence.scalar_trace(atoms, winners)
+            link_confs.append(trace["confidence"])
+            debug[f"links.{bucket}"] = {
+                "kind": "scalar", "winner": best.value, "trace": trace,
+                "atoms": [atom_info(a) for a in ordered(atoms)],
+            }
             links[bucket] = best.value
     other_atoms = by_field.get("links.other", [])
     if other_atoms:
@@ -152,6 +184,11 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
             groups.setdefault(str(a.value), []).append(a)
         links["other"] = sorted(groups)
         link_confs.extend(confidence.element_confidence(g) for g in groups.values())
+        debug["links.other"] = {"kind": "set", "elements": [
+            {"value": v, "confidence": confidence.element_confidence(groups[v]),
+             "atoms": [atom_info(a) for a in ordered(groups[v])]}
+            for v in sorted(groups)
+        ]}
     if link_confs:
         field_conf["links"] = round(max(link_confs), 6)
 
@@ -172,16 +209,25 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
             })
         skills_out.sort(key=lambda s: (-s["confidence"], s["name"]))
         field_conf["skills"] = skills_out[0]["confidence"]
+        debug["skills"] = {"kind": "set", "elements": [
+            {"value": s["name"], "confidence": s["confidence"],
+             "canonical": s["canonical"],
+             "atoms": [atom_info(a) for a in ordered(groups2[s["name"]])]}
+            for s in skills_out
+        ]}
 
     # ------------------------------------------------------------- experience
     experience, exp_confs, exp_intervals = _merge_experience(
-        by_field.get("experience", []), ordered, as_of, prov, notes
+        by_field.get("experience", []), ordered, as_of, prov, notes,
+        debug, atom_info,
     )
     if exp_confs:
         field_conf["experience"] = round(max(exp_confs), 6)
 
     # -------------------------------------------------------------- education
-    education, edu_confs = _merge_education(by_field.get("education", []), ordered, prov)
+    education, edu_confs = _merge_education(
+        by_field.get("education", []), ordered, prov, debug, atom_info
+    )
     if edu_confs:
         field_conf["education"] = round(max(edu_confs), 6)
 
@@ -210,9 +256,12 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
             if value_repr(a.value) != value_repr(years_experience)
         })
         prov("years_experience", winner_atom, alts)
-        field_conf["years_experience"] = confidence.scalar_confidence(
-            years_atoms, agree
-        )
+        trace = confidence.scalar_trace(years_atoms, agree)
+        field_conf["years_experience"] = trace["confidence"]
+        debug["years_experience"] = {
+            "kind": "scalar", "winner": years_experience, "trace": trace,
+            "atoms": [atom_info(a) for a in years_atoms],
+        }
 
     candidate_id = _candidate_id(cluster, by_field, full_name)
 
@@ -231,6 +280,7 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
         "provenance": sorted(provenance, key=lambda p: p["field"]),
         "field_confidence": {k: field_conf[k] for k in sorted(field_conf)},
         "overall_confidence": confidence.overall(field_conf),
+        "_debug": debug,  # popped by the pipeline; never serialized
     }
     return profile, notes
 
@@ -253,7 +303,7 @@ def _same_job(a: dict, b: dict, as_of) -> bool:
     return bool(ta and tb and text.strip_accents(ta) == text.strip_accents(tb))
 
 
-def _merge_experience(atoms, ordered, as_of, prov, notes):
+def _merge_experience(atoms, ordered, as_of, prov, notes, debug, atom_info):
     if not atoms:
         return [], [], []
     idx_parent = list(range(len(atoms)))
@@ -337,12 +387,19 @@ def _merge_experience(atoms, ordered, as_of, prov, notes):
         x["company"] or "",
     ))
     for i, ent in enumerate(entries):
+        group_atoms = ent.pop("_atoms")
         prov(f"experience[{i}]", ent.pop("_best"), [])
-        ent.pop("_atoms")
+        debug[f"experience[{i}]"] = {
+            "kind": "entry",
+            "value": {k: ent[k] for k in ("company", "title", "start", "end",
+                                          "is_current")},
+            "confidence": confidence.element_confidence(group_atoms),
+            "atoms": [atom_info(a) for a in ordered(group_atoms)],
+        }
     return entries, confs, intervals
 
 
-def _merge_education(atoms, ordered, prov):
+def _merge_education(atoms, ordered, prov, debug, atom_info):
     if not atoms:
         return [], []
     groups: dict[tuple, list[Evidence]] = {}
@@ -364,11 +421,17 @@ def _merge_education(atoms, ordered, prov):
         entries.append({
             "institution": pick("institution"), "degree": pick("degree"),
             "field": pick("field"), "end_year": pick("end_year"),
-            "_best": by_pref[0],
+            "_best": by_pref[0], "_atoms": g,
         })
         confs.append(confidence.element_confidence(g))
     for i, ent in enumerate(entries):
+        group_atoms = ent.pop("_atoms")
         prov(f"education[{i}]", ent.pop("_best"), [])
+        debug[f"education[{i}]"] = {
+            "kind": "entry", "value": dict(ent),
+            "confidence": confidence.element_confidence(group_atoms),
+            "atoms": [atom_info(a) for a in ordered(group_atoms)],
+        }
     return entries, confs
 
 

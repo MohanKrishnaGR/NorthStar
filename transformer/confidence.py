@@ -33,8 +33,9 @@ def _noisy_or(strengths) -> float:
     return 1.0 - p
 
 
-def scalar_confidence(all_atoms: list[Evidence], winner_atoms: list[Evidence]) -> float:
-    """Confidence in a chosen value, penalized by disagreeing evidence."""
+def scalar_trace(all_atoms: list[Evidence], winner_atoms: list[Evidence]) -> dict:
+    """The full arithmetic behind a scalar score — what the UI's "show the
+    math" panel renders. scalar_confidence() is its final number."""
     win = _per_source_strengths(winner_atoms)
     agreement = _noisy_or(win.values())
     groups: dict[tuple[str, str], float] = {}
@@ -45,12 +46,31 @@ def scalar_confidence(all_atoms: list[Evidence], winner_atoms: list[Evidence]) -
             groups[k] = s
     total = sum(groups.values())
     support = sum(win.values()) / total if total else 0.0
-    return round(agreement * support, 6)
+    return {
+        "per_source": {k: round(v, 6) for k, v in sorted(win.items())},
+        "competing_total": round(total, 6),
+        "agreement": round(agreement, 6),
+        "support": round(support, 6),
+        "confidence": round(agreement * support, 6),
+    }
+
+
+def scalar_confidence(all_atoms: list[Evidence], winner_atoms: list[Evidence]) -> float:
+    """Confidence in a chosen value, penalized by disagreeing evidence."""
+    return scalar_trace(all_atoms, winner_atoms)["confidence"]
+
+
+def element_trace(atoms: list[Evidence]) -> dict:
+    per_source = _per_source_strengths(atoms)
+    return {
+        "per_source": {k: round(v, 6) for k, v in sorted(per_source.items())},
+        "confidence": round(_noisy_or(per_source.values()), 6),
+    }
 
 
 def element_confidence(atoms: list[Evidence]) -> float:
     """Set elements (emails, phones, skills, links): pure noisy-OR, support=1."""
-    return round(_noisy_or(_per_source_strengths(atoms).values()), 6)
+    return element_trace(atoms)["confidence"]
 
 
 def overall(field_conf: dict[str, float]) -> float:

@@ -27,7 +27,14 @@ python -m transformer run --input samples \
   --config configs/recruiter_view.json \
   --out out/profiles_recruiter_view.json --report out/run_report_recruiter_view.json
 
-python -m pytest -q      # 171 tests incl. golden-persona, hostile, metamorphic, scale suites
+python -m pytest -q      # 176 tests incl. golden-persona, hostile, metamorphic, scale suites
+
+# Glass-box explorer UI (React, Material 3) — self-contained HTML, no server:
+python -m transformer run --input goldens/t1 --config configs/default.json \
+  --out out/_p.json --report out/_r.json --as-of 2026-08 \
+  --emit-ui out/explorer.html
+# open out/explorer.html in any browser. Rebuild the template after UI edits:
+#   cd ui && npm install && cd .. && python tools/build_ui.py
 ```
 
 The `out/` directory contains exactly what these two commands produce on the
@@ -122,6 +129,12 @@ out/              committed outputs of the two quickstart commands
 goldens/          golden dataset: t1/ 20 mechanism-named personas across all six
                   source types, t2/ hostile corpus, expected/ pinned outputs,
                   TRUTH.md (per-persona expectations and why — see GOLDEN_DATASET.md)
+ui/               React explorer (Material 3 tokens): Landing-AI-style grounding —
+                  click any profile field to highlight its evidence in the source,
+                  audit the confidence arithmetic, walk the identity cluster.
+                  The UI is the Evidence model rendered — it adds nothing the
+                  CLI doesn't produce (see UI_DESIGN.md). Built template is
+                  committed, so --emit-ui works without Node installed.
 tools/            fixture (re)builders + gen_scale.py, the seeded Tier-3 generator
                   with planted ground truth (recall/false-merge/runtime gate)
 tests/            171 tests: unit, e2e, determinism, golden personas, hostile

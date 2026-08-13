@@ -3,4 +3,7 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 build/
-dist/
+/dist/
+ui/node_modules/
+out/_p.json
+out/_r.json

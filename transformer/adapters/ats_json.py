@@ -49,6 +49,13 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
     else:
         raise ValueError("ATS JSON is neither an object nor an array")
 
+    if isinstance(doc, dict) and isinstance(doc.get("candidates"), list):
+        prefix_fmt = "candidates[{i}]"
+    elif isinstance(doc, list):
+        prefix_fmt = "[{i}]"
+    else:
+        prefix_fmt = ""
+
     for i, entry in enumerate(entries):
         res.records_read += 1
         rid = f"{res.source_id}#idx={i}"
@@ -62,27 +69,33 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
                 rec.updated_at = text.nfc(str(entry[k]))
                 break
         order = 0
+        prefix = prefix_fmt.format(i=i)
 
-        def add(field_path, value, raw, method="direct_field", normalized=True):
+        def jp(key: str) -> dict:
+            path = f"{prefix}.{key}" if prefix else key
+            return {"kind": "path", "path": path}
+
+        def add(field_path, value, raw, method="direct_field", normalized=True,
+                locator=None):
             nonlocal order
             rec.evidence.append(Evidence(
                 field_path=field_path, value=value, raw_value=raw,
                 source_id=res.source_id, source_type=SOURCE_TYPE,
                 method=method, record_id=rid, order_index=order,
-                normalized=normalized))
+                normalized=normalized, locator=locator))
             order += 1
 
         for foreign, target in _SCALAR_MAP.items():
             v = _s(entry, foreign)
             if v:
-                add(target, v, entry[foreign])
+                add(target, v, entry[foreign], locator=jp(foreign))
 
         for k in _EMAIL_KEYS:
             v = _s(entry, k)
             if v:
                 norm = emails.normalize(v)
                 if norm:
-                    add("emails", norm, entry[k])
+                    add("emails", norm, entry[k], locator=jp(k))
                 else:
                     res.note_unparseable("emails", entry[k], "not_an_email")
 
@@ -91,38 +104,40 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
             if v:
                 e164 = phones.to_e164(v, ctx.get("default_region"))
                 if e164:
-                    add("phones", e164, entry[k])
+                    add("phones", e164, entry[k], locator=jp(k))
                 else:
-                    add("phones_raw", v, entry[k], normalized=False)
+                    add("phones_raw", v, entry[k], normalized=False,
+                        locator=jp(k))
 
         for k in _URL_KEYS:
-            for u in entry.get(k) or []:
+            for j, u in enumerate(entry.get(k) or []):
                 bucket, cleaned = urls.classify(str(u))
-                add(f"links.{bucket}", cleaned, u)
+                add(f"links.{bucket}", cleaned, u, locator=jp(f"{k}[{j}]"))
 
         raw_skills = entry.get("skills") or []
         if isinstance(raw_skills, str):
             # Some ATS exports join skills into one string; never iterate a
             # string as characters.
             raw_skills = [p for p in raw_skills.split(",") if p.strip()]
-        for raw_skill in raw_skills:
+        for j, raw_skill in enumerate(raw_skills):
             if text.is_null_marker(raw_skill):
                 continue
             name, canonical = skills.canonicalize(raw_skill)
             add("skills", {"name": name, "canonical": canonical}, raw_skill,
-                method="dict:skill_alias_v1")
+                method="dict:skill_alias_v1", locator=jp(f"skills[{j}]"))
 
         for k in ("totalYearsExperience", "yearsOfExperience", "experience_years"):
             v = entry.get(k)
             if isinstance(v, (int, float)) and not isinstance(v, bool):
                 # A *stated* claim — the merge stage prefers range-derived
                 # values and records this as an alternative (ADR-006).
-                add("years_experience", v, v)
+                add("years_experience", v, v, locator=jp(k))
                 break
 
         loc = _location_of(entry)
         if loc:
-            add("location", loc, json.dumps(loc, sort_keys=True))
+            add("location", loc, json.dumps(loc, sort_keys=True),
+                locator=jp("city"))
 
         cur_company = _s(entry, "currentEmployer", "current_employer")
         cur_title = _s(entry, "designation", "jobTitle")
@@ -130,10 +145,11 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
             add("experience", {
                 "company": cur_company, "title": cur_title,
                 "start": None, "end": None, "is_current": True, "summary": None,
-            }, f"{cur_company}|{cur_title}")
+            }, f"{cur_company}|{cur_title}",
+                locator=jp("currentEmployer" if cur_company else "designation"))
 
         for k in _WORK_KEYS:
-            for job in entry.get(k) or []:
+            for j, job in enumerate(entry.get(k) or []):
                 if not isinstance(job, dict):
                     continue
                 to_raw = str(job.get("to") or "")
@@ -145,10 +161,10 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
                     "end": None if is_current else dates.parse(to_raw),
                     "is_current": is_current,
                     "summary": _s(job, "description", "summary"),
-                }, json.dumps(job, sort_keys=True))
+                }, json.dumps(job, sort_keys=True), locator=jp(f"{k}[{j}]"))
 
         for k in _EDU_KEYS:
-            for edu in entry.get(k) or []:
+            for j, edu in enumerate(entry.get(k) or []):
                 if not isinstance(edu, dict):
                     continue
                 end_year = edu.get("endYear") or edu.get("end_year")
@@ -158,7 +174,7 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
                     "degree": _s(edu, "degree"),
                     "field": _s(edu, "fieldOfStudy", "field", "major"),
                     "end_year": parsed_year[0] if parsed_year else None,
-                }, json.dumps(edu, sort_keys=True))
+                }, json.dumps(edu, sort_keys=True), locator=jp(f"{k}[{j}]"))
 
         if rec.evidence:
             res.records.append(rec)

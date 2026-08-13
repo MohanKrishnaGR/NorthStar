@@ -47,32 +47,38 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
                            source_type=SOURCE_TYPE)
         order = 0
 
-        def add(field_path, value, raw, method="direct_field", normalized=True):
+        def cell_loc(col: str) -> dict:
+            return {"kind": "cell", "row": i, "col": headers.get(col, col)}
+
+        def add(field_path, value, raw, method="direct_field", normalized=True,
+                locator=None):
             nonlocal order
             rec.evidence.append(Evidence(
                 field_path=field_path, value=value, raw_value=raw,
                 source_id=res.source_id, source_type=SOURCE_TYPE,
                 method=method, record_id=rid, order_index=order,
-                normalized=normalized))
+                normalized=normalized, locator=locator))
             order += 1
 
         if cell(row, "name"):
-            add("full_name", cell(row, "name"), row.get(headers.get("name")))
+            add("full_name", cell(row, "name"), row.get(headers.get("name")),
+                locator=cell_loc("name"))
 
         for raw_email in _split_multi(cell(row, "email")):
             norm = emails.normalize(raw_email)
             if norm:
-                add("emails", norm, raw_email)
+                add("emails", norm, raw_email, locator=cell_loc("email"))
             elif raw_email:
                 res.note_unparseable("emails", raw_email, "not_an_email")
 
         for raw_phone in phones.split_cell(cell(row, "phone")):
             e164 = phones.to_e164(raw_phone, ctx.get("default_region"))
             if e164:
-                add("phones", e164, raw_phone)
+                add("phones", e164, raw_phone, locator=cell_loc("phone"))
             else:
                 # Kept raw for post-merge pass 2 (ADR-009); never a match key.
-                add("phones_raw", raw_phone, raw_phone, normalized=False)
+                add("phones_raw", raw_phone, raw_phone, normalized=False,
+                    locator=cell_loc("phone"))
 
         company, title = cell(row, "current_company"), cell(row, "title")
         if company or title:
@@ -80,7 +86,8 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
                 "company": company or None, "title": title or None,
                 "start": None, "end": None, "is_current": True,
                 "summary": None,
-            }, f"{company}|{title}")
+            }, f"{company}|{title}",
+                locator=cell_loc("current_company" if company else "title"))
 
         if rec.evidence:
             res.records.append(rec)

@@ -31,22 +31,25 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
     rec = SourceRecord(record_id=rid, source_id=res.source_id,
                        source_type=SOURCE_TYPE)
 
-    def add(field_path, value, raw, method="direct_field"):
+    def add(field_path, value, raw, method="direct_field", key=None):
+        loc = {"kind": "path", "path": key} if key else None
         rec.evidence.append(Evidence(
             field_path=field_path, value=value, raw_value=raw,
             source_id=res.source_id, source_type=SOURCE_TYPE,
-            method=method, record_id=rid, order_index=len(rec.evidence)))
+            method=method, record_id=rid, order_index=len(rec.evidence),
+            locator=loc))
 
     name = doc.get("fullName") or " ".join(
         p for p in (doc.get("firstName"), doc.get("lastName")) if p
     )
     if name and not text.is_null_marker(name):
-        add("full_name", text.nfc(name), name)
+        add("full_name", text.nfc(name), name, key="fullName")
     if doc.get("headline"):
-        add("headline", text.nfc(str(doc["headline"])), doc["headline"])
+        add("headline", text.nfc(str(doc["headline"])), doc["headline"],
+            key="headline")
     if doc.get("publicProfileUrl"):
         add("links.linkedin", urls.classify(str(doc["publicProfileUrl"]))[1],
-            doc["publicProfileUrl"])
+            doc["publicProfileUrl"], key="publicProfileUrl")
 
     loc = doc.get("location")
     if isinstance(loc, dict):
@@ -54,9 +57,9 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
         add("location", {
             "city": text.nfc(loc["city"]) if loc.get("city") else None,
             "region": None, "country": iso,
-        }, json.dumps(loc, sort_keys=True))
+        }, json.dumps(loc, sort_keys=True), key="location")
 
-    for pos in doc.get("positions") or []:
+    for j, pos in enumerate(doc.get("positions") or []):
         if not isinstance(pos, dict):
             continue
         start = _partial(pos.get("startDate"))
@@ -67,9 +70,9 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
             "title": _clean(pos.get("title")),
             "start": start, "end": end, "is_current": is_current,
             "summary": _clean(pos.get("summary")),
-        }, json.dumps(pos, sort_keys=True))
+        }, json.dumps(pos, sort_keys=True), key=f"positions[{j}]")
 
-    for edu in doc.get("educations") or []:
+    for j, edu in enumerate(doc.get("educations") or []):
         if not isinstance(edu, dict):
             continue
         end_year = edu.get("endYear")
@@ -79,7 +82,7 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
             "degree": _clean(edu.get("degreeName") or edu.get("degree")),
             "field": _clean(edu.get("fieldOfStudy")),
             "end_year": parsed[0] if parsed else None,
-        }, json.dumps(edu, sort_keys=True))
+        }, json.dumps(edu, sort_keys=True), key=f"educations[{j}]")
 
     res.records_read = 1
     if rec.evidence:

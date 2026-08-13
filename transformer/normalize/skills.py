@@ -66,3 +66,18 @@ def find_all(body: str) -> list[str]:
         if pat.search(folded):
             found.add(aliases()[alias])
     return sorted(found)
+
+
+def find_spans(body: str) -> dict[str, tuple[int, int]]:
+    """First-occurrence span per canonical skill, searched on lower(body) so
+    offsets map back to the original text. Grounding only (UI locators) —
+    membership always comes from find_all."""
+    low = body.lower()
+    out: dict[str, tuple[int, int]] = {}
+    for pat, alias in _scan_patterns():
+        m = pat.search(low)
+        if m:
+            canon = aliases()[alias]
+            if canon not in out or m.start() < out[canon][0]:
+                out[canon] = (m.start(), m.end())
+    return out

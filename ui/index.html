@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Candidate Explorer</title>
+    <script>
+      /* Replaced (with its quotes) by the run's JSON when the CLI emits the
+         explorer; in dev it stays a string and App falls back to dev_data. */
+      window.__RUN_DATA__ = "__RUN_DATA_JSON__";
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

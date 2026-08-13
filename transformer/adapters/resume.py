@@ -43,11 +43,13 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
 
     first = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
     if _NAME_LINE_RE.match(first) and text.fold(first) not in _NOT_NAMES:
+        at = body.find(first)
         rec.evidence.append(Evidence(
             field_path="full_name", value=text.nfc(first), raw_value=first,
             source_id=res.source_id, source_type=SOURCE_TYPE,
             method="regex:resume_title_name_v1", record_id=rec.record_id,
-            order_index=0))
+            order_index=0,
+            locator={"kind": "span", "start": at, "end": at + len(first)}))
 
     scan_into(rec, body, ctx)
     res.records_read = 1

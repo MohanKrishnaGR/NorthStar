@@ -48,21 +48,28 @@ def extract(path: Path, res: SourceResult, ctx: dict) -> None:
 
 
 def scan_into(rec: SourceRecord, body: str, ctx: dict) -> None:
-    """Run every free-text extractor over body, appending Evidence to rec."""
+    """Run every free-text extractor over body, appending Evidence to rec.
+    Every atom carries a character-span locator so the UI can ground it."""
 
-    def add(field_path, value, raw, method, normalized=True):
+    def span(start: int, end: int) -> dict:
+        return {"kind": "span", "start": start, "end": end}
+
+    def add(field_path, value, raw, method, normalized=True, locator=None):
         rec.evidence.append(Evidence(
             field_path=field_path, value=value, raw_value=raw,
             source_id=rec.source_id, source_type=rec.source_type,
             method=method, record_id=rec.record_id,
-            order_index=len(rec.evidence), normalized=normalized))
+            order_index=len(rec.evidence), normalized=normalized,
+            locator=locator))
 
     m = _LABEL_NAME_RE.search(body)
     if m:
-        add("full_name", text.nfc(m.group(1)), m.group(1), "regex:labeled_name_v1")
+        add("full_name", text.nfc(m.group(1)), m.group(1),
+            "regex:labeled_name_v1", locator=span(*m.span(1)))
     m = _LABEL_TITLE_RE.search(body)
     if m:
-        add("headline", text.nfc(m.group(1)), m.group(1), "regex:labeled_title_v1")
+        add("headline", text.nfc(m.group(1)), m.group(1),
+            "regex:labeled_title_v1", locator=span(*m.span(1)))
     m = _LABEL_LOCATION_RE.search(body)
     if m:
         parts = [p.strip() for p in m.group(1).split(",")]
@@ -71,34 +78,44 @@ def scan_into(rec: SourceRecord, body: str, ctx: dict) -> None:
             "city": text.nfc(parts[0]) if parts else None,
             "region": None,
             "country": iso,
-        }, m.group(1), "regex:labeled_location_v1")
+        }, m.group(1), "regex:labeled_location_v1", locator=span(*m.span(1)))
 
-    for raw_email in emails.find_all(body):
-        norm = emails.normalize(raw_email)
+    for m in emails.EMAIL_RE.finditer(body):
+        norm = emails.normalize(m.group(0))
         if norm:
-            add("emails", norm, raw_email, "regex:email_v1")
+            add("emails", norm, m.group(0), "regex:email_v1",
+                locator=span(*m.span()))
 
     seen_phones = set()
-    for raw_phone in phones.find_all(body):
+    for m in phones.CANDIDATE_RE.finditer(body):
+        raw_phone = m.group(0).strip()
         e164 = phones.to_e164(raw_phone, ctx.get("default_region"))
         if e164 and e164 not in seen_phones:
             seen_phones.add(e164)
-            add("phones", e164, raw_phone, "regex:phone_v1")
+            add("phones", e164, raw_phone, "regex:phone_v1",
+                locator=span(*m.span()))
         # >= 9 digits: below that, free-text "phone" candidates are usually
         # year ranges ("2018 - 2021" has 8 digits) — noise, not numbers.
         elif not e164 and sum(ch.isdigit() for ch in raw_phone) >= 9:
-            add("phones_raw", raw_phone.strip(), raw_phone,
-                "regex:phone_v1", normalized=False)
+            add("phones_raw", raw_phone, raw_phone,
+                "regex:phone_v1", normalized=False, locator=span(*m.span()))
 
-    for raw_url in urls.find_all(body):
-        bucket, cleaned = urls.classify(raw_url)
-        add(f"links.{bucket}", cleaned, raw_url, "regex:url_v1")
+    for m in urls.URL_RE.finditer(body):
+        bucket, cleaned = urls.classify(m.group(0))
+        add(f"links.{bucket}", cleaned, m.group(0), "regex:url_v1",
+            locator=span(*m.span()))
 
+    skill_spans = skills.find_spans(body)
     for name in skills.find_all(body):
+        loc = span(*skill_spans[name]) if name in skill_spans else None
         add("skills", {"name": name, "canonical": True}, name,
-            "dict:skill_scan_v1")
+            "dict:skill_scan_v1", locator=loc)
 
-    for line in body.splitlines():
+    pos = 0
+    for raw_line in body.splitlines(keepends=True):
+        line = raw_line.rstrip("\r\n")
+        line_span = span(pos, pos + len(line))
+        pos += len(raw_line)
         rng = dates.parse_range(line)
         if not rng:
             continue
@@ -114,4 +131,4 @@ def scan_into(rec: SourceRecord, body: str, ctx: dict) -> None:
             add("experience", {
                 "company": company, "title": title, "start": start,
                 "end": end, "is_current": is_current, "summary": None,
-            }, line.strip(), "regex:experience_line_v1")
+            }, line.strip(), "regex:experience_line_v1", locator=line_span)

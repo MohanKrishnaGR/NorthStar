@@ -24,24 +24,28 @@ class RunResult:
     profiles: list = field(default_factory=list)  # projected, sorted
     report: dict = field(default_factory=dict)
     readable_sources: int = 0
+    ui_bundle: dict | None = None  # only when collect_ui=True (UI_DESIGN §6)
 
 
 def run_pipeline(input_paths: list[Path], cfg: Config, *,
                  default_region: str | None = None,
                  as_of: dates.PartialDate | None = None,
-                 strict: bool = False) -> RunResult:
+                 strict: bool = False,
+                 collect_ui: bool = False) -> RunResult:
     ctx = {"default_region": default_region, "strict": strict}
     files = sorted(input_paths, key=lambda p: p.name)  # order-independence
 
     source_results = []
     unrecognized = []
     records = []
+    src_paths: dict[str, Path] = {}
     for path in files:
         adapter = detect_adapter(path)
         if adapter is None:
             unrecognized.append(path.name)
             continue
         res = run_adapter(adapter, path, ctx)
+        src_paths[res.source_id] = path
         source_results.append(res)
         records.extend(res.records)
 
@@ -59,6 +63,7 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
         unparseable.extend(dict(u, source_id=src.source_id) for u in src.unparseable)
 
     contested = resolution.contested_keys
+    candidates_ui = []
     for cluster in resolution.clusters:
         cluster = dict(cluster)
         cluster["contested_keys"] = contested
@@ -67,11 +72,25 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
             for f in resolution.record_flags.get(rid, [])
         })
         profile, notes = merge.merge_cluster(cluster, records_by_id, as_of)
+        debug = profile.pop("_debug", {})
         unparseable.extend(notes)
         out, errors, proj_notes = project(profile, cfg)
         unparseable.extend(
             dict(n, candidate_id=profile["candidate_id"]) for n in proj_notes
         )
+        if collect_ui:
+            candidates_ui.append({
+                "candidate_id": profile["candidate_id"],
+                "canonical": profile,
+                "debug": debug,
+                "cluster": {
+                    "record_ids": cluster["record_ids"],
+                    "match_keys_used": cluster["match_keys_used"],
+                    "flags": cluster["flags"],
+                },
+                "excluded": bool(errors),
+                "validation": errors,
+            })
         if errors:
             validation.extend(
                 dict(e, candidate_id=profile["candidate_id"]) for e in errors
@@ -133,11 +152,55 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
                            u["field"], u["raw_value"]),
         ),
     }
+    ui_bundle = None
+    if collect_ui:
+        candidates_ui.sort(key=lambda c: c["candidate_id"])
+        ui_bundle = {
+            "run": dict(report["run"], profiles=len(keyed_profiles)),
+            "sources": [
+                dict(s, content=_source_content(src_paths.get(s["source_id"])))
+                for s in report["sources"]
+            ],
+            "unrecognized_files": unrecognized,
+            "merges": report["merges"],
+            "validation": report["validation"],
+            "unparseable": report["unparseable"],
+            "profiles": [out for _, out in keyed_profiles],
+            "candidates": candidates_ui,
+        }
     return RunResult(
         profiles=[out for _, out in keyed_profiles],
         report=report,
         readable_sources=sum(1 for s in source_results if s.status != "skipped"),
+        ui_bundle=ui_bundle,
     )
+
+
+_CONTENT_CAP = 200_000
+
+
+def _source_content(path: Path | None) -> dict | None:
+    """Raw text of a source for the UI's grounding pane. For binary resume
+    formats this is the *extracted* text — exactly what the engine saw."""
+    if path is None:
+        return None
+    kind = {".csv": "csv", ".json": "json"}.get(path.suffix.lower(), "text")
+    try:
+        if path.suffix.lower() == ".docx":
+            from .adapters.resume import _docx_text
+
+            text = _docx_text(path)
+        elif path.suffix.lower() == ".pdf":
+            from .adapters.resume import _pdf_text
+
+            text = _pdf_text(path)
+        else:
+            from .adapters.base import read_text
+
+            text = read_text(path)
+    except Exception as e:
+        return {"kind": "text", "text": f"(unreadable: {type(e).__name__})"}
+    return {"kind": kind, "text": text[:_CONTENT_CAP]}
 
 
 def _max_observed_date(records) -> dates.PartialDate | None:
