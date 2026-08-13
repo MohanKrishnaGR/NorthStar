@@ -6,11 +6,17 @@ import "./m3.css";
 async function boot() {
   let data = window.__RUN_DATA__;
   if (typeof data === "string") {
-    // Dev mode: the placeholder was not replaced — load a sample bundle.
-    const resp = await fetch("./dev_data.json");
-    data = await resp.json();
+    // Dev mode: the placeholder was not replaced — try a sample bundle.
+    try {
+      const resp = await fetch("./dev_data.json");
+      data = resp.ok ? await resp.json() : null;
+    } catch {
+      data = null; // serve mode (or nothing loaded): App handles both
+    }
   }
-  createRoot(document.getElementById("root")).render(<App bundle={data} />);
+  createRoot(document.getElementById("root")).render(
+    <App initialBundle={data} />
+  );
 }
 
 boot();

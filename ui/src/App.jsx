@@ -1,19 +1,36 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CandidateView from "./CandidateView.jsx";
+import Workspace from "./Workspace.jsx";
 import { clusterSourceIds, pct, pressable } from "./lib.js";
 
-export default function App({ bundle }) {
+export default function App({ initialBundle }) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const [view, setView] = useState(initialBundle ? "batch" : "workspace");
   const [candId, setCandId] = useState(null);
+  const [serve, setServe] = useState(null); // /api/health payload when served
+
+  useEffect(() => {
+    fetch("/api/health")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((h) => setServe(h && h.ok ? h : null))
+      .catch(() => setServe(null));
+  }, []);
+
   const cand = useMemo(
-    () => bundle.candidates.find((c) => c.candidate_id === candId) ?? null,
+    () =>
+      bundle
+        ? bundle.candidates.find((c) => c.candidate_id === candId) ?? null
+        : null,
     [bundle, candId]
   );
+
+  const goBatch = () => { setCandId(null); setView("batch"); };
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <header className="appbar">
-        <div className="brand" {...pressable(() => setCandId(null))}
-             title="Back to all candidates">
+        <div className="brand" {...pressable(() => (bundle ? goBatch() : null))}
+             title="All candidates">
           <div className="logo">Cx</div>
           <div>
             <div className="title-medium">Candidate Explorer</div>
@@ -23,19 +40,38 @@ export default function App({ bundle }) {
           </div>
         </div>
         <div className="spacer" />
-        {cand && (
-          <button className="textbtn" onClick={() => setCandId(null)}>
-            ← all candidates
+        {bundle && view !== "batch" && (
+          <button className="textbtn" onClick={goBatch}>← all candidates</button>
+        )}
+        {serve && (
+          <button className={`textbtn${view === "workspace" ? " active" : ""}`}
+                  onClick={() => setView("workspace")}>
+            ⚙ workspace
           </button>
         )}
-        <span className="chip">as-of {bundle.run.as_of ?? "—"}</span>
-        <span className="chip">{bundle.run.profiles} profiles</span>
-        <span className="chip">{bundle.sources.length} sources</span>
+        {!serve && !bundle && (
+          <span className="chip">start with: python -m transformer serve</span>
+        )}
+        {bundle && (
+          <>
+            <span className="chip">as-of {bundle.run.as_of ?? "—"}</span>
+            <span className="chip">{bundle.run.profiles} profiles</span>
+            <span className="chip">{bundle.sources.length} sources</span>
+          </>
+        )}
       </header>
-      {cand ? (
+      {view === "workspace" && serve ? (
+        <Workspace serve={serve}
+                   onBundle={(b) => { setBundle(b); goBatch(); }} />
+      ) : cand ? (
         <CandidateView bundle={bundle} cand={cand} />
+      ) : bundle ? (
+        <BatchView bundle={bundle} onOpen={(id) => { setCandId(id); setView("cand"); }} />
       ) : (
-        <BatchView bundle={bundle} onOpen={setCandId} />
+        <div style={{ padding: 40 }} className="body-medium">
+          No run loaded. {serve ? "Open the workspace to upload sources and run."
+            : "Emit one with --emit-ui, or start `python -m transformer serve`."}
+        </div>
       )}
     </div>
   );

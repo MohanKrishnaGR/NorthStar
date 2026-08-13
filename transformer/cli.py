@@ -20,6 +20,10 @@ def main(argv: list[str] | None = None) -> int:
         description="Multi-source candidate data transformer",
     )
     sub = ap.add_subparsers(dest="cmd", required=True)
+    servep = sub.add_parser("serve",
+                            help="local workspace UI: upload sources, edit "
+                                 "the config, run, explore")
+    servep.add_argument("--port", type=int, default=8765)
     runp = sub.add_parser("run", help="run the pipeline end-to-end")
     runp.add_argument("--input", required=True,
                       help="input directory (or a single source file)")
@@ -38,6 +42,11 @@ def main(argv: list[str] | None = None) -> int:
                       help="also write a self-contained explorer HTML "
                            "(requires the built template in ui/dist)")
     args = ap.parse_args(argv)
+
+    if args.cmd == "serve":
+        from .server import serve
+
+        return serve(args.port)
 
     try:
         cfg = load(args.config)

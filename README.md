@@ -35,6 +35,15 @@ python -m transformer run --input goldens/t1 --config configs/default.json \
   --emit-ui out/explorer.html
 # open out/explorer.html in any browser. Rebuild the template after UI edits:
 #   cd ui && npm install && cd .. && python tools/build_ui.py
+
+# Interactive workspace (stdlib http.server — zero extra dependencies):
+python -m transformer serve
+# -> http://127.0.0.1:8765  · upload any of the six source types (csv/json/
+#    txt/docx/pdf incl. github_*/linkedin_* recorded payloads), pick or edit
+#    the projection config in the UI (load-time errors shown verbatim), set
+#    as-of / default-region, run, then explore the grounded result.
+#    Tip: without an explicit as-of, the derived default is the latest date
+#    in YOUR inputs — a future-dated source shifts it (ADR-016: no clock).
 ```
 
 The `out/` directory contains exactly what these two commands produce on the
