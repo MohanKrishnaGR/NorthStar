@@ -1,0 +1,7 @@
+name,email,phone,current_company,title
+Alice Fern,alice.fern@gmail.com,+1 415 555 2671,BlueYonder Analytics,Senior Data Engineer
+Rohan Mehta,rohan.mehta@outlook.com,98765 43210,Zenlytics,Backend Engineer
+"Fern, Alice",alice.fern+jobs@gmail.com,,BlueYonder Analytics,Sr. Data Engineer
+Priya Sharma,priya@sharma.dev,+91 87654 32109,Nimbus Retail,Product Analyst
+Alice Fern,alice.fern@gmail.com,+1 415 555 2671,BlueYonder Analytics,Senior Data Engineer
+Broken Row,broken@example.com,+1 415 555 2671,Acme,Engineer,EXTRA,SHIFTED

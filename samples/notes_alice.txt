@@ -1,0 +1,8 @@
+Name: Alice Fern
+Location: San Francisco, United States
+
+Spoke with Alice via referral. Reach her at alice.fern@gmail.com or +1 (415) 555-2671.
+Senior Data Engineer at BlueYonder Analytics since Jun 2021.
+Strong on Python, Airflow and PostgreSQL. Some Kubernetes exposure.
+Portfolio: https://alicefern.dev and code at https://github.com/alicefern
+Data Engineer at Nimbus Retail 2018 - 2021.

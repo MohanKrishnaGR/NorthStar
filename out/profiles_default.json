@@ -1,0 +1,522 @@
+[
+  {
+    "candidate_id": "0680018e997e0885",
+    "confidence": {
+      "fields": {
+        "education": 0.9,
+        "emails": 0.985,
+        "experience": 0.9,
+        "full_name": 0.985,
+        "location": 0.9,
+        "phones": 0.9765,
+        "skills": 0.765,
+        "years_experience": 0.6
+      },
+      "overall": 0.799588
+    },
+    "education": [
+      {
+        "degree": "B.E.",
+        "end_year": 2019,
+        "field": "Information Systems",
+        "institution": "BITS Pilani"
+      }
+    ],
+    "emails": [
+      "rohan.mehta@outlook.com"
+    ],
+    "experience": [
+      {
+        "company": "Zenlytics Pvt Ltd",
+        "end": null,
+        "is_current": true,
+        "start": "2022-03",
+        "summary": null,
+        "title": "Senior Backend Engineer"
+      },
+      {
+        "company": "Zenlytics Pvt Ltd",
+        "end": "2022-02",
+        "is_current": false,
+        "start": "2019-07",
+        "summary": null,
+        "title": "Backend Engineer"
+      },
+      {
+        "company": "Zenlytics",
+        "end": null,
+        "is_current": true,
+        "start": null,
+        "summary": null,
+        "title": "Backend Engineer"
+      }
+    ],
+    "full_name": "Rohan Mehta",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": {
+      "city": "Bengaluru",
+      "country": "IN",
+      "region": null
+    },
+    "phones": [
+      "+919876543210"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[2]",
+        "method": "direct_field",
+        "source": "recruiters.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "docker",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "go",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "kubernetes",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "postgresql",
+        "sources": [
+          "ats.json"
+        ]
+      }
+    ],
+    "years_experience": 6.9
+  },
+  {
+    "candidate_id": "45a9e0928920fc78",
+    "confidence": {
+      "fields": {
+        "emails": 0.45
+      },
+      "overall": 0.079412
+    },
+    "education": [],
+    "emails": [
+      "alice.fern@gmail.com",
+      "priya.sharma@nimbus.io"
+    ],
+    "experience": [],
+    "full_name": null,
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "regex:email_v1",
+        "source": "notes_two_people.txt"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[1]",
+        "method": "regex:email_v1",
+        "source": "notes_two_people.txt"
+      }
+    ],
+    "skills": [],
+    "years_experience": null
+  },
+  {
+    "candidate_id": "47b73d4b6152d03d",
+    "confidence": {
+      "fields": {
+        "education": 0.9,
+        "emails": 0.99175,
+        "experience": 0.99175,
+        "full_name": 0.715361,
+        "links": 0.945,
+        "location": 0.6,
+        "phones": 0.984325,
+        "skills": 0.864875,
+        "years_experience": 0.6
+      },
+      "overall": 0.814602
+    },
+    "education": [
+      {
+        "degree": "B.Tech",
+        "end_year": 2017,
+        "field": "Computer Science",
+        "institution": "IIT Delhi"
+      }
+    ],
+    "emails": [
+      "alice.fern@gmail.com",
+      "alice.fern+jobs@gmail.com"
+    ],
+    "experience": [
+      {
+        "company": "BlueYonder Analytics",
+        "end": null,
+        "is_current": true,
+        "start": "2021-06",
+        "summary": "Owns the data platform",
+        "title": "Senior Data Engineer"
+      },
+      {
+        "company": "Nimbus Retail",
+        "end": "2021-05",
+        "is_current": false,
+        "start": "2018-02",
+        "summary": "Built ETL pipelines",
+        "title": "Data Engineer"
+      }
+    ],
+    "full_name": "Alice Fern",
+    "headline": null,
+    "links": {
+      "github": "https://github.com/alicefern",
+      "linkedin": "https://www.linkedin.com/in/alicefern",
+      "other": [
+        "https://alicefern.dev"
+      ],
+      "portfolio": null
+    },
+    "location": {
+      "city": "San Francisco",
+      "country": "US",
+      "region": "CA"
+    },
+    "phones": [
+      "+14155552671"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[1]",
+        "method": "direct_field",
+        "source": "recruiters.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[1]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [
+          "Fern, Alice"
+        ],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.github",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.linkedin",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [
+          {
+            "city": "San Francisco",
+            "country": "US",
+            "region": null
+          }
+        ],
+        "field": "location",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "phones_pass2:US",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.864875,
+        "name": "airflow",
+        "sources": [
+          "ats.json",
+          "notes_alice.txt"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.864875,
+        "name": "python",
+        "sources": [
+          "ats.json",
+          "notes_alice.txt"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "aws",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": false,
+        "confidence": 0.765,
+        "name": "quantum basket weaving",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "sql",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "kubernetes",
+        "sources": [
+          "notes_alice.txt"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.425,
+        "name": "postgresql",
+        "sources": [
+          "notes_alice.txt"
+        ]
+      }
+    ],
+    "years_experience": 8.3
+  },
+  {
+    "candidate_id": "f74beb5030c55262",
+    "confidence": {
+      "fields": {
+        "emails": 0.9,
+        "experience": 0.985,
+        "full_name": 0.985,
+        "location": 0.9,
+        "phones": 0.985,
+        "skills": 0.765,
+        "years_experience": 0.6
+      },
+      "overall": 0.742647
+    },
+    "education": [],
+    "emails": [
+      "priya.sharma@nimbus.io",
+      "priya@sharma.dev"
+    ],
+    "experience": [
+      {
+        "company": "Nimbus Retail",
+        "end": null,
+        "is_current": true,
+        "start": "2023",
+        "summary": null,
+        "title": "Product Analyst"
+      }
+    ],
+    "full_name": "Priya Sharma",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": {
+      "city": "Mumbai",
+      "country": "IN",
+      "region": null
+    },
+    "phones": [
+      "+918765432109"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[1]",
+        "method": "direct_field",
+        "source": "recruiters.csv"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "location",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "direct_field",
+        "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "machine learning",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "pandas",
+        "sources": [
+          "ats.json"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.765,
+        "name": "sql",
+        "sources": [
+          "ats.json"
+        ]
+      }
+    ],
+    "years_experience": 3.4
+  }
+]

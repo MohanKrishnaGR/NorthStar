@@ -1,0 +1,64 @@
+[
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.985,
+        "phone": 0.9765,
+        "primary_email": 0.985,
+        "skills": 0.765
+      },
+      "overall": 0.799588
+    },
+    "full_name": "Rohan Mehta",
+    "phone": "+919876543210",
+    "primary_email": "rohan.mehta@outlook.com",
+    "skills": [
+      "docker",
+      "go",
+      "kubernetes",
+      "postgresql"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.715361,
+        "phone": 0.984325,
+        "primary_email": 0.99175,
+        "skills": 0.864875
+      },
+      "overall": 0.814602
+    },
+    "full_name": "Alice Fern",
+    "phone": "+14155552671",
+    "primary_email": "alice.fern@gmail.com",
+    "skills": [
+      "airflow",
+      "python",
+      "aws",
+      "quantum basket weaving",
+      "sql",
+      "kubernetes",
+      "postgresql"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
+        "full_name": 0.985,
+        "phone": 0.985,
+        "primary_email": 0.9,
+        "skills": 0.765
+      },
+      "overall": 0.742647
+    },
+    "full_name": "Priya Sharma",
+    "phone": "+918765432109",
+    "primary_email": "priya.sharma@nimbus.io",
+    "skills": [
+      "machine learning",
+      "pandas",
+      "sql"
+    ]
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "candidates": [
+    {
+      "candidateName": "Alice Fern",
+      "emailAddress": "alice.fern@gmail.com",
+      "phoneNumber": "(415) 555-2671",
+      "currentEmployer": "BlueYonder Analytics",
+      "designation": "Senior Data Engineer",
+      "skills": ["Python", "SQL", "Airflow", "AWS", "Quantum Basket Weaving"],
+      "workHistory": [
+        {"org": "BlueYonder Analytics", "role": "Senior Data Engineer", "from": "2021-06", "to": "Present", "description": "Owns the data platform"},
+        {"org": "Nimbus Retail", "role": "Data Engineer", "from": "2018-02", "to": "2021-05", "description": "Built ETL pipelines"}
+      ],
+      "schooling": [
+        {"school": "IIT Delhi", "degree": "B.Tech", "fieldOfStudy": "Computer Science", "endYear": 2017}
+      ],
+      "city": "San Francisco",
+      "region": "CA",
+      "country": "United States",
+      "lastUpdated": "2026-05-14",
+      "profileUrls": ["https://github.com/alicefern", "https://www.linkedin.com/in/alicefern"]
+    },
+    {
+      "candidateName": "Rohan Mehta",
+      "emailAddress": "rohan.mehta@outlook.com",
+      "phoneNumber": "+91 98765 43210",
+      "currentEmployer": "Zenlytics Pvt Ltd",
+      "designation": "Senior Backend Engineer",
+      "skills": ["Go", "PostgreSQL", "Kubernetes", "Docker"],
+      "workHistory": [
+        {"org": "Zenlytics Pvt Ltd", "role": "Senior Backend Engineer", "from": "2022-03", "to": "Present"},
+        {"org": "Zenlytics Pvt Ltd", "role": "Backend Engineer", "from": "2019-07", "to": "2022-02"}
+      ],
+      "schooling": [
+        {"school": "BITS Pilani", "degree": "B.E.", "fieldOfStudy": "Information Systems", "endYear": 2019}
+      ],
+      "city": "Bengaluru",
+      "country": "India",
+      "lastUpdated": "2026-04-02"
+    },
+    {
+      "candidateName": "Priya Sharma",
+      "emailAddress": "priya.sharma@nimbus.io",
+      "phoneNumber": "+91 87654 32109",
+      "currentEmployer": "Nimbus Retail",
+      "designation": "Product Analyst",
+      "skills": ["SQL", "Pandas", "Machine Learning"],
+      "workHistory": [
+        {"org": "Nimbus Retail", "role": "Product Analyst", "from": "2023", "to": ""}
+      ],
+      "city": "Mumbai",
+      "country": "India",
+      "lastUpdated": "2026-03-19"
+    }
+  ]
+}

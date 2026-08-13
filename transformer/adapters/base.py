@@ -1,0 +1,55 @@
+"""Adapter contract and fault boundary (DESIGN.md ADR-013).
+
+An adapter turns one source file into SourceRecords full of Evidence atoms.
+Any exception inside extract() marks the source `skipped` (row-level failures
+mark it `partial`); the run always continues with whatever evidence exists.
+`--strict` re-raises instead — a development aid, never a documented run mode.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from pathlib import Path
+
+_ENCODINGS = ("utf-8-sig", "cp1252")  # deterministic fallback order
+
+
+@dataclass
+class SourceResult:
+    source_id: str
+    source_type: str
+    status: str = "ok"  # ok | partial | skipped
+    records: list = field(default_factory=list)  # list[SourceRecord]
+    records_read: int = 0
+    errors: list = field(default_factory=list)
+    flags: list = field(default_factory=list)
+    unparseable: list = field(default_factory=list)  # {field, raw_value, reason}
+
+    def note_unparseable(self, fieldname: str, raw: object, reason: str) -> None:
+        self.unparseable.append(
+            {"field": fieldname, "raw_value": str(raw), "reason": reason}
+        )
+
+
+def read_text(path: Path) -> str:
+    last_err: Exception | None = None
+    for enc in _ENCODINGS:
+        try:
+            return path.read_text(encoding=enc)
+        except UnicodeDecodeError as e:  # pragma: no cover - cp1252 rarely fails
+            last_err = e
+    raise last_err  # type: ignore[misc]
+
+
+def run_adapter(adapter, path: Path, ctx: dict) -> SourceResult:
+    res = SourceResult(source_id=path.name, source_type=adapter.SOURCE_TYPE)
+    try:
+        adapter.extract(path, res, ctx)
+    except Exception as e:
+        if ctx.get("strict"):
+            raise
+        res.status = "skipped"
+        res.records = []
+        res.errors.append(f"{type(e).__name__}: {e}")
+    if res.status != "skipped" and res.errors:
+        res.status = "partial"
+    return res

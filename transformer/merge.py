@@ -1,0 +1,410 @@
+"""Merge: field survivorship over a sorted evidence pool (ADR-004/006).
+
+A pure function: (cluster, records, as_of) -> canonical profile dict. Given
+the same pool it cannot produce different output — the evidence pool is
+canonically sorted, survivorship ordering is total, and every tiebreak ends
+in a stable id comparison.
+"""
+from __future__ import annotations
+
+import hashlib
+from decimal import ROUND_HALF_UP, Decimal
+
+from . import confidence
+from .constants import SOURCE_TRUST, method_reliability
+from .models import Evidence, SourceRecord, value_repr
+from .normalize import dates
+from .normalize import emails as emails_mod
+from .normalize import phones as phones_mod
+from .normalize import text
+
+
+def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
+                  as_of: dates.PartialDate | None):
+    """Returns (profile_dict, notes) — notes are unparseable leftovers."""
+    notes: list[dict] = []
+    pool = sorted(
+        (e for rid in cluster["record_ids"] for e in records_by_id[rid].evidence),
+        key=Evidence.sort_key,
+    )
+    recency = {
+        rid: records_by_id[rid].updated_at or ""
+        for rid in cluster["record_ids"]
+    }
+    by_field: dict[str, list[Evidence]] = {}
+    for e in pool:
+        by_field.setdefault(e.field_path, []).append(e)
+
+    def ordered(atoms: list[Evidence]) -> list[Evidence]:
+        # Survivorship ordering (ADR-006): trust -> method -> in-band recency
+        # -> source_id -> order_index, via chained stable sorts (reverse
+        # priority first).
+        a = sorted(atoms, key=lambda e: (e.source_id, e.record_id, e.order_index))
+        a = sorted(a, key=lambda e: recency[e.record_id], reverse=True)
+        a = sorted(
+            a,
+            key=lambda e: (SOURCE_TRUST[e.source_type], method_reliability(e.method)),
+            reverse=True,
+        )
+        return a
+
+    provenance: list[dict] = []
+    field_conf: dict[str, float] = {}
+
+    def prov(field: str, atom: Evidence, alternatives: list) -> None:
+        provenance.append({
+            "field": field, "source": atom.source_id, "method": atom.method,
+            "alternatives": alternatives,
+        })
+
+    # ---------------------------------------------------------- scalar fields
+    def scalar(field: str) -> str | None:
+        atoms = by_field.get(field, [])
+        if not atoms:
+            return None
+        best = ordered(atoms)[0]
+        winners = [a for a in atoms if value_repr(a.value) == value_repr(best.value)]
+        alts = sorted({value_repr(a.value) for a in atoms} - {value_repr(best.value)})
+        prov(field, best, [_unrepr(v) for v in alts])
+        field_conf[field] = confidence.scalar_confidence(atoms, winners)
+        return best.value
+
+    full_name = scalar("full_name")
+    headline = scalar("headline")
+
+    # ------------------------------------------------- location: atomic merge
+    location = None
+    loc_atoms = by_field.get("location", [])
+    if loc_atoms:
+        # Most complete struct first, then survivorship — never a chimera of
+        # subfields no single source claimed (ADR-006).
+        def completeness(e: Evidence) -> int:
+            return sum(1 for v in e.value.values() if v)
+
+        best = sorted(ordered(loc_atoms), key=completeness, reverse=True)[0]
+        winners = [a for a in loc_atoms if value_repr(a.value) == value_repr(best.value)]
+        alts = sorted({value_repr(a.value) for a in loc_atoms} - {value_repr(best.value)})
+        prov("location", best, [_unrepr(v) for v in alts])
+        field_conf["location"] = confidence.scalar_confidence(loc_atoms, winners)
+        location = dict(best.value)
+
+    # ------------------------------------------------ sets: emails and phones
+    def element_set(field: str, atoms: list[Evidence]) -> list[str]:
+        groups: dict[str, list[Evidence]] = {}
+        for a in atoms:
+            groups.setdefault(str(a.value), []).append(a)
+        scored = sorted(
+            ((confidence.element_confidence(g), v) for v, g in groups.items()),
+            key=lambda cv: (-cv[0], cv[1]),
+        )
+        values = [v for _, v in scored]
+        for i, (conf, v) in enumerate(scored):
+            best = ordered(groups[v])[0]
+            prov(f"{field}[{i}]", best, [])
+        if scored:
+            # Field-level score = the best-attested element (emails[0]).
+            field_conf[field] = scored[0][0]
+        return values
+
+    emails = element_set("emails", by_field.get("emails", []))
+
+    # Phone pass 2 (ADR-009): retry raw national numbers with the cluster's
+    # resolved country. Never re-clusters — one resolution round.
+    phone_atoms = list(by_field.get("phones", []))
+    cluster_country = (location or {}).get("country")
+    for raw_atom in by_field.get("phones_raw", []):
+        e164 = phones_mod.to_e164(raw_atom.value, cluster_country)
+        if e164:
+            phone_atoms.append(Evidence(
+                field_path="phones", value=e164, raw_value=raw_atom.raw_value,
+                source_id=raw_atom.source_id, source_type=raw_atom.source_type,
+                method=f"phones_pass2:{cluster_country}",
+                record_id=raw_atom.record_id, order_index=raw_atom.order_index,
+            ))
+        else:
+            notes.append({
+                "source_id": raw_atom.source_id, "field": "phones",
+                "raw_value": str(raw_atom.value), "reason": "no_region_context",
+            })
+    phones = element_set("phones", sorted(phone_atoms, key=Evidence.sort_key))
+
+    # ------------------------------------------------------------------ links
+    links = {"linkedin": None, "github": None, "portfolio": None, "other": []}
+    link_confs = []
+    for bucket in ("linkedin", "github", "portfolio"):
+        atoms = by_field.get(f"links.{bucket}", [])
+        if atoms:
+            best = ordered(atoms)[0]
+            winners = [a for a in atoms if a.value == best.value]
+            alts = sorted({str(a.value) for a in atoms} - {str(best.value)})
+            prov(f"links.{bucket}", best, alts)
+            link_confs.append(confidence.scalar_confidence(atoms, winners))
+            links[bucket] = best.value
+    other_atoms = by_field.get("links.other", [])
+    if other_atoms:
+        groups: dict[str, list[Evidence]] = {}
+        for a in other_atoms:
+            groups.setdefault(str(a.value), []).append(a)
+        links["other"] = sorted(groups)
+        link_confs.extend(confidence.element_confidence(g) for g in groups.values())
+    if link_confs:
+        field_conf["links"] = round(max(link_confs), 6)
+
+    # ----------------------------------------------------------------- skills
+    skills_out = []
+    skill_atoms = by_field.get("skills", [])
+    if skill_atoms:
+        groups2: dict[str, list[Evidence]] = {}
+        for a in skill_atoms:
+            groups2.setdefault(a.value["name"], []).append(a)
+        for name in groups2:
+            g = groups2[name]
+            skills_out.append({
+                "name": name,
+                "canonical": any(a.value.get("canonical") for a in g),
+                "confidence": confidence.element_confidence(g),
+                "sources": sorted({a.source_id for a in g}),
+            })
+        skills_out.sort(key=lambda s: (-s["confidence"], s["name"]))
+        field_conf["skills"] = skills_out[0]["confidence"]
+
+    # ------------------------------------------------------------- experience
+    experience, exp_confs, exp_intervals = _merge_experience(
+        by_field.get("experience", []), ordered, as_of, prov
+    )
+    if exp_confs:
+        field_conf["experience"] = round(max(exp_confs), 6)
+
+    # -------------------------------------------------------------- education
+    education, edu_confs = _merge_education(by_field.get("education", []), ordered, prov)
+    if edu_confs:
+        field_conf["education"] = round(max(edu_confs), 6)
+
+    # ------------------------------------------------------- years_experience
+    years = _years_from_intervals(exp_intervals)
+    stated_atoms = by_field.get("years_experience", [])
+    years_atoms = list(stated_atoms)
+    if years is not None:
+        years_atoms.append(Evidence(
+            field_path="years_experience", value=years, raw_value=years,
+            source_id="derived:experience", source_type="derived",
+            method="derived:experience_intervals_v1", record_id="derived",
+        ))
+    years_experience = None
+    if years_atoms:
+        # Derived-from-ranges wins over stated claims (ADR-006); stated values
+        # within 1.0y count as agreement, farther ones as contradiction.
+        winner_atom = years_atoms[-1] if years is not None else ordered(stated_atoms)[0]
+        years_experience = winner_atom.value
+        agree = [
+            a for a in years_atoms
+            if abs(float(a.value) - float(years_experience)) <= 1.0
+        ]
+        alts = sorted({
+            str(a.value) for a in years_atoms
+            if value_repr(a.value) != value_repr(years_experience)
+        })
+        prov("years_experience", winner_atom, alts)
+        field_conf["years_experience"] = confidence.scalar_confidence(
+            years_atoms, agree
+        )
+
+    candidate_id = _candidate_id(cluster, by_field, full_name)
+
+    profile = {
+        "candidate_id": candidate_id,
+        "full_name": full_name,
+        "emails": emails,
+        "phones": phones,
+        "location": location,
+        "links": links,
+        "headline": headline,
+        "years_experience": years_experience,
+        "skills": skills_out,
+        "experience": experience,
+        "education": education,
+        "provenance": sorted(provenance, key=lambda p: p["field"]),
+        "field_confidence": {k: field_conf[k] for k in sorted(field_conf)},
+        "overall_confidence": confidence.overall(field_conf),
+    }
+    return profile, notes
+
+
+# ---------------------------------------------------------------- sub-merges
+
+
+def _same_job(a: dict, b: dict, as_of) -> bool:
+    ca, cb = a.get("company"), b.get("company")
+    if not ca or not cb or text.strip_accents(ca) != text.strip_accents(cb):
+        return False
+    a_dated, b_dated = a.get("start") is not None, b.get("start") is not None
+    if a_dated and b_dated:
+        end_cap = as_of or (9999, 12)
+        return dates.overlaps(a["start"], a.get("end"), b["start"], b.get("end"),
+                              as_of=end_cap)
+    if a.get("is_current") and b.get("is_current"):
+        return True
+    ta, tb = a.get("title"), b.get("title")
+    return bool(ta and tb and text.strip_accents(ta) == text.strip_accents(tb))
+
+
+def _merge_experience(atoms, ordered, as_of, prov):
+    if not atoms:
+        return [], [], []
+    idx_parent = list(range(len(atoms)))
+
+    def find(i):
+        while idx_parent[i] != i:
+            idx_parent[i] = idx_parent[idx_parent[i]]
+            i = idx_parent[i]
+        return i
+
+    for i in range(len(atoms)):
+        for j in range(i + 1, len(atoms)):
+            if _same_job(atoms[i].value, atoms[j].value, as_of):
+                ri, rj = find(i), find(j)
+                if ri != rj:
+                    idx_parent[max(ri, rj)] = min(ri, rj)
+
+    groups: dict[int, list[Evidence]] = {}
+    for i, a in enumerate(atoms):
+        groups.setdefault(find(i), []).append(a)
+
+    entries = []
+    intervals = []
+    confs = []
+    for root in sorted(groups):
+        g = groups[root]
+        by_pref = ordered(g)
+
+        def pick(key):
+            for a in by_pref:
+                if a.value.get(key) is not None:
+                    return a.value[key]
+            return None
+
+        # Precision beats extremity: a month-known date from any source wins
+        # over a year-only bound ("2018 - 2021" must not stretch a job that
+        # ATS dates precisely at 2021-05 out to December).
+        def best_date(cands, bound, pick):
+            precise = [d for d in cands if d[1] is not None]
+            pool_ = precise or cands
+            return pick(pool_, key=lambda d: dates.month_index(d, bound))
+
+        starts = [a.value["start"] for a in g if a.value.get("start")]
+        start = best_date(starts, "start", min) if starts else None
+        is_current = any(a.value.get("is_current") for a in g)
+        end = None
+        if not is_current:
+            ends = [a.value["end"] for a in g if a.value.get("end")]
+            end = best_date(ends, "end", max) if ends else None
+        if start and (end or (is_current and as_of)):
+            intervals.append((
+                dates.month_index(start, "start"),
+                dates.month_index(end or as_of, "end"),
+            ))
+        entries.append({
+            "company": pick("company"),
+            "title": pick("title"),
+            "start": dates.render(start),
+            "end": dates.render(end),
+            "is_current": is_current,
+            "summary": pick("summary"),
+            "_best": by_pref[0], "_atoms": g,
+        })
+        confs.append(confidence.element_confidence(g))
+
+    entries.sort(key=lambda x: (
+        x["start"] is None,
+        -(dates.month_index(dates.parse(x["start"]), "start") if x["start"] else 0),
+        x["company"] or "",
+    ))
+    for i, ent in enumerate(entries):
+        prov(f"experience[{i}]", ent.pop("_best"), [])
+        ent.pop("_atoms")
+    return entries, confs, intervals
+
+
+def _merge_education(atoms, ordered, prov):
+    if not atoms:
+        return [], []
+    groups: dict[tuple, list[Evidence]] = {}
+    for a in atoms:
+        key = (text.strip_accents(a.value.get("institution") or ""),
+               a.value.get("end_year"))
+        groups.setdefault(key, []).append(a)
+    entries, confs = [], []
+    for key in sorted(groups, key=lambda k: (-(k[1] or 0), k[0])):
+        g = groups[key]
+        by_pref = ordered(g)
+
+        def pick(k):
+            for a in by_pref:
+                if a.value.get(k) is not None:
+                    return a.value[k]
+            return None
+
+        entries.append({
+            "institution": pick("institution"), "degree": pick("degree"),
+            "field": pick("field"), "end_year": pick("end_year"),
+            "_best": by_pref[0],
+        })
+        confs.append(confidence.element_confidence(g))
+    for i, ent in enumerate(entries):
+        prov(f"education[{i}]", ent.pop("_best"), [])
+    return entries, confs
+
+
+def _years_from_intervals(intervals):
+    """Union of month intervals -> years, 1 decimal, Decimal ROUND_HALF_UP
+    (ADR-016). Overlapping jobs never double-count."""
+    if not intervals:
+        return None
+    merged = []
+    for s, e in sorted(intervals):
+        if merged and s <= merged[-1][1] + 1:
+            merged[-1][1] = max(merged[-1][1], e)
+        else:
+            merged.append([s, e])
+    months = sum(e - s + 1 for s, e in merged)
+    years = (Decimal(months) / Decimal(12)).quantize(
+        Decimal("0.1"), rounding=ROUND_HALF_UP
+    )
+    return float(years)
+
+
+def _candidate_id(cluster, by_field, full_name):
+    """Content-derived id (ADR-016): smallest strong identifier, kind-prefixed.
+
+    A multi-identity cluster (a notes file naming two people) must NOT seed
+    its id from those identifiers — they belong to other people's clusters
+    and would collide with their ids. It falls back to its record seed."""
+    if "multi_identity_source" in cluster.get("flags", ()):
+        return hashlib.sha256(
+            f"record:{cluster['cluster_id']}".encode("utf-8")
+        ).hexdigest()[:16]
+    email_keys = sorted({
+        emails_mod.match_key(a.value) for a in by_field.get("emails", [])
+    })
+    if email_keys:
+        seed = f"email:{email_keys[0]}"
+    else:
+        phone_keys = sorted({str(a.value) for a in by_field.get("phones", [])})
+        if phone_keys:
+            seed = f"phone:{phone_keys[0]}"
+        elif full_name:
+            company = next((a.value.get("company") for a in by_field.get("experience", [])
+                            if a.value.get("company")), "")
+            seed = f"name+company:{text.strip_accents(full_name)}|{text.strip_accents(company or '')}"
+        else:
+            seed = f"record:{cluster['cluster_id']}"
+    return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+
+def _unrepr(v: str):
+    import json
+
+    try:
+        return json.loads(v)
+    except (ValueError, TypeError):  # pragma: no cover
+        return v

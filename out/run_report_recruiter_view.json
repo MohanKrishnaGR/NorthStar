@@ -1,0 +1,128 @@
+{
+  "merges": {
+    "clusters": [
+      {
+        "cluster_id": "ats.json#idx=0",
+        "match_keys_used": [
+          "email:alicefern@gmail.com"
+        ],
+        "record_ids": [
+          "ats.json#idx=0",
+          "notes_alice.txt#file",
+          "recruiters.csv#row=1",
+          "recruiters.csv#row=3",
+          "recruiters.csv#row=5"
+        ]
+      },
+      {
+        "cluster_id": "ats.json#idx=1",
+        "match_keys_used": [
+          "email:rohan.mehta@outlook.com"
+        ],
+        "record_ids": [
+          "ats.json#idx=1",
+          "recruiters.csv#row=2"
+        ]
+      },
+      {
+        "cluster_id": "ats.json#idx=2",
+        "match_keys_used": [
+          "phone:+918765432109"
+        ],
+        "record_ids": [
+          "ats.json#idx=2",
+          "recruiters.csv#row=4"
+        ]
+      },
+      {
+        "cluster_id": "notes_two_people.txt#file",
+        "match_keys_used": [],
+        "record_ids": [
+          "notes_two_people.txt#file"
+        ]
+      }
+    ],
+    "refusals": []
+  },
+  "run": {
+    "as_of": "2026-05",
+    "config_fields": [
+      "full_name",
+      "primary_email",
+      "phone",
+      "skills"
+    ],
+    "default_region": null
+  },
+  "sources": [
+    {
+      "errors": [],
+      "evidence_emitted": 36,
+      "flags": [],
+      "records_read": 3,
+      "source_id": "ats.json",
+      "source_type": "ats_json",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 0,
+      "flags": [],
+      "records_read": 0,
+      "source_id": "empty.csv",
+      "source_type": "recruiter_csv",
+      "status": "ok"
+    },
+    {
+      "errors": [
+        "JSONDecodeError: Invalid control character at: line 1 column 54 (char 53)"
+      ],
+      "evidence_emitted": 0,
+      "flags": [],
+      "records_read": 0,
+      "source_id": "garbage.json",
+      "source_type": "ats_json",
+      "status": "skipped"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 12,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "notes_alice.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 2,
+      "flags": [
+        "multi_identity_source"
+      ],
+      "records_read": 1,
+      "source_id": "notes_two_people.txt",
+      "source_type": "notes_txt",
+      "status": "ok"
+    },
+    {
+      "errors": [
+        "recruiters.csv#row=6: column-shifted row skipped"
+      ],
+      "evidence_emitted": 19,
+      "flags": [],
+      "records_read": 6,
+      "source_id": "recruiters.csv",
+      "source_type": "recruiter_csv",
+      "status": "partial"
+    }
+  ],
+  "unparseable": [],
+  "unrecognized_files": [],
+  "validation": [
+    {
+      "candidate_id": "45a9e0928920fc78",
+      "field": "full_name",
+      "problem": "required_missing"
+    }
+  ]
+}

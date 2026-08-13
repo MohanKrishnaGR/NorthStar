@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "candidate-transformer"
+version = "0.1.0"
+description = "Multi-source candidate data transformer: extract, normalize, merge, project"
+requires-python = ">=3.11"
+dependencies = [
+    "phonenumbers>=8.13",
+    "jsonschema>=4.21",
+]
+
+[project.optional-dependencies]
+resume = ["pdfplumber>=0.11", "python-docx>=1.1"]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["transformer*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
