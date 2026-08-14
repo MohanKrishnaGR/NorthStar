@@ -1,4 +1,15 @@
-# North Star — Multi-Source Candidate Data Transformer
+<div align="center">
+    <img src="ui/assets/logo.png" alt="North Star" width="340">
+    <h1>North Star — Multi-Source Candidate Data Transformer</h1>
+</div>
+
+[![ci](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/ci.yml/badge.svg)](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/ci.yml)
+[![pages](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/pages.yml/badge.svg)](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/pages.yml)
+[![canary](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/canary.yml/badge.svg)](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/canary.yml)
+![python](https://img.shields.io/badge/python-3.11%2B-blue)
+
+A project by <em>Mohan Krishna G R</em> —
+[mohankrishnagr.github.io](https://mohankrishnagr.github.io)
 
 Messy candidate data in — recruiter CSV, ATS JSON, free-text notes, resumes
 (docx/pdf), recorded GitHub/LinkedIn payloads. One canonical, deduplicated
@@ -14,6 +25,17 @@ run report — never a guess.
 - **Design one-pager:** submitted separately (PDF) — the full decision
   record behind this build covers every material choice with options and
   trade-offs
+
+## Contents
+- [Run it](#run-it) — [live site](#1--zero-install--the-live-site) ·
+  [docker](#2--docker) · [CLI](#3--cli) ·
+  [local workspace](#4--local-workspace--self-contained-explorer) ·
+  [tests](#tests)
+- [How it works](#how-it-works)
+- [CLI flags](#cli-flags)
+- [What the sample inputs prove](#what-the-sample-inputs-prove)
+- [Assumptions & descopes](#assumptions--descopes-stated-not-silent)
+- [Repo map](#repo-map)
 
 ## Run it
 
