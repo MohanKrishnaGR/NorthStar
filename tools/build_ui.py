@@ -17,11 +17,15 @@ DIST = UI / "dist"
 
 
 def main() -> int:
-    got = subprocess.run(["npm", "run", "build"], cwd=UI, shell=True,
-                         capture_output=True, text=True)
-    if got.returncode != 0:
-        sys.stderr.write(got.stdout + got.stderr)
-        return got.returncode
+    # --inline-only: dist/ was already built (e.g. by the Dockerfile's node
+    # stage); just do the inlining here where Python is available.
+    if "--inline-only" not in sys.argv:
+        got = subprocess.run(["npm", "run", "build"], cwd=UI,
+                             shell=(sys.platform == "win32"),
+                             capture_output=True, text=True)
+        if got.returncode != 0:
+            sys.stderr.write(got.stdout + got.stderr)
+            return got.returncode
 
     html = (DIST / "index.html").read_text(encoding="utf-8")
 

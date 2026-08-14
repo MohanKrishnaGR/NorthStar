@@ -1,0 +1,31 @@
+{
+  "version": "2026.08.1",
+  "source_trust": {
+    "ats_json": 0.90,
+    "recruiter_csv": 0.85,
+    "linkedin_json": 0.80,
+    "github_json": 0.75,
+    "resume": 0.70,
+    "notes_txt": 0.50,
+    "derived": 1.00
+  },
+  "method_reliability": {
+    "direct_field": 1.00,
+    "regex": 0.90,
+    "phones_pass2": 0.90,
+    "dict": 0.85,
+    "derived": 0.60
+  },
+  "core_field_weights": {
+    "full_name": 3,
+    "emails": 3,
+    "phones": 2,
+    "skills": 2,
+    "experience": 2,
+    "location": 1,
+    "headline": 1,
+    "years_experience": 1,
+    "education": 1,
+    "links": 1
+  }
+}

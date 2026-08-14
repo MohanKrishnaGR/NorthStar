@@ -8,6 +8,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import telemetry
 from .normalize import dates
 from .pipeline import run_pipeline
 from .projection.config import ConfigError, load
@@ -24,6 +25,8 @@ def main(argv: list[str] | None = None) -> int:
                             help="local workspace UI: upload sources, edit "
                                  "the config, run, explore")
     servep.add_argument("--port", type=int, default=8765)
+    servep.add_argument("--host", default="127.0.0.1",
+                        help="bind address (0.0.0.0 inside a container)")
     runp = sub.add_parser("run", help="run the pipeline end-to-end")
     runp.add_argument("--input", required=True,
                       help="input directory (or a single source file)")
@@ -41,13 +44,23 @@ def main(argv: list[str] | None = None) -> int:
     runp.add_argument("--emit-ui", default=None, metavar="PATH",
                       help="also write a self-contained explorer HTML "
                            "(requires the built template in ui/dist)")
+    for p in (runp, servep):
+        p.add_argument("--log-format", choices=("text", "json"), default=None,
+                       help="structured log format on stderr "
+                            "(default: text for run, json for serve)")
+        p.add_argument("--log-level", default="warning",
+                       choices=("debug", "info", "warning", "error"),
+                       help="log verbosity (default: warning — quiet runs "
+                            "log only anomalies)")
     args = ap.parse_args(argv)
 
     if args.cmd == "serve":
         from .server import serve
 
-        return serve(args.port)
+        telemetry.setup(args.log_format or "json", args.log_level)
+        return serve(args.port, host=args.host)
 
+    telemetry.setup(args.log_format or "text", args.log_level)
     try:
         cfg = load(args.config)
     except ConfigError as e:

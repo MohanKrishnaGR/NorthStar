@@ -21,9 +21,18 @@ _WS_RE = re.compile(r"\s+")
 
 
 @lru_cache(maxsize=1)
-def aliases() -> dict[str, str]:
+def _doc() -> dict:
     with open(_DATA, encoding="utf-8") as f:
         return json.load(f)
+
+
+def aliases() -> dict[str, str]:
+    return _doc()["aliases"]
+
+
+def version() -> str:
+    """Dictionary version, recorded in the run report (OPS_PLAN §2.1)."""
+    return _doc()["version"]
 
 
 def fold_skill(raw: object) -> str:

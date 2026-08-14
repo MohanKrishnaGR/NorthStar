@@ -8,7 +8,7 @@ validation errors is excluded by the caller; the batch always continues.
 from __future__ import annotations
 
 from ..normalize.registry import NormalizeError, apply as apply_normalizer
-from .config import Config, FieldSpec
+from .config import Config
 from .paths import MISSING, resolve, top_field
 
 _TYPE_CHECKS = {

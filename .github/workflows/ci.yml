@@ -1,0 +1,114 @@
+# CI (OPS_PLAN §2.3): each job is named for the claim its failure breaks.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ruff
+      - run: ruff check .
+
+  tests:
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install .[resume,dev]
+      - name: unit + integration (gold and scale gates run as their own jobs)
+        run: >
+          pytest -q
+          --ignore=tests/test_gold.py
+          --ignore=tests/test_golden_t1.py
+          --ignore=tests/test_golden_t2.py
+          --ignore=tests/test_determinism.py
+          --ignore=tests/test_scale.py
+
+  gold-gate:
+    # Red here means: the MEANING of the output changed. Regenerate gold
+    # deliberately and review the diff by eye — never to make CI pass.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install .[resume,dev]
+      - run: pytest -q tests/test_gold.py tests/test_golden_t1.py tests/test_golden_t2.py
+
+  scale-gate:
+    # Planted-truth metrics: recall 1.0, zero false merges, runtime budget.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install .[dev]
+      - run: pytest -q tests/test_scale.py
+
+  determinism:
+    # Same inputs twice + shuffled order + touched mtimes => identical bytes.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install .[resume,dev]
+      - run: pytest -q tests/test_determinism.py tests/test_metamorphic.py
+
+  ui-freshness:
+    # The committed explorer template must match a fresh build — protects
+    # the "works without Node" guarantee for anyone cloning the repo.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: npm, cache-dependency-path: ui/package-lock.json }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: npm ci --no-fund --no-audit
+        working-directory: ui
+      - run: python tools/build_ui.py
+      - run: git diff --exit-code ui/dist/explorer_template.html
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t candidate-transformer:ci .
+      - name: smoke — the container answers /api/health
+        run: |
+          docker run -d --rm -p 8765:8765 --name ct candidate-transformer:ci
+          for i in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:8765/api/health > /dev/null && ok=1 && break
+            sleep 1
+          done
+          docker stop ct
+          test "$ok" = "1"
+
+  demo-artifact:
+    runs-on: ubuntu-latest
+    needs: [gold-gate]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install .[resume]
+      - run: >
+          python -m transformer run --input goldens/t1
+          --config configs/default.json
+          --out /tmp/p.json --report /tmp/r.json
+          --as-of 2026-08 --emit-ui explorer.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: explorer-demo
+          path: explorer.html

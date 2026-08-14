@@ -62,6 +62,26 @@ Exit codes: `0` profiles emitted (report may carry warnings) · `2` unusable
 config / bad arguments / zero readable sources. A garbage source is a
 *reported condition*, never a crash.
 
+### Ops (OPS_PLAN.md)
+
+- **Structured logs** on stderr: `--log-format text|json`, `--log-level`
+  (default `warning` — a clean run is silent; anomalies like skipped
+  sources, refused unions, and soft-key merges are exactly what appears).
+  Outputs stay clock-free; telemetry may know what time it is.
+- **Versioned reference data**: trust tables live in `data/scoring.json`,
+  alias dictionaries carry version headers, and every run report records
+  `engine_version` + `scoring_version` + dictionary versions — the complete
+  reproducibility pin. Changing reference data is a ritual:
+  bump the version, run `tools/update_reference_checksums.py`, regenerate
+  gold, review the diff (enforced by `tests/test_reference_data.py`).
+- **Container**: `docker compose up --build` → workspace on
+  `127.0.0.1:8765` (multi-stage build; non-root; healthcheck).
+- **CI** (`.github/workflows/ci.yml`): lint · tests · gold-gate ·
+  scale-gate · determinism · ui-freshness · docker smoke · demo artifact —
+  each job named for the claim its failure breaks. A **nightly canary**
+  re-runs the golden corpus and byte-compares: the golden dataset acting
+  as a production monitor.
+
 ## Pipeline
 
 ```

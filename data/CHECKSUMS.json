@@ -1,0 +1,14 @@
+{
+  "country_aliases.json": {
+    "sha256": "fb1cb0306938940b281061fdfd61ad53c3ef9a7bb5228ebda22788acf876944a",
+    "version": "2026.08.1"
+  },
+  "scoring.json": {
+    "sha256": "adb85b671c010740fb7d4d03c17d26cc8ae503fc43b99f5b7492ccb205608e1b",
+    "version": "2026.08.1"
+  },
+  "skill_aliases.json": {
+    "sha256": "649a8a12615893237450ff397e2946a4959e9bb8fa151a2e0d8058c840e8f323",
+    "version": "2026.08.1"
+  }
+}

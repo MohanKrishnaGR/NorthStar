@@ -53,6 +53,6 @@ def test_as_of_pins_open_ended_durations():
     assert '"years_experience": 8.6' in profiles_a
     assert '"years_experience": 9.6' in profiles_b
     # ...but identity is stable across as-of values.
-    ids_a = [l for l in profiles_a.splitlines() if '"candidate_id"' in l]
-    ids_b = [l for l in profiles_b.splitlines() if '"candidate_id"' in l]
+    ids_a = [ln for ln in profiles_a.splitlines() if '"candidate_id"' in ln]
+    ids_b = [ln for ln in profiles_b.splitlines() if '"candidate_id"' in ln]
     assert ids_a == ids_b

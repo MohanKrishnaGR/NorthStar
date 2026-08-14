@@ -14,9 +14,18 @@ _DATA = Path(__file__).resolve().parent.parent.parent / "data" / "country_aliase
 
 
 @lru_cache(maxsize=1)
-def _aliases() -> dict[str, str]:
+def _doc() -> dict:
     with open(_DATA, encoding="utf-8") as f:
         return json.load(f)
+
+
+def _aliases() -> dict[str, str]:
+    return _doc()["aliases"]
+
+
+def version() -> str:
+    """Dictionary version, recorded in the run report (OPS_PLAN §2.1)."""
+    return _doc()["version"]
 
 
 # 2-letter aliases safe to honor even inside "City, XX" strings. Others

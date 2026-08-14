@@ -146,13 +146,14 @@ def _run(payload: dict) -> dict:
     return result.ui_bundle
 
 
-def serve(port: int = 8765) -> int:
+def serve(port: int = 8765, host: str = "127.0.0.1") -> int:
     if not TEMPLATE.exists():
         print("serve needs the built template at ui/dist/explorer_template.html "
               "(run: python tools/build_ui.py)")
         return 2
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"workspace -> http://127.0.0.1:{port}/  (Ctrl+C to stop)")
+    httpd = ThreadingHTTPServer((host, port), Handler)
+    shown = "127.0.0.1" if host == "0.0.0.0" else host
+    print(f"workspace -> http://{shown}:{port}/  (Ctrl+C to stop)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

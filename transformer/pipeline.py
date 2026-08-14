@@ -7,16 +7,24 @@ every downstream stage re-sorts what it consumes.
 """
 from __future__ import annotations
 
+import hashlib
+import logging
+import time
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import identity, merge
+from . import __version__, identity, merge, telemetry
 from .adapters import detect_adapter
 from .adapters.base import run_adapter
+from .constants import SCORING_VERSION
+from .normalize import country as country_mod
 from .normalize import dates
+from .normalize import skills as skills_mod
 from .projection import schema as schema_mod
 from .projection.config import Config
 from .projection.project import project
+from .report import dumps as _dumps
 
 
 @dataclass
@@ -35,6 +43,13 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
     ctx = {"default_region": default_region, "strict": strict}
     files = sorted(input_paths, key=lambda p: p.name)  # order-independence
 
+    # Telemetry only (OPS_PLAN §1.1): ids/clocks never reach outputs.
+    run_id = uuid.uuid4().hex[:12]
+    t0 = time.monotonic()
+    telemetry.event("run_started", run_id=run_id, inputs=len(files),
+                    engine_version=__version__,
+                    scoring_version=SCORING_VERSION)
+
     source_results = []
     unrecognized = []
     records = []
@@ -48,12 +63,29 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
         src_paths[res.source_id] = path
         source_results.append(res)
         records.extend(res.records)
+        telemetry.event(
+            "source_processed",
+            _level=logging.INFO if res.status == "ok" else logging.WARNING,
+            run_id=run_id, source_id=res.source_id,
+            source_type=res.source_type, status=res.status,
+            records=res.records_read,
+            evidence=sum(len(r.evidence) for r in res.records),
+            error=res.errors[0] if res.errors else None,
+        )
 
     if as_of is None:
         as_of = _max_observed_date(records)  # content-derived (ADR-016)
 
     resolution = identity.resolve(records)
     records_by_id = {r.record_id: r for r in records}
+    for refusal in resolution.refusals:
+        telemetry.event("union_refused", _level=logging.WARNING,
+                        run_id=run_id, key=refusal["key"],
+                        records=" vs ".join(refusal["records"]))
+    for rid, flags in sorted(resolution.record_flags.items()):
+        if "multi_identity_source" in flags:
+            telemetry.event("multi_identity_flagged", _level=logging.WARNING,
+                            run_id=run_id, record_id=rid)
 
     sch = schema_mod.build(cfg)
     keyed_profiles = []
@@ -91,7 +123,17 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
                 "excluded": bool(errors),
                 "validation": errors,
             })
+        if any(k.startswith("soft:") for k in cluster["match_keys_used"]):
+            # The weakest merge kind, made loud (ledger defect #1).
+            telemetry.event("soft_key_merge", _level=logging.WARNING,
+                            run_id=run_id,
+                            candidate_id=profile["candidate_id"],
+                            records=len(cluster["record_ids"]))
         if errors:
+            telemetry.event("profile_excluded", run_id=run_id,
+                            candidate_id=profile["candidate_id"],
+                            problems="; ".join(
+                                f"{e['field']}: {e['problem']}" for e in errors))
             validation.extend(
                 dict(e, candidate_id=profile["candidate_id"]) for e in errors
             )
@@ -118,6 +160,14 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
             "as_of": dates.render(as_of),
             "default_region": default_region,
             "config_fields": [f.path for f in cfg.fields],
+            # The complete reproducibility pin (ADR-016 + OPS_PLAN §2.1):
+            # same inputs + these versions => byte-identical outputs.
+            "engine_version": __version__,
+            "scoring_version": SCORING_VERSION,
+            "dictionary_versions": {
+                "skill_aliases": skills_mod.version(),
+                "country_aliases": country_mod.version(),
+            },
         },
         "sources": [
             {
@@ -152,6 +202,22 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
                            u["field"], u["raw_value"]),
         ),
     }
+    unparse_counts: dict[str, int] = {}
+    for u in unparseable:
+        unparse_counts[u["reason"]] = unparse_counts.get(u["reason"], 0) + 1
+    if unparse_counts:
+        telemetry.event("unparseable_summary", run_id=run_id, **unparse_counts)
+    telemetry.event(
+        "run_completed", run_id=run_id,
+        profiles=len(keyed_profiles), clusters=len(resolution.clusters),
+        refusals=len(resolution.refusals),
+        excluded=len({v["candidate_id"] for v in validation}),
+        duration_ms=int((time.monotonic() - t0) * 1000),
+        output_hash=hashlib.sha256(
+            _dumps([out for _, out in keyed_profiles]).encode("utf-8")
+        ).hexdigest()[:16],
+    )
+
     ui_bundle = None
     if collect_ui:
         candidates_ui.sort(key=lambda c: c["candidate_id"])

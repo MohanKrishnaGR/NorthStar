@@ -282,7 +282,13 @@
       "phone",
       "skills"
     ],
-    "default_region": null
+    "default_region": null,
+    "dictionary_versions": {
+      "country_aliases": "2026.08.1",
+      "skill_aliases": "2026.08.1"
+    },
+    "engine_version": "0.1.0",
+    "scoring_version": "2026.08.1"
   },
   "sources": [
     {

@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from transformer.cli import main
-from transformer.normalize import dates
 from transformer.pipeline import run_pipeline
 from transformer.projection.config import load
 

@@ -1,0 +1,8 @@
+# Demo workspace: docker compose up --build  ->  http://127.0.0.1:8765
+# Port is bound to localhost only — this surface has no auth by design
+# (PRODUCTION_READINESS Tier 2 covers hardening it into a real service).
+services:
+  explorer:
+    build: .
+    ports:
+      - "127.0.0.1:8765:8765"
