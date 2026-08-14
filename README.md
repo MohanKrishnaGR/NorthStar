@@ -1,187 +1,177 @@
-# Candidate Data Transformer
+# North Star — Multi-Source Candidate Data Transformer
 
-Turns messy multi-source candidate data (recruiter CSV, ATS JSON, recruiter
-notes, resumes) into one canonical, deduplicated profile per candidate — with
-per-field provenance, confidence scores, and a runtime config that reshapes
-the output without code changes.
+Messy candidate data in — recruiter CSV, ATS JSON, free-text notes, resumes
+(docx/pdf), recorded GitHub/LinkedIn payloads. One canonical, deduplicated
+profile per candidate out, with per-field provenance, auditable confidence,
+and a runtime config that reshapes the output with **no code changes**.
 
-**Live demo (GitHub Pages):** https://mohankrishnagr.github.io/NorthStar/ —
-the glass-box explorer preloaded with the 21-persona golden corpus. Click any
-profile field to see its evidence highlighted in the source; expand any
-confidence score into the arithmetic behind it.
+Guiding rule, from the problem statement: **wrong-but-confident is worse than
+honestly-empty.** Every tie breaks toward `null` plus an explanation in the
+run report — never a guess.
 
-Design rationale lives in [DESIGN.md](DESIGN.md) (16 ADRs); the build plan in
-[PLAN.md](PLAN.md). The one-line philosophy, from the problem statement:
-**wrong-but-confident is worse than honestly-empty** — every tie here breaks
-toward `null` plus an explanation in the run report, never a guess.
+- **Live demo:** https://mohankrishnagr.github.io/NorthStar/
+- **Demo video (~2 min):** _[add link before submitting]_
+- **Design one-pager:** submitted separately (PDF) — the full decision
+  record behind this build covers every material choice with options and
+  trade-offs
 
-## Quickstart
+## Run it
+
+### 1 · Zero install — the live site
+
+Open https://mohankrishnagr.github.io/NorthStar/ — the glass-box explorer,
+preloaded with the 21-persona golden corpus. Click any profile field and its
+evidence highlights inside the original source; expand any confidence score
+into the arithmetic behind it.
+
+**⚙ workspace** loads the *real engine* in your browser (Pyodide + this
+repo's wheel, ~15 MB one-time): stage `⤓ goldens/t1` or drop your own files,
+preview each one (CSV as a table, JSON pretty-printed, resumes as the
+engine's own extracted text), pick or edit the projection config, run, then
+download `profiles.json` and the run report. Uploads never leave the tab.
+
+### 2 · Docker
 
 ```bash
-pip install .            # Python 3.11+; deps: phonenumbers, jsonschema
-pip install .[resume]    # optional: PDF/DOCX resume support
-pip install .[dev]       # pytest
+docker compose up --build
+```
+
+→ http://127.0.0.1:8765 — the same workspace against the native engine
+(multi-stage build, non-root, healthcheck).
+
+### 3 · CLI
+
+```bash
+pip install .            # Python 3.11+ · deps: phonenumbers, jsonschema
+pip install .[resume]    # optional: docx/pdf resume support
 
 # Default canonical output + run report
-python -m transformer run --input samples \
-  --config configs/default.json \
+python -m transformer run --input samples --config configs/default.json \
   --out out/profiles_default.json --report out/run_report_default.json
 
 # Custom projection (the problem statement's example config)
-python -m transformer run --input samples \
-  --config configs/recruiter_view.json \
+python -m transformer run --input samples --config configs/recruiter_view.json \
   --out out/profiles_recruiter_view.json --report out/run_report_recruiter_view.json
-
-python -m pytest -q      # 176 tests incl. golden-persona, hostile, metamorphic, scale suites
-
-# Glass-box explorer UI (React, Material 3) — self-contained HTML, no server:
-python -m transformer run --input goldens/t1 --config configs/default.json \
-  --out out/_p.json --report out/_r.json --as-of 2026-08 \
-  --emit-ui out/explorer.html
-# open out/explorer.html in any browser. Rebuild the template after UI edits:
-#   cd ui && npm install && cd .. && python tools/build_ui.py
-
-# Interactive workspace (stdlib http.server — zero extra dependencies):
-python -m transformer serve
-# -> http://127.0.0.1:8765  · upload any of the six source types (csv/json/
-#    txt/docx/pdf incl. github_*/linkedin_* recorded payloads), pick or edit
-#    the projection config in the UI (load-time errors shown verbatim), set
-#    as-of / default-region, run, then explore the grounded result.
-#    Tip: without an explicit as-of, the derived default prefers record
-#    timestamps (ATS updated_at) over employment-claim dates, so one
-#    future-dated claim can't drag "now"; a corpus with no timestamps
-#    falls back to claim dates and logs a WARN (ADR-016: still no clock).
 ```
 
-The `out/` directory contains exactly what these two commands produce on the
-sample inputs — and `tests/test_gold.py` fails if code and committed outputs
-ever drift apart.
+`out/` is committed and contains exactly what these commands produce —
+`tests/test_gold.py` fails if code and committed outputs ever drift.
 
-### CLI flags
+### 4 · Local workspace & self-contained explorer
 
-| Flag | Meaning |
-|---|---|
-| `--as-of YYYY-MM` | Pins "now" for open-ended job durations. Default: the latest date observed in the inputs. **The system clock is never consulted** — reruns are byte-identical forever. |
-| `--default-region IN` | Region for phones without `+CC`. Unset means such phones are never guessed into E.164; they are preserved raw and reported. |
-| `--strict` | Development aid: re-raise adapter errors instead of containing them. |
+```bash
+python -m transformer serve      # stdlib-only server → http://127.0.0.1:8765
 
-Exit codes: `0` profiles emitted (report may carry warnings) · `2` unusable
-config / bad arguments / zero readable sources. A garbage source is a
-*reported condition*, never a crash.
+python -m transformer run --input goldens/t1 --config configs/default.json \
+  --out out/_p.json --report out/_r.json --as-of 2026-08 \
+  --emit-ui out/explorer.html    # one self-contained HTML file, no server
+```
 
-### Ops (OPS_PLAN.md)
+The built UI template is committed, so `--emit-ui` needs no Node. (After UI
+edits: `cd ui && npm install && cd .. && python tools/build_ui.py`.)
 
-- **Structured logs** on stderr: `--log-format text|json`, `--log-level`
-  (default `warning` — a clean run is silent; anomalies like skipped
-  sources, refused unions, and soft-key merges are exactly what appears).
-  Outputs stay clock-free; telemetry may know what time it is.
-- **Versioned reference data**: trust tables live in `transformer/data/scoring.json`
-  (inside the package, so the installed wheel is self-contained),
-  alias dictionaries carry version headers, and every run report records
-  `engine_version` + `scoring_version` + dictionary versions — the complete
-  reproducibility pin. Changing reference data is a ritual:
-  bump the version, run `tools/update_reference_checksums.py`, regenerate
-  gold, review the diff (enforced by `tests/test_reference_data.py`).
-- **Container**: `docker compose up --build` → workspace on
-  `127.0.0.1:8765` (multi-stage build; non-root; healthcheck).
-- **CI** (`.github/workflows/ci.yml`): lint · tests · gold-gate ·
-  scale-gate · determinism · ui-freshness · docker smoke · demo artifact —
-  each job named for the claim its failure breaks. A **nightly canary**
-  re-runs the golden corpus and byte-compares: the golden dataset acting
-  as a production monitor.
+### Tests
 
-## Pipeline
+```bash
+pip install .[dev] && python -m pytest -q     # 211 tests, ~4 s
+```
+
+Unit · end-to-end · determinism (shuffled file order, touched mtimes →
+byte-identical output) · 21 golden personas with pinned expected outputs ·
+hostile corpus · metamorphic invariants · scale gate. CI re-proves each claim
+in a named job (gold-gate, determinism, docker smoke, …) and a **nightly
+canary** byte-compares the golden corpus — the dataset doubles as a
+production monitor.
+
+## How it works
 
 ```
 detect -> extract -> normalize (pass 1) -> resolve identity -> merge
        (+ phone pass 2) -> score confidence -> project (config) -> validate
 ```
 
-Every extracted value is born as an **Evidence atom**
-`{field, value, raw_value, source, method}`; merging is a pure function over
-the canonically sorted pool. That single decision makes provenance free,
-confidence auditable, and determinism provable (see the determinism suite:
-same inputs, shuffled file order, touched mtimes → byte-identical output).
+- Every extracted value is born an **Evidence atom**
+  `{field, value, raw_value, source, method}`; merging is a pure function
+  over the canonically sorted pool. That one decision makes provenance free,
+  confidence auditable, and determinism provable.
+- **Identity:** deterministic blocking (email / phone / profile-URL keys) +
+  union-find, with contradiction and multi-identity guards that *refuse* a
+  merge rather than fuse two people. A file naming two people loses its
+  identity keys and is flagged (`multi_identity_source`).
+- **Confidence:** transparent noisy-OR over source-trust ×
+  method-reliability (tables with rationale in `transformer/constants.py`).
+  Scores are ordinal — they order trust, they are not probabilities.
+- **Projection:** the default schema is itself a shipped config, so default
+  and custom outputs exercise the same projection + validation path; output
+  is validated against a JSON Schema *generated from the config*.
+- **No clock, no network, no LLM in the pipeline.** `--as-of` pins "now"
+  (default derives from the inputs); GitHub's API is exercised once at the
+  recording boundary (`tools/fetch_github.py`) and replayed forever; rule
+  extractors keep every value traceable to a named method.
 
-Confidence is transparent noisy-OR arithmetic over
-`source_trust x method_reliability` (tables with rationale in
-`transformer/constants.py`). Scores are **ordinal**, not calibrated
-probabilities: they order trust; they are not percentages.
+### CLI flags
 
-## What the sample inputs demonstrate
-
-| File | Nastiness it proves out |
+| Flag | Meaning |
 |---|---|
-| `recruiters.csv` | duplicate rows, plus-tagged email variant, `"Fern, Alice"` name order, national phone without country code, column-shifted row (contained as `partial`) |
-| `ats.json` | foreign field names, conflicting titles/companies vs CSV, in-band `lastUpdated` recency, unknown skill kept + flagged (`canonical: false`) |
-| `notes_alice.txt` | free-text extraction: labeled fields, skills scan, "Title at Company since Jun 2021" lines, year-only ranges |
-| `notes_two_people.txt` | **multi-identity guard**: a file naming two people is excluded from identity blocking and flagged — the alternative is silently fusing two candidates |
-| `garbage.json` / `empty.csv` | truncated JSON is `skipped` with the error in the report; a header-only CSV is `ok` with zero records |
+| `--as-of YYYY-MM` | Pins "now" for open-ended durations. Default: derived from the inputs — the system clock is never consulted. |
+| `--default-region IN` | Region for phones without `+CC`. Unset ⇒ such phones stay raw and are reported, never guessed. |
+| `--strict` | Development aid: re-raise adapter errors instead of containing them. |
+
+Exit codes: `0` profiles emitted (report may carry warnings) · `2` unusable
+config / zero readable sources. A garbage source is a *reported condition*,
+never a crash.
+
+## What the sample inputs prove
+
+| File | Nastiness |
+|---|---|
+| `recruiters.csv` | duplicate rows, plus-tagged email, `"Fern, Alice"` name order, national phone, column-shifted row (contained as `partial`) |
+| `ats.json` | foreign field names, conflicts vs CSV, in-band recency, unknown skill kept + flagged |
+| `notes_alice.txt` | free-text extraction: labeled fields, skills, "Title at Company since Jun 2021", year-only ranges |
+| `notes_two_people.txt` | the multi-identity guard in action |
+| `garbage.json` / `empty.csv` | truncated JSON → `skipped` + reason; header-only CSV → `ok`, zero records |
+
+The golden corpus (`goldens/`) scales this up: 21 mechanism-named personas
+across all six source types, a hostile corpus, pinned expected outputs, and
+a seeded scale generator with planted ground truth.
 
 ## Assumptions & descopes (stated, not silent)
 
-- **One candidate per unstructured file** — assumed and *guarded*: ≥2 distinct
-  strong identifiers in one notes/resume file ⇒ its identity keys are
-  withdrawn and the source flagged `multi_identity_source`.
-- **The pipeline never fetches URLs** — network breaks offline determinism;
-  LinkedIn has no sanctioned API. Profile URLs found in any source are still
-  captured into `links.*` (and serve as identity match keys). GitHub's public
-  API is exercised at the *recording boundary* instead:
-  `python tools/fetch_github.py <profile-url> --out samples` calls it once
-  and writes `github_<login>.json`, which the pipeline replays
-  deterministically forever.
-- **The sample inputs are self-authored.** No official sample files
-  accompanied this problem statement, so `samples/` (and the golden corpus)
-  were built to its field lists — deliberately nastier than clean demo data.
-  If official samples arrive, only the declarative mapping tables in the
-  adapters should need adjusting.
-- **No LLM extraction** — rule-based extractors keep runs deterministic and
-  every value traceable to a named method; an LLM extractor would slot in as
-  just another Evidence emitter with its own (lower) reliability weight.
-- **Notes/resumes contribute a bounded field set** (contacts, links, skills,
-  labeled fields, simple experience lines). No NER: a missed value becomes
-  `null`, which the problem statement prefers to an invented one.
-- **ATS field mappings are fixture-defined** pending real sample files;
-  adjusting the declarative map in `adapters/ats_json.py` is the only
-  expected change when they arrive.
+- **Self-authored samples** — no official inputs accompanied the problem;
+  `samples/` and `goldens/` were built to its field lists, deliberately
+  nastier than demo data. If real samples arrive, only the declarative
+  adapter mapping tables should need to change.
+- **One candidate per unstructured file** — assumed *and guarded* (see the
+  multi-identity flag above).
+- **No live URL fetching** — network breaks offline determinism; recorded
+  payloads instead. Profile URLs are still captured and used as match keys.
+- **No NER / fuzzy name matching** — a missed value becomes `null`; a false
+  merge silently poisons downstream decisions and is the worse failure.
 - **`candidate_id` is content-derived** (hash of the cluster's smallest
-  strong identifier). If a later run adds a *stronger* identifier for a
-  cluster, its id changes — acceptable for a batch tool, noted here.
-- **An empty ATS `to` date means unknown**, not "present": `is_current` is
-  only ever asserted by a source, never inferred from absence.
-- **Fuzzy/phonetic name matching is out**: a false split is recoverable, a
-  false merge silently poisons downstream decisions.
+  strong identifier); a later, stronger identifier changes it — acceptable
+  for a batch tool.
+- **Empty ATS `to` means unknown**, not "present": `is_current` is only ever
+  asserted by a source, never inferred from absence.
 
 ## Repo map
 
 ```
 transformer/
-  models.py       Evidence atom + canonical type map (the spine)
-  constants.py    trust/reliability/weight tables, with rationale
-  normalize/      NFC text, emails, phones (2-pass E.164), dates ({year,month?}),
-                  country ISO-3166, skills alias dict, URLs, idempotent registry
-  adapters/       CSV, ATS JSON, notes .txt, resume .docx/.pdf (optional extra),
-                  recorded-response github_*.json / linkedin_*.json (ADR-017)
-  identity.py     blocking + union-find (email/phone/profile-URL keys),
-                  contradiction & multi-identity guards
-  merge.py        survivorship, atomic location, interval-union years, phone pass 2
-  confidence.py   noisy-OR scoring
-  projection/     4-construct path DSL, config compile, projector, schema builder
-  pipeline.py     orchestration; cli.py the thin surface
-configs/          default.json (identity projection) + recruiter_view.json
-samples/          sample inputs (see table above)
-out/              committed outputs of the two quickstart commands
-goldens/          golden dataset: t1/ 20 mechanism-named personas across all six
-                  source types, t2/ hostile corpus, expected/ pinned outputs,
-                  TRUTH.md (per-persona expectations and why — see GOLDEN_DATASET.md)
-ui/               React explorer (Material 3 tokens): Landing-AI-style grounding —
-                  click any profile field to highlight its evidence in the source,
-                  audit the confidence arithmetic, walk the identity cluster.
-                  The UI is the Evidence model rendered — it adds nothing the
-                  CLI doesn't produce (see UI_DESIGN.md). Built template is
-                  committed, so --emit-ui works without Node installed.
-tools/            fixture (re)builders + gen_scale.py, the seeded Tier-3 generator
-                  with planted ground truth (recall/false-merge/runtime gate)
-tests/            171 tests: unit, e2e, determinism, golden personas, hostile
-                  corpus, metamorphic invariants, scale gate
+  models.py      Evidence atom + canonical type map (the spine)
+  constants.py   trust/reliability tables, with rationale
+  normalize/     text, emails, phones (2-pass E.164), dates {year,month?},
+                 country, skills alias dict, URLs
+  adapters/      csv · ats json · notes txt · resume docx/pdf ·
+                 recorded github/linkedin payloads
+  identity.py    blocking + union-find + guards
+  merge.py       survivorship, interval-union years, phone pass 2
+  confidence.py  noisy-OR scoring
+  projection/    4-construct path DSL, config compile, projector, validator
+  pipeline.py    orchestration · cli.py · server.py (stdlib workspace)
+configs/         default.json (identity projection) + recruiter_view.json
+samples/  out/   sample inputs + committed outputs (gold-gated)
+goldens/         21 personas · hostile corpus · pinned expected outputs
+ui/              React explorer (Material 3) — grounded provenance; the UI
+                 renders the Evidence model, it adds nothing the CLI doesn't
+tests/           211 tests    tools/  fixture builders, scale generator
 ```

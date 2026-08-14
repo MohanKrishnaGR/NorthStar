@@ -9,3 +9,14 @@ out/_p.json
 out/_r.json
 out/*.whl
 out/engine_wheel.json
+
+# Working docs — the submission repo carries only README.md
+/DESIGN.md
+/PLAN.md
+/GOLDEN_DATASET.md
+/UI_DESIGN.md
+/OPS_PLAN.md
+/PRODUCTION_READINESS.md
+/RESUME_PLAN.md
+/DEFECTS_PLAN.md
+goldens/TRUTH.md
