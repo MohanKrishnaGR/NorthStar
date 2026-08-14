@@ -1,9 +1,19 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
+import { FAVICON_SRC } from "./logo.js";
 import "./m3.css";
 
+function setFavicon() {
+  const link = document.createElement("link");
+  link.rel = "icon";
+  link.type = "image/png";
+  link.href = FAVICON_SRC;
+  document.head.appendChild(link);
+}
+
 async function boot() {
+  setFavicon();
   let data = window.__RUN_DATA__;
   if (typeof data === "string") {
     // Dev mode: the placeholder was not replaced — try a sample bundle.

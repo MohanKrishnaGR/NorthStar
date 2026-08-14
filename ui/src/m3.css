@@ -102,17 +102,28 @@ body {
 
 /* ---- app bar ---- */
 .appbar {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   padding: 10px 20px;
   background: var(--md-surface-container);
   border-bottom: 1px solid var(--md-outline-variant);
   position: sticky; top: 0; z-index: 20;
 }
-.appbar .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.appbar .brand {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  flex: 0 0 auto; white-space: nowrap;  /* name+subtitle never wrap mid-word */
+}
 .appbar .brand .logo {
-  width: 32px; height: 32px; border-radius: var(--shape-sm);
-  background: var(--md-primary); color: var(--md-on-primary);
-  display: grid; place-items: center; font-weight: 700;
+  height: 32px; width: auto; display: block;
+  object-fit: contain; user-select: none; -webkit-user-drag: none;
+}
+/* The mark's outer ring is near-black navy — on a dark bar it would vanish,
+   so it sits on a light plate there rather than being filtered into mush. */
+@media (prefers-color-scheme: dark) {
+  .appbar .brand .logo {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: var(--shape-sm);
+    padding: 3px 5px; box-sizing: content-box;
+  }
 }
 .appbar .spacer { flex: 1; }
 

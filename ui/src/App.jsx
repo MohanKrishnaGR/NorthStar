@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CandidateView from "./CandidateView.jsx";
 import Workspace from "./Workspace.jsx";
+import { LOGO_SRC } from "./logo.js";
 import { clusterSourceIds, pct, pressable } from "./lib.js";
 
 export default function App({ initialBundle }) {
@@ -31,11 +32,11 @@ export default function App({ initialBundle }) {
       <header className="appbar">
         <div className="brand" {...pressable(() => (bundle ? goBatch() : null))}
              title="All candidates">
-          <div className="logo">Cx</div>
+          <img className="logo" src={LOGO_SRC} alt="North Star" />
           <div>
-            <div className="title-medium">Candidate Explorer</div>
+            <div className="title-medium">North Star</div>
             <div className="body-small">
-              every value traceable · every score auditable
+              Multi-Source Candidate Data Transformer
             </div>
           </div>
         </div>
