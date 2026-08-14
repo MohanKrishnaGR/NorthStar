@@ -12,7 +12,7 @@ RUN npm run build
 FROM python:3.12-slim
 LABEL org.opencontainers.image.title="candidate-transformer" \
       org.opencontainers.image.description="Multi-source candidate data transformer: deterministic merge with provenance, confidence, and a glass-box explorer" \
-      org.opencontainers.image.source="https://github.com/mohankrishnagr/candidate-transformer"
+      org.opencontainers.image.source="https://github.com/MohanKrishnaGR/NorthStar"
 
 WORKDIR /app
 COPY pyproject.toml README.md ./

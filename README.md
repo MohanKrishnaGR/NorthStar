@@ -5,6 +5,11 @@ notes, resumes) into one canonical, deduplicated profile per candidate — with
 per-field provenance, confidence scores, and a runtime config that reshapes
 the output without code changes.
 
+**Live demo (GitHub Pages):** https://mohankrishnagr.github.io/NorthStar/ —
+the glass-box explorer preloaded with the 21-persona golden corpus. Click any
+profile field to see its evidence highlighted in the source; expand any
+confidence score into the arithmetic behind it.
+
 Design rationale lives in [DESIGN.md](DESIGN.md) (16 ADRs); the build plan in
 [PLAN.md](PLAN.md). The one-line philosophy, from the problem statement:
 **wrong-but-confident is worse than honestly-empty** — every tie here breaks
@@ -115,10 +120,18 @@ probabilities: they order trust; they are not percentages.
 - **One candidate per unstructured file** — assumed and *guarded*: ≥2 distinct
   strong identifiers in one notes/resume file ⇒ its identity keys are
   withdrawn and the source flagged `multi_identity_source`.
-- **No live GitHub/LinkedIn fetching** — network breaks offline determinism;
+- **The pipeline never fetches URLs** — network breaks offline determinism;
   LinkedIn has no sanctioned API. Profile URLs found in any source are still
-  captured into `links.*`. The adapter registry leaves a slot for a
-  recorded-response API adapter.
+  captured into `links.*` (and serve as identity match keys). GitHub's public
+  API is exercised at the *recording boundary* instead:
+  `python tools/fetch_github.py <profile-url> --out samples` calls it once
+  and writes `github_<login>.json`, which the pipeline replays
+  deterministically forever.
+- **The sample inputs are self-authored.** No official sample files
+  accompanied this problem statement, so `samples/` (and the golden corpus)
+  were built to its field lists — deliberately nastier than clean demo data.
+  If official samples arrive, only the declarative mapping tables in the
+  adapters should need adjusting.
 - **No LLM extraction** — rule-based extractors keep runs deterministic and
   every value traceable to a named method; an LLM extractor would slot in as
   just another Evidence emitter with its own (lower) reliability weight.

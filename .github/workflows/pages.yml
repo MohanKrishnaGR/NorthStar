@@ -1,0 +1,45 @@
+# GitHub Pages: the glass-box explorer, preloaded with the golden corpus.
+# Pure static hosting — the emitted file is self-contained, so the Pages
+# build needs Python only (the UI template is committed; no Node here).
+# On Pages the app runs in viewer mode: no /api, so the workspace hides
+# itself and the batch/grounding/inspector views carry the demo.
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install .[resume]
+      - name: emit the explorer over the golden corpus
+        run: |
+          mkdir -p _site
+          python -m transformer run --input goldens/t1 \
+            --config configs/default.json \
+            --out /tmp/p.json --report /tmp/r.json \
+            --as-of 2026-08 --emit-ui _site/index.html
+      - uses: actions/configure-pages@v5
+        with: { enablement: true }
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4
