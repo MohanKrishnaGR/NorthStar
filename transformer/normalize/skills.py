@@ -12,7 +12,7 @@ from pathlib import Path
 
 from . import text
 
-_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "skill_aliases.json"
+_DATA = Path(__file__).resolve().parent.parent / "data" / "skill_aliases.json"
 
 # Keep +, #, . so c++, c#, node.js survive folding.
 _STRIP_RE = re.compile(r"[^a-z0-9+#.\s]")

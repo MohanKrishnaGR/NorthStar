@@ -35,7 +35,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-_SCORING_PATH = Path(__file__).resolve().parent.parent / "data" / "scoring.json"
+# Inside the package so the installed wheel is self-contained (the first CI
+# run caught exactly this: site-packages had the code but not the data).
+_SCORING_PATH = Path(__file__).resolve().parent / "data" / "scoring.json"
 
 with open(_SCORING_PATH, encoding="utf-8") as _f:
     _SCORING = json.load(_f)

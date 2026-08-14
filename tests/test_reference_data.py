@@ -17,7 +17,7 @@ from transformer.constants import (
     SOURCE_TRUST,
 )
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = Path(__file__).resolve().parent.parent / "transformer" / "data"
 
 
 def _checksums():

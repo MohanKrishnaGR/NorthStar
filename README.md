@@ -73,7 +73,8 @@ config / bad arguments / zero readable sources. A garbage source is a
   (default `warning` — a clean run is silent; anomalies like skipped
   sources, refused unions, and soft-key merges are exactly what appears).
   Outputs stay clock-free; telemetry may know what time it is.
-- **Versioned reference data**: trust tables live in `data/scoring.json`,
+- **Versioned reference data**: trust tables live in `transformer/data/scoring.json`
+  (inside the package, so the installed wheel is self-contained),
   alias dictionaries carry version headers, and every run report records
   `engine_version` + `scoring_version` + dictionary versions — the complete
   reproducibility pin. Changing reference data is a ritual:

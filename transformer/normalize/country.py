@@ -10,7 +10,7 @@ from pathlib import Path
 
 from . import text
 
-_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "country_aliases.json"
+_DATA = Path(__file__).resolve().parent.parent / "data" / "country_aliases.json"
 
 
 @lru_cache(maxsize=1)

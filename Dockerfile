@@ -19,7 +19,6 @@ COPY pyproject.toml README.md ./
 COPY transformer/ transformer/
 RUN pip install --no-cache-dir .[resume]
 
-COPY data/ data/
 COPY configs/ configs/
 COPY samples/ samples/
 COPY goldens/ goldens/

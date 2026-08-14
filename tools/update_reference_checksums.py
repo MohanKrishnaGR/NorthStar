@@ -11,7 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = Path(__file__).resolve().parent.parent / "transformer" / "data"
 TRACKED = ("scoring.json", "skill_aliases.json", "country_aliases.json")
 
 
