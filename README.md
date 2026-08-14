@@ -1,6 +1,6 @@
 <div align="center">
     <img src="ui/assets/logo.png" alt="North Star" width="340">
-    <h1>North Star — Multi-Source Candidate Data Transformer</h1>
+    <h1>North Star: Multi-Source Candidate Data Transformer</h1>
 </div>
 
 [![ci](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/ci.yml/badge.svg)](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/ci.yml)
@@ -11,7 +11,7 @@
 A project by <em>Mohan Krishna G R</em> —
 [mohankrishnagr.github.io](https://mohankrishnagr.github.io)
 
-Messy candidate data in — recruiter CSV, ATS JSON, free-text notes, resumes
+Messy candidate data in: recruiter CSV, ATS JSON, free-text notes, resumes
 (docx/pdf), recorded GitHub/LinkedIn payloads. One canonical, deduplicated
 profile per candidate out, with per-field provenance, auditable confidence,
 and a runtime config that reshapes the output with **no code changes**.
@@ -21,10 +21,10 @@ honestly-empty.** Every tie breaks toward `null` plus an explanation in the
 run report — never a guess.
 
 - **Live demo:** https://mohankrishnagr.github.io/NorthStar/
-- **Demo video (~2 min):** _[add link before submitting]_
+<!-- - **Demo video (~2 min):** _[add link before submitting]_
 - **Design one-pager:** submitted separately (PDF) — the full decision
   record behind this build covers every material choice with options and
-  trade-offs
+  trade-offs -->
 
 ## Contents
 - [Run it](#run-it) — [live site](#1--zero-install--the-live-site) ·
@@ -33,9 +33,6 @@ run report — never a guess.
   [tests](#tests)
 - [How it works](#how-it-works)
 - [CLI flags](#cli-flags)
-- [What the sample inputs prove](#what-the-sample-inputs-prove)
-- [Assumptions & descopes](#assumptions--descopes-stated-not-silent)
-- [Repo map](#repo-map)
 
 ## Run it
 
@@ -147,57 +144,4 @@ Exit codes: `0` profiles emitted (report may carry warnings) · `2` unusable
 config / zero readable sources. A garbage source is a *reported condition*,
 never a crash.
 
-## What the sample inputs prove
 
-| File | Nastiness |
-|---|---|
-| `recruiters.csv` | duplicate rows, plus-tagged email, `"Fern, Alice"` name order, national phone, column-shifted row (contained as `partial`) |
-| `ats.json` | foreign field names, conflicts vs CSV, in-band recency, unknown skill kept + flagged |
-| `notes_alice.txt` | free-text extraction: labeled fields, skills, "Title at Company since Jun 2021", year-only ranges |
-| `notes_two_people.txt` | the multi-identity guard in action |
-| `garbage.json` / `empty.csv` | truncated JSON → `skipped` + reason; header-only CSV → `ok`, zero records |
-
-The golden corpus (`goldens/`) scales this up: 21 mechanism-named personas
-across all six source types, a hostile corpus, pinned expected outputs, and
-a seeded scale generator with planted ground truth.
-
-## Assumptions & descopes (stated, not silent)
-
-- **Self-authored samples** — no official inputs accompanied the problem;
-  `samples/` and `goldens/` were built to its field lists, deliberately
-  nastier than demo data. If real samples arrive, only the declarative
-  adapter mapping tables should need to change.
-- **One candidate per unstructured file** — assumed *and guarded* (see the
-  multi-identity flag above).
-- **No live URL fetching** — network breaks offline determinism; recorded
-  payloads instead. Profile URLs are still captured and used as match keys.
-- **No NER / fuzzy name matching** — a missed value becomes `null`; a false
-  merge silently poisons downstream decisions and is the worse failure.
-- **`candidate_id` is content-derived** (hash of the cluster's smallest
-  strong identifier); a later, stronger identifier changes it — acceptable
-  for a batch tool.
-- **Empty ATS `to` means unknown**, not "present": `is_current` is only ever
-  asserted by a source, never inferred from absence.
-
-## Repo map
-
-```
-transformer/
-  models.py      Evidence atom + canonical type map (the spine)
-  constants.py   trust/reliability tables, with rationale
-  normalize/     text, emails, phones (2-pass E.164), dates {year,month?},
-                 country, skills alias dict, URLs
-  adapters/      csv · ats json · notes txt · resume docx/pdf ·
-                 recorded github/linkedin payloads
-  identity.py    blocking + union-find + guards
-  merge.py       survivorship, interval-union years, phone pass 2
-  confidence.py  noisy-OR scoring
-  projection/    4-construct path DSL, config compile, projector, validator
-  pipeline.py    orchestration · cli.py · server.py (stdlib workspace)
-configs/         default.json (identity projection) + recruiter_view.json
-samples/  out/   sample inputs + committed outputs (gold-gated)
-goldens/         21 personas · hostile corpus · pinned expected outputs
-ui/              React explorer (Material 3) — grounded provenance; the UI
-                 renders the Evidence model, it adds nothing the CLI doesn't
-tests/           211 tests    tools/  fixture builders, scale generator
-```
