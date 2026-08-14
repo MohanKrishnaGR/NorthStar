@@ -228,6 +228,119 @@
     "years_experience": null
   },
   {
+    "candidate_id": "170efa61f6054b90",
+    "confidence": {
+      "fields": {
+        "education": 0.63,
+        "emails": 0.63,
+        "experience": 0.63,
+        "full_name": 0.63,
+        "phones": 0.63,
+        "skills": 0.595,
+        "years_experience": 0.6
+      },
+      "overall": 0.512941
+    },
+    "education": [
+      {
+        "degree": "B.Sc",
+        "end_year": 2016,
+        "field": "Computer Science",
+        "institution": "University of Lagos"
+      }
+    ],
+    "emails": [
+      "wale.adeyemi@example.com"
+    ],
+    "experience": [
+      {
+        "company": "Harmattan Cloud",
+        "end": null,
+        "is_current": true,
+        "start": "2022-03",
+        "summary": null,
+        "title": "Platform Engineer"
+      }
+    ],
+    "full_name": "Wale Adeyemi",
+    "headline": null,
+    "links": {
+      "github": null,
+      "linkedin": null,
+      "other": [],
+      "portfolio": null
+    },
+    "location": null,
+    "phones": [
+      "+447911123456"
+    ],
+    "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "regex:education_line_v1",
+        "source": "resume_p21.pdf"
+      },
+      {
+        "alternatives": [],
+        "field": "emails[0]",
+        "method": "regex:email_v1",
+        "source": "resume_p21.pdf"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[0]",
+        "method": "regex:experience_block_v1",
+        "source": "resume_p21.pdf"
+      },
+      {
+        "alternatives": [],
+        "field": "full_name",
+        "method": "regex:resume_title_name_v1",
+        "source": "resume_p21.pdf"
+      },
+      {
+        "alternatives": [],
+        "field": "phones[0]",
+        "method": "regex:phone_v1",
+        "source": "resume_p21.pdf"
+      },
+      {
+        "alternatives": [],
+        "field": "years_experience",
+        "method": "derived:experience_intervals_v1",
+        "source": "derived:experience"
+      }
+    ],
+    "skills": [
+      {
+        "canonical": true,
+        "confidence": 0.595,
+        "name": "kafka",
+        "sources": [
+          "resume_p21.pdf"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.595,
+        "name": "python",
+        "sources": [
+          "resume_p21.pdf"
+        ]
+      },
+      {
+        "canonical": true,
+        "confidence": 0.595,
+        "name": "terraform",
+        "sources": [
+          "resume_p21.pdf"
+        ]
+      }
+    ],
+    "years_experience": 4.5
+  },
+  {
     "candidate_id": "201d57ee7b1407fd",
     "confidence": {
       "fields": {
@@ -858,6 +971,14 @@
       },
       {
         "canonical": true,
+        "confidence": 0.595,
+        "name": "terraform",
+        "sources": [
+          "resume_p01.docx"
+        ]
+      },
+      {
+        "canonical": true,
         "confidence": 0.45,
         "name": "go",
         "sources": [
@@ -1381,14 +1502,22 @@
     "candidate_id": "a69cdfc9b24db73a",
     "confidence": {
       "fields": {
+        "education": 0.63,
         "emails": 0.7965,
         "experience": 0.63,
         "full_name": 0.45,
         "years_experience": 0.6
       },
-      "overall": 0.329382
+      "overall": 0.366441
     },
-    "education": [],
+    "education": [
+      {
+        "degree": "B.Tech",
+        "end_year": 2018,
+        "field": "Data Engineering",
+        "institution": "IIT Bombay"
+      }
+    ],
     "emails": [
       "ishaan.verma@example.com"
     ],
@@ -1421,6 +1550,12 @@
     "location": null,
     "phones": [],
     "provenance": [
+      {
+        "alternatives": [],
+        "field": "education[0]",
+        "method": "regex:education_line_v1",
+        "source": "resume_p07.docx"
+      },
       {
         "alternatives": [],
         "field": "emails[0]",

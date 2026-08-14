@@ -82,8 +82,8 @@ def test_gold_bytes_recruiter_view(rv_run):
 
 
 def test_aggregate_counts_ids_refusals(default_run, rv_run):
-    assert len(default_run.profiles) == 27
-    assert len(rv_run.profiles) == 23
+    assert len(default_run.profiles) == 28
+    assert len(rv_run.profiles) == 24
     ids = [p["candidate_id"] for p in default_run.profiles]
     assert len(ids) == len(set(ids))
     kinds = sorted(r["key"].split(":")[0] for r in default_run.report["merges"]["refusals"])
@@ -158,6 +158,14 @@ def test_p06_promoted_link_key_join_no_double_count(default_run):
     assert hana["years_experience"] == 6.7
     assert len(hana["experience"]) == 3  # manager, senior, advisor
     assert hana["education"][0]["institution"] == "Kyoto University"
+
+
+def test_p07_education_extracted_from_resume(default_run):
+    ishaan = prof(default_run, "Ishaan Verma")
+    assert ishaan["education"] == [{
+        "institution": "IIT Bombay", "degree": "B.Tech",
+        "field": "Data Engineering", "end_year": 2018,
+    }]
 
 
 def test_p07_year_only_precision(default_run):
@@ -271,3 +279,40 @@ def test_p20_cp1252_accents_survive(default_run):
     renee = prof(default_run, "Renée Fontaine")
     assert renee["phones"] == ["+33612345678"]
     assert renee["experience"][0]["company"] == "Café Lumière"
+
+
+# P21 "The Portable": one fixture, three mechanisms — three test functions,
+# so a failure names what broke (RESUME_PLAN R1 assert-separation).
+
+
+def test_p21_pdf_acquisition(default_run):
+    src = [s for s in default_run.report["sources"]
+           if s["source_id"] == "resume_p21.pdf"][0]
+    assert src["status"] == "ok" and src["evidence_emitted"] > 0
+    wale = prof(default_run, "Wale Adeyemi")  # pipe line: name = first segment
+    assert wale["emails"] == ["wale.adeyemi@example.com"]
+    assert wale["phones"] == ["+447911123456"]
+    assert {s["name"] for s in wale["skills"]} == {"python", "terraform", "kafka"}
+
+
+def test_p21_block_experience_from_pdf(default_run):
+    wale = prof(default_run, "Wale Adeyemi")
+    assert wale["experience"] == [{
+        "company": "Harmattan Cloud", "title": "Platform Engineer",
+        "start": "2022-03", "end": None, "is_current": True, "summary": None,
+    }]
+    assert wale["years_experience"] == 4.5  # 2022-03 → as-of 2026-08
+
+
+def test_p21_education_from_pdf(default_run):
+    wale = prof(default_run, "Wale Adeyemi")
+    assert wale["education"] == [{
+        "institution": "University of Lagos", "degree": "B.Sc",
+        "field": "Computer Science", "end_year": 2016,
+    }]
+
+
+def test_p01_table_skill_from_docx(default_run):
+    avery = prof(default_run, "Avery Stone")
+    terra = skill(avery, "terraform")  # lives only in the resume's table
+    assert terra["sources"] == ["resume_p01.docx"]

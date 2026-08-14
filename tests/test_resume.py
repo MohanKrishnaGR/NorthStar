@@ -53,3 +53,57 @@ def test_garbage_docx_is_contained(tmp_path):
     bad.write_bytes(b"this is not a zip archive")
     res = run_adapter(resume, bad, CTX)
     assert res.status == "skipped" and res.errors
+
+
+def test_docx_table_skills_are_read(tmp_path):
+    import docx as docx_mod
+
+    doc = docx_mod.Document()
+    doc.add_paragraph("Skye Grid")
+    doc.add_paragraph("skye.grid@example.com")
+    t = doc.add_table(rows=1, cols=2)
+    t.rows[0].cells[0].text = "Terraform"
+    t.rows[0].cells[1].text = "Kubernetes"
+    path = tmp_path / "table.docx"
+    doc.save(str(path))
+    res = run_adapter(resume, path, CTX)
+    names = {e.value["name"] for e in res.records[0].evidence
+             if e.field_path == "skills"}
+    assert {"terraform", "kubernetes"} <= names
+
+
+def test_contact_line_name_splits_on_pipe(tmp_path):
+    import docx as docx_mod
+
+    doc = docx_mod.Document()
+    doc.add_paragraph("Zed Pipe | Staff Engineer")
+    doc.add_paragraph("zed.pipe@example.com")
+    path = tmp_path / "pipe.docx"
+    doc.save(str(path))
+    res = run_adapter(resume, path, CTX)
+    names = [e for e in res.records[0].evidence if e.field_path == "full_name"]
+    assert names and names[0].value == "Zed Pipe"
+
+
+def test_pdf_hygiene_headers_and_hyphens(tmp_path):
+    pytest.importorskip("pdfplumber")
+    import sys
+
+    sys.path.insert(0, str(ROOT / "tools"))
+    from build_t1_binary_fixtures import minimal_pdf
+
+    path = tmp_path / "two_page.pdf"
+    path.write_bytes(minimal_pdf([
+        ["CONFIDENTIAL - Skye Grid",
+         "skye.grid@example.com",
+         "Led the datacenter migra-",
+         "tion program end to end."],
+        ["CONFIDENTIAL - Skye Grid",
+         "Second page content."],
+    ]))
+    from transformer.adapters.resume import _pdf_text
+
+    text_all = _pdf_text(path)
+    assert text_all.count("CONFIDENTIAL") == 1  # repeated header kept once
+    assert "migration" in text_all              # hyphen-split word healed
+    assert "migra-" not in text_all

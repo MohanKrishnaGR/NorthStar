@@ -113,6 +113,51 @@ def test_ats_skills_as_string_and_numeric_phone(tmp_path):
     assert not _fields(rec, "experience")  # "n/a" designation filtered
 
 
+def test_education_grammar_positive_and_negative(tmp_path):
+    f = tmp_path / "edu.txt"
+    f.write_text(
+        "B.Tech in Computer Science, IIT Bombay, 2018\n"
+        "M.S. Computer Science — Stanford University (2020)\n"
+        "MBA, IIM Ahmedabad 2015\n"
+        "Skills: MS Office, Excel\n"          # degree token, no institution
+        "MS Office 2016 certified\n"           # year but still no institution
+        "She will be joining Stanford University this fall\n",  # 'be' needs its dot
+        encoding="utf-8",
+    )
+    res = run_adapter(notes_txt, f, CTX)
+    edus = [e.value for e in res.records[0].evidence if e.field_path == "education"]
+    assert len(edus) == 3  # the three real degrees, none of the bait
+    by_inst = {e["institution"]: e for e in edus}
+    assert by_inst["IIT Bombay"]["field"] == "Computer Science"
+    assert by_inst["Stanford University"]["end_year"] == 2020
+    assert by_inst["IIM Ahmedabad"]["degree"] == "MBA"
+
+
+def test_block_experience_grammar(tmp_path):
+    f = tmp_path / "blocks.txt"
+    f.write_text(
+        "Pixelforge — Frontend Lead\n"
+        "Jan 2023 - Present\n"
+        "\n"
+        "Senior Analyst | Helios Retail\n"
+        "2019 - 2021\n"
+        "\n"
+        "Joined in Jan 2020 after the merger\n"          # header has a date: no
+        "We shipped to Mar 2021 deadlines and beyond\n",  # prose, not a pure range
+        encoding="utf-8",
+    )
+    res = run_adapter(notes_txt, f, CTX)
+    exps = [e.value for e in res.records[0].evidence
+            if e.field_path == "experience"]
+    assert len(exps) == 2
+    pixel = [x for x in exps if x["company"] == "Pixelforge"][0]
+    assert pixel["title"] == "Frontend Lead" and pixel["is_current"]
+    assert pixel["start"] == (2023, 1)
+    helios = [x for x in exps if x["company"] == "Helios Retail"][0]
+    assert helios["title"] == "Senior Analyst"  # company found via suffix hint
+    assert helios["start"] == (2019, None) and helios["end"] == (2021, None)
+
+
 def test_garbage_json_is_contained():
     res = run_adapter(ats_json, SAMPLES / "garbage.json", CTX)
     assert res.status == "skipped" and res.errors and not res.records

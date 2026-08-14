@@ -105,6 +105,13 @@
         ]
       },
       {
+        "cluster_id": "resume_p21.pdf#file",
+        "match_keys_used": [],
+        "record_ids": [
+          "resume_p21.pdf#file"
+        ]
+      },
+      {
         "cluster_id": "t1_ats.json#idx=10",
         "match_keys_used": [],
         "record_ids": [
@@ -410,7 +417,7 @@
     },
     {
       "errors": [],
-      "evidence_emitted": 7,
+      "evidence_emitted": 8,
       "flags": [],
       "records_read": 1,
       "source_id": "resume_p01.docx",
@@ -428,7 +435,7 @@
     },
     {
       "errors": [],
-      "evidence_emitted": 3,
+      "evidence_emitted": 4,
       "flags": [],
       "records_read": 1,
       "source_id": "resume_p07.docx",
@@ -441,6 +448,15 @@
       "flags": [],
       "records_read": 1,
       "source_id": "resume_p18.docx",
+      "source_type": "resume",
+      "status": "ok"
+    },
+    {
+      "errors": [],
+      "evidence_emitted": 8,
+      "flags": [],
+      "records_read": 1,
+      "source_id": "resume_p21.pdf",
       "source_type": "resume",
       "status": "ok"
     },

@@ -37,6 +37,25 @@
   {
     "confidence": {
       "fields": {
+        "full_name": 0.63,
+        "phone": 0.63,
+        "primary_email": 0.63,
+        "skills": 0.595
+      },
+      "overall": 0.512941
+    },
+    "full_name": "Wale Adeyemi",
+    "phone": "+447911123456",
+    "primary_email": "wale.adeyemi@example.com",
+    "skills": [
+      "kafka",
+      "python",
+      "terraform"
+    ]
+  },
+  {
+    "confidence": {
+      "fields": {
         "full_name": 0.85,
         "primary_email": 0.85
       },
@@ -131,6 +150,7 @@
       "python",
       "airflow",
       "sql",
+      "terraform",
       "go"
     ]
   },
@@ -238,7 +258,7 @@
         "full_name": 0.45,
         "primary_email": 0.7965
       },
-      "overall": 0.329382
+      "overall": 0.366441
     },
     "full_name": "Ishaan Verma",
     "phone": null,

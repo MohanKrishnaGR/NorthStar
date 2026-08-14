@@ -6,9 +6,15 @@ after it, so a failure names the broken mechanism. Pinned bytes live in
 `goldens/expected/` (regenerate with the two commands in that test's header
 and review the diff by eye before committing).
 
-Run pin: `--as-of 2026-08`. Expected: **27 profiles** (default config),
-**23** under `recruiter_view` (4 excluded: Lena Novak and Priya Patel have no
+Run pin: `--as-of 2026-08`. Expected: **28 profiles** (default config),
+**24** under `recruiter_view` (4 excluded: Lena Novak and Priya Patel have no
 email, the gossip profile has no name, Noor Zaidi has neither).
+
+Fixture touches from RESUME_PLAN (2026-08-14): P01's resume gained a skills
+*table* (Terraform | Airflow — DOCX tables were previously invisible), P07's
+resume gained an education line, P18's resume first line became pipe-separated
+("Tomas Eder | Frontend Lead") — each existing persona's mechanism unchanged,
+one new assert each.
 
 | Persona | Mechanism | Expectation (and why) |
 |---|---|---|
@@ -34,6 +40,7 @@ email, the gossip profile has no name, Noor Zaidi has neither).
 | P18 Tomas Eder | URL conflicts | Same-slug-with-tracking-params corroborates (match key ignores query); the alt-slug from notes loses and is preserved as an alternative; github + portfolio links captured. |
 | P19 Uma Reddy | degenerate dates | Future-dated current job (2030→) and inverted range (2022-05→2021-01) are dropped from the years sum with named reasons; all 3 entries still emitted; `years=0.1` (the one sane month). |
 | P20 Renée Fontaine | encoding fallback | cp1252 bytes decode via the deterministic fallback; name and "Café Lumière" keep their accents; `+33` phone normalizes at pass 1. |
+| P21 Wale Adeyemi | the real-PDF path | A hand-rolled single-column PDF (tools `minimal_pdf`) through pdfplumber: pipe-split contact-line name, block-form experience ("Harmattan Cloud -- Platform Engineer" over a pure range line → 2022-03→present, `years=4.5`), education grammar ("B.Sc in Computer Science, University of Lagos, 2016"). Three mechanisms, three separate test functions. |
 
 **Aggregate asserts:** all candidate_ids unique; exactly 4 refusals (2 email,
 2 phone kinds); `unparseable` reasons exactly {no_region_context,
