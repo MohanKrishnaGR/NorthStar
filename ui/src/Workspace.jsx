@@ -86,6 +86,12 @@ function serverBackend(serve) {
     configs: serve.configs,
     canonicalTypes: serve.canonical_types,
     samples: serve.samples,
+    async fetchSample(name) {
+      const resp = await fetch(`/api/sample?name=${encodeURIComponent(name)}`);
+      const body = await resp.json();
+      if (!resp.ok) throw body.errors ?? ["sample fetch failed"];
+      return body.files;
+    },
     async run(payload) {
       const resp = await fetch("/api/run", {
         method: "POST",
@@ -108,24 +114,16 @@ function browserBackend(engine, corpora) {
     configs: STATIC_CONFIGS,
     canonicalTypes: engine.canonical_types,
     samples: Object.keys(corpora),
-    async run(payload) {
-      if (payload.sample) {
-        // The wasm engine only takes files, so fetch the published corpus
-        // and stage it exactly as if the user had dropped the files in.
-        const files = await Promise.all(corpora[payload.sample].map(
-          async (name) => {
-            const resp = await fetch(
-              new URL(`./${payload.sample}/${name}`, window.location));
-            if (!resp.ok) {
-              throw [`${payload.sample}/${name}: fetch failed (${resp.status})`];
-            }
-            return { name,
-                     b64: bytesToB64(new Uint8Array(await resp.arrayBuffer())) };
-          }));
-        return engine.run({ ...payload, sample: undefined, files });
-      }
-      return engine.run(payload);
+    // Fetch the published corpus files so the UI can stage them like drops.
+    fetchSample(name) {
+      return Promise.all(corpora[name].map(async (fname) => {
+        const resp = await fetch(new URL(`./${name}/${fname}`, window.location));
+        if (!resp.ok) throw [`${name}/${fname}: fetch failed (${resp.status})`];
+        const bytes = new Uint8Array(await resp.arrayBuffer());
+        return { name: fname, size: bytes.length, b64: bytesToB64(bytes) };
+      }));
     },
+    run: (payload) => engine.run(payload),
   };
 }
 
@@ -138,6 +136,7 @@ function Workbench({ backend, onBundle }) {
   const [asOf, setAsOf] = useState("");
   const [region, setRegion] = useState("");
   const [running, setRunning] = useState(false);
+  const [staging, setStaging] = useState(false);
   const [errors, setErrors] = useState([]);
   const [previewName, setPreviewName] = useState(null); // staged file open below
   const inputRef = useRef(null);
@@ -154,6 +153,26 @@ function Workbench({ backend, onBundle }) {
       };
       reader.readAsDataURL(f);
     });
+  };
+
+  // Stage a corpus; running stays the user's explicit ▶, with their config.
+  const stageSample = async (name) => {
+    setErrors([]);
+    setStaging(true);
+    try {
+      const fetched = await backend.fetchSample(name);
+      setFiles((cur) => {
+        let next = [...cur];
+        fetched.forEach((f) => {
+          next = [...next.filter((x) => x.name !== f.name), f];
+        });
+        return next;
+      });
+    } catch (e) {
+      setErrors(Array.isArray(e) ? e : [String(e)]);
+    } finally {
+      setStaging(false);
+    }
   };
 
   const stageTemplates = (rows) => {
@@ -198,7 +217,7 @@ function Workbench({ backend, onBundle }) {
     });
   };
 
-  const run = async (sample = null) => {
+  const run = async () => {
     setErrors([]);
     let config;
     try {
@@ -207,16 +226,15 @@ function Workbench({ backend, onBundle }) {
       setErrors([`config editor: ${e.message}`]);
       return;
     }
-    if (!sample && !files.length) {
+    if (!files.length) {
       setErrors(["stage at least one source file" +
-                 (backend.samples.length ? ", or load a sample corpus" : "")]);
+                 (backend.samples.length ? ", or stage a sample corpus" : "")]);
       return;
     }
     setRunning(true);
     try {
       const bundle = await backend.run({
-        files: sample ? undefined : files.map(({ name, b64 }) => ({ name, b64 })),
-        sample: sample ?? undefined,
+        files: files.map(({ name, b64 }) => ({ name, b64 })),
         config,
         as_of: asOf || null,
         default_region: region || null,
@@ -284,14 +302,19 @@ function Workbench({ backend, onBundle }) {
           )}
           {backend.samples.length > 0 && (
             <div style={{ marginTop: 12 }}>
-              <span className="label">or load a sample corpus</span>
-              <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
+              <span className="label">or stage a sample corpus</span>
+              <div style={{ display: "flex", gap: 8, alignItems: "center",
+                            marginTop: 6 }}>
                 {backend.samples.map((s) => (
-                  <button key={s} className="btn tonal" disabled={running}
-                          onClick={() => run(s)}>
-                    ▶ {s}
+                  <button key={s} className="btn tonal" disabled={staging}
+                          onClick={() => stageSample(s)}>
+                    ⤓ {s}
                   </button>
                 ))}
+                <span className="body-small">
+                  {staging ? "fetching corpus…"
+                    : "files land above — review, then ▶ run pipeline"}
+                </span>
               </div>
             </div>
           )}
@@ -401,7 +424,7 @@ function Workbench({ backend, onBundle }) {
             </label>
             <span style={{ flex: 1 }} />
             <button className="btn filled" disabled={running}
-                    onClick={() => run(null)}>
+                    onClick={() => run()}>
               {running ? "running…" : "▶ run pipeline"}
             </button>
           </div>

@@ -46,6 +46,20 @@ def test_health_ships_configs_samples_types(base_url):
     assert "skills[].name" in h["canonical_types"]
 
 
+def test_sample_endpoint_stages_corpus_files(base_url):
+    s, body = call(base_url, "/api/sample?name=goldens%2Ft1")
+    assert s == 200
+    names = [f["name"] for f in body["files"]]
+    assert names == sorted(names)          # deterministic order
+    assert "t1_roster.csv" in names
+    roster = next(f for f in body["files"] if f["name"] == "t1_roster.csv")
+    assert roster["size"] > 0
+    text = base64.b64decode(roster["b64"]).decode("utf-8")
+    assert text.splitlines()[0].startswith("name,")
+    s, e = call(base_url, "/api/sample?name=nope")
+    assert s == 404 and "unknown sample" in e["errors"][0]
+
+
 def test_sample_run_returns_bundle(base_url):
     _, h = call(base_url, "/api/health")
     s, b = call(base_url, "/api/run",

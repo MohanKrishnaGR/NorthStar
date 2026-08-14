@@ -4,6 +4,8 @@
 
 GET  /             the explorer shell (no run data; workspace opens first)
 GET  /api/health   shipped configs, sample corpora, canonical type map
+GET  /api/sample?name=<corpus>   the corpus files as {name,size,b64} — the
+                    UI stages them; running stays a separate, explicit act
 POST /api/run      {files:[{name,b64}] | sample:<name>, config:{...},
                     as_of?, default_region?}  ->  UI bundle (or 400 + errors)
 
@@ -19,6 +21,7 @@ import re
 import tempfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs
 
 from .models import CANONICAL_TYPES
 from .normalize import dates
@@ -57,17 +60,29 @@ class Handler(BaseHTTPRequestHandler):
                    "application/json; charset=utf-8")
 
     def do_GET(self):
-        if self.path in ("/", "/index.html", "/explorer.html"):
+        path, _, query = self.path.partition("?")
+        if path in ("/", "/index.html", "/explorer.html"):
             html = TEMPLATE.read_text(encoding="utf-8").replace(
                 "\"__RUN_DATA_JSON__\"", "null")
             self._send(200, html.encode("utf-8"), "text/html; charset=utf-8")
-        elif self.path == "/api/health":
+        elif path == "/api/health":
             self._json(200, {
                 "ok": True,
                 "configs": _shipped_configs(),
                 "samples": sorted(SAMPLES),
                 "canonical_types": CANONICAL_TYPES,
             })
+        elif path == "/api/sample":
+            name = (parse_qs(query).get("name") or [""])[0]
+            base = SAMPLES.get(name)
+            if base is None:
+                self._json(404, {"errors": [f"unknown sample corpus {name!r}"]})
+                return
+            self._json(200, {"files": [
+                {"name": p.name, "size": p.stat().st_size,
+                 "b64": base64.b64encode(p.read_bytes()).decode("ascii")}
+                for p in sorted(base.iterdir()) if p.is_file()
+            ]})
         else:
             self._json(404, {"error": "not found"})
 
