@@ -32,11 +32,18 @@ def detect(path: Path) -> bool:
     return path.suffix.lower() in {".pdf", ".docx"}
 
 
-def extract(path: Path, res: SourceResult, ctx: dict) -> None:
+def extract_text(path: Path) -> str:
+    """The exact prose the pipeline scans for this file (docx or pdf).
+
+    Shared by extract() and the workspace's preview endpoint, so a preview
+    can never diverge from what the engine actually reads."""
     if path.suffix.lower() == ".docx":
-        body = _docx_text(path)
-    else:
-        body = _pdf_text(path)
+        return _docx_text(path)
+    return _pdf_text(path)
+
+
+def extract(path: Path, res: SourceResult, ctx: dict) -> None:
+    body = extract_text(path)
     if not body.strip():
         raise ValueError("no extractable text (scanned/image-only file?)")
 

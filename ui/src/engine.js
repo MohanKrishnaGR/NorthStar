@@ -25,6 +25,21 @@ def engine_info():
     })
 
 
+def extract_json(payload_json):
+    # Preview path: the resume adapter's own extractor, so what the user
+    # sees is exactly what the pipeline will scan.
+    try:
+        p = json.loads(payload_json)
+        from transformer.adapters.resume import extract_text
+        target = (Path(tempfile.mkdtemp(prefix="extract_"))
+                  / Path(str(p.get("name", ""))).name)
+        target.write_bytes(base64.b64decode(p.get("b64", "")))
+        return json.dumps({"ok": True, "text": extract_text(target)})
+    except Exception as e:
+        return json.dumps({"ok": False,
+                           "errors": [f"{type(e).__name__}: {e}"]})
+
+
 def run_json(payload_json):
     try:
         p = json.loads(payload_json)
@@ -108,6 +123,7 @@ async function boot(onStatus) {
   pyodide.runPython(GLUE);
   const info = JSON.parse(pyodide.runPython("engine_info()"));
   const runner = pyodide.globals.get("run_json");
+  const extractor = pyodide.globals.get("extract_json");
   const engine = {
     ...info,
     resumeSupport,
@@ -115,6 +131,15 @@ async function boot(onStatus) {
       const out = JSON.parse(runner(JSON.stringify(payload)));
       if (!out.ok) return Promise.reject(out.errors);
       return Promise.resolve(out.bundle);
+    },
+    extractText(payload) {
+      if (!resumeSupport) {
+        return Promise.reject(["docx/pdf extras unavailable in this "
+          + "browser — the run will skip these sources with a reason"]);
+      }
+      const out = JSON.parse(extractor(JSON.stringify(payload)));
+      if (!out.ok) return Promise.reject(out.errors);
+      return Promise.resolve(out.text);
     },
   };
   window.__browserEngine = engine; // console-testable hook

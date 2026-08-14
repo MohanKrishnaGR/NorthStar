@@ -60,6 +60,23 @@ def test_sample_endpoint_stages_corpus_files(base_url):
     assert s == 404 and "unknown sample" in e["errors"][0]
 
 
+def test_extract_endpoint_matches_adapter_text(base_url):
+    pytest.importorskip("pdfplumber")
+    from pathlib import Path
+
+    from transformer.adapters.resume import extract_text
+    pdf = Path(__file__).resolve().parent.parent / "goldens/t1/resume_p21.pdf"
+    s, body = call(base_url, "/api/extract", {
+        "name": pdf.name,
+        "b64": base64.b64encode(pdf.read_bytes()).decode(),
+    })
+    assert s == 200
+    assert body["text"] == extract_text(pdf)   # preview == what the run scans
+    s, e = call(base_url, "/api/extract",
+                {"name": "notes.txt", "b64": base64.b64encode(b"x").decode()})
+    assert s == 400 and "only docx/pdf" in e["errors"][0]
+
+
 def test_sample_run_returns_bundle(base_url):
     _, h = call(base_url, "/api/health")
     s, b = call(base_url, "/api/run",

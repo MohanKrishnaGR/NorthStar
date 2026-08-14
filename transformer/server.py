@@ -8,6 +8,8 @@ GET  /api/sample?name=<corpus>   the corpus files as {name,size,b64} — the
                     UI stages them; running stays a separate, explicit act
 POST /api/run      {files:[{name,b64}] | sample:<name>, config:{...},
                     as_of?, default_region?}  ->  UI bundle (or 400 + errors)
+POST /api/extract  {name, b64} (docx/pdf) -> {text} via the resume
+                    adapter's own extractor, so previews match the run
 
 Binds 127.0.0.1 only — a demo/dev surface, not a deployment. Uploads land in
 a fresh temp directory per run; nothing persists. The engine invoked here is
@@ -23,6 +25,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs
 
+from .adapters import resume
 from .models import CANONICAL_TYPES
 from .normalize import dates
 from .pipeline import run_pipeline
@@ -87,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path != "/api/run":
+        if self.path not in ("/api/run", "/api/extract"):
             self._json(404, {"error": "not found"})
             return
         try:
@@ -97,7 +100,8 @@ class Handler(BaseHTTPRequestHandler):
             self._json(400, {"errors": ["request body is not valid JSON"]})
             return
         try:
-            self._json(200, _run(payload))
+            handler = _extract if self.path == "/api/extract" else _run
+            self._json(200, handler(payload))
         except _BadRequest as e:
             self._json(400, {"errors": e.errors})
         except Exception as e:  # engine bugs surface honestly, not as hangs
@@ -107,6 +111,36 @@ class Handler(BaseHTTPRequestHandler):
 class _BadRequest(Exception):
     def __init__(self, errors):
         self.errors = errors
+
+
+def _decode_upload(payload: dict) -> tuple[str, bytes]:
+    name = Path(str(payload.get("name", ""))).name
+    if not _NAME_RE.match(name):
+        raise _BadRequest([f"unacceptable file name {payload.get('name')!r}"])
+    try:
+        blob = base64.b64decode(payload.get("b64", ""), validate=True)
+    except Exception:
+        raise _BadRequest([f"{name}: broken base64 payload"])
+    if len(blob) > _MAX_FILE:
+        raise _BadRequest([f"{name}: over the {_MAX_FILE // 2**20}MB cap"])
+    return name, blob
+
+
+def _extract(payload: dict) -> dict:
+    """Text of one staged docx/pdf, via the resume adapter's own extractor."""
+    name, blob = _decode_upload(payload)
+    if Path(name).suffix.lower() not in {".docx", ".pdf"}:
+        raise _BadRequest([f"{name}: only docx/pdf need engine extraction"])
+    target = Path(tempfile.mkdtemp(prefix="transformer_extract_")) / name
+    target.write_bytes(blob)
+    try:
+        text = resume.extract_text(target)
+    except ImportError:
+        raise _BadRequest(
+            ["resume extras not installed — pip install .[resume]"])
+    except Exception as e:
+        raise _BadRequest([f"{name}: {type(e).__name__}: {e}"])
+    return {"text": text}
 
 
 def _run(payload: dict) -> dict:
@@ -138,15 +172,7 @@ def _run(payload: dict) -> dict:
         workdir = Path(tempfile.mkdtemp(prefix="transformer_run_"))
         inputs = []
         for f in files:
-            name = Path(str(f.get("name", ""))).name
-            if not _NAME_RE.match(name):
-                raise _BadRequest([f"unacceptable file name {f.get('name')!r}"])
-            try:
-                blob = base64.b64decode(f.get("b64", ""), validate=True)
-            except Exception:
-                raise _BadRequest([f"{name}: broken base64 payload"])
-            if len(blob) > _MAX_FILE:
-                raise _BadRequest([f"{name}: over the {_MAX_FILE // 2**20}MB cap"])
+            name, blob = _decode_upload(f)
             target = workdir / name
             target.write_bytes(blob)
             inputs.append(target)

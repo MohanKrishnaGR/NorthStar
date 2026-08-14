@@ -92,6 +92,16 @@ function serverBackend(serve) {
       if (!resp.ok) throw body.errors ?? ["sample fetch failed"];
       return body.files;
     },
+    async extractText(payload) {
+      const resp = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const body = await resp.json();
+      if (!resp.ok) throw body.errors ?? ["extraction failed"];
+      return body.text;
+    },
     async run(payload) {
       const resp = await fetch("/api/run", {
         method: "POST",
@@ -123,6 +133,7 @@ function browserBackend(engine, corpora) {
         return { name: fname, size: bytes.length, b64: bytesToB64(bytes) };
       }));
     },
+    extractText: (payload) => engine.extractText(payload),
     run: (payload) => engine.run(payload),
   };
 }
@@ -295,7 +306,8 @@ function Workbench({ backend, onBundle }) {
                               setPreviewName((cur) => (cur === f.name ? null : cur));
                             }}>remove</button>
                   </div>
-                  {previewName === f.name && <FilePreview file={f} />}
+                  {previewName === f.name &&
+                    <FilePreview file={f} backend={backend} />}
                 </React.Fragment>
               ))}
             </div>
@@ -448,8 +460,30 @@ function safeParse(s) {
 const PREVIEW_TEXT_CAP = 20000; // chars shown for text formats
 const PREVIEW_ROW_CAP = 30;     // data rows shown for CSV
 
-function FilePreview({ file }) {
-  const view = useMemo(() => buildPreview(file), [file]);
+function FilePreview({ file, backend }) {
+  const ext = file.name.toLowerCase().split(".").pop();
+  const isBinary = ext === "docx" || ext === "pdf";
+  // docx/pdf go through the engine's own extractor (async), so the preview
+  // is the exact prose the pipeline will scan — not a second parser.
+  const [extracted, setExtracted] = useState(null);
+  useEffect(() => {
+    if (!isBinary) return undefined;
+    let live = true;
+    setExtracted({ status: "loading" });
+    backend.extractText({ name: file.name, b64: file.b64 })
+      .then((text) => { if (live) setExtracted({ status: "ok", text }); })
+      .catch((e) => {
+        if (live) {
+          setExtracted({ status: "err",
+                         errors: Array.isArray(e) ? e : [String(e)] });
+        }
+      });
+    return () => { live = false; };
+  }, [file, backend, isBinary]);
+
+  const view = useMemo(
+    () => (isBinary ? extractedView(ext, extracted) : buildPreview(file)),
+    [file, isBinary, ext, extracted]);
   return (
     <div className="filepreview">
       {view.kind === "table" ? (
@@ -473,13 +507,31 @@ function FilePreview({ file }) {
   );
 }
 
+function extractedView(ext, extracted) {
+  if (!extracted || extracted.status === "loading") {
+    return { kind: "text", text: "",
+             note: `extracting ${ext} text with the engine…` };
+  }
+  if (extracted.status === "err") {
+    return { kind: "binary",
+             note: `${ext} — no preview: ${extracted.errors.join("; ")}` };
+  }
+  let text = extracted.text;
+  if (!text.trim()) {
+    return { kind: "binary",
+             note: `${ext} — no extractable text (scanned/image-only file?)` };
+  }
+  const clipped = text.length > PREVIEW_TEXT_CAP;
+  if (clipped) text = text.slice(0, PREVIEW_TEXT_CAP);
+  return { kind: "text", text,
+           note: "text exactly as the engine scans it at run time"
+             + (clipped
+                ? ` · first ${PREVIEW_TEXT_CAP / 1000} K characters`
+                : "") };
+}
+
 function buildPreview(file) {
   const ext = file.name.toLowerCase().split(".").pop();
-  if (ext === "docx" || ext === "pdf") {
-    return { kind: "binary",
-             note: `${ext} — binary source; the engine extracts its text at `
-               + `run time. ${(file.size / 1024).toFixed(1)} KB staged.` };
-  }
   let text;
   try {
     text = decodeSourceBytes(b64ToBytes(file.b64));
