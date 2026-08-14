@@ -253,6 +253,19 @@ function IdentityPanel({ bundle, cand }) {
       <div className="title-small" style={{ marginBottom: 6 }}>
         identity cluster
       </div>
+      <div className="rec" style={{ marginBottom: 6 }}>
+        <span className="label">candidate id</span>
+        <code className="idchip"
+              title={"Content-derived (ADR-016): sha256 of the cluster's "
+                + "smallest strong identifier — same person, same id, "
+                + "on every rerun."}>
+          {cand.candidate_id}
+        </code>
+        <button className="textbtn"
+                onClick={() => navigator.clipboard?.writeText(cand.candidate_id)}>
+          copy
+        </button>
+      </div>
       {cand.cluster.record_ids.map((rid) => (
         <div key={rid} className="rec">
           <span className="chip">{sourceOf(rid)}</span>
