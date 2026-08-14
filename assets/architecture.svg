@@ -1,0 +1,282 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1720 1210" role="img" aria-label="North Star architecture: six messy sources pass through adapters with per-source fault boundaries, become Evidence atoms, flow through normalize, identity resolution, merge and confidence scoring on the canonical side; only the canonical record crosses the load-bearing boundary into config-driven projection and validation; every anomaly lands in the run report; one engine serves CLI, local workspace, Docker and an in-browser wasm build" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#5f6368"/>
+    </marker>
+    <marker id="arrb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#0b57d0"/>
+    </marker>
+    <marker id="arro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8f4c00"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1720" height="1210" fill="#ffffff"/>
+
+  <!-- ================= header ================= -->
+  <text x="60" y="56" font-size="25" font-weight="700" fill="#041e49">North Star — system architecture</text>
+  <text x="60" y="84" font-size="12.5" fill="#5f6368">multi-source candidate data → one canonical, explainable profile per person · deterministic by construction</text>
+  <text x="1660" y="52" font-size="12" font-style="italic" fill="#5f6368" text-anchor="end">“wrong-but-confident is worse than honestly-empty”</text>
+  <text x="1660" y="70" font-size="11" fill="#5f6368" text-anchor="end">every tie breaks toward null + an explanation in the run report</text>
+
+  <!-- ================= zone labels ================= -->
+  <text x="60"   y="132" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">SOURCES — ANY MAY BE MISSING, MALFORMED, OR LYING</text>
+  <text x="350"  y="132" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">1 · DETECT + EXTRACT</text>
+  <text x="650"  y="132" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">2 · THE SPINE</text>
+  <text x="970"  y="132" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">3 · CANONICAL SIDE</text>
+  <text x="1350" y="132" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">4 · PROJECTION SIDE</text>
+
+  <!-- ================= sources ================= -->
+  <g>
+    <rect x="60" y="150" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="174" font-size="12.5" font-weight="700" fill="#041e49">recruiters.csv</text>
+    <text x="76" y="192" font-size="10.5" fill="#5f6368">structured rows · dupes · shifted columns</text>
+    <text x="76" y="206" font-size="10.5" fill="#5f6368">raw national phones · “Fern, Alice”</text>
+
+    <rect x="60" y="224" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="248" font-size="12.5" font-weight="700" fill="#041e49">ats.json</text>
+    <text x="76" y="266" font-size="10.5" fill="#5f6368">foreign field names · conflicts vs CSV</text>
+    <text x="76" y="280" font-size="10.5" fill="#5f6368">in-band recency (lastUpdated)</text>
+
+    <rect x="60" y="298" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="322" font-size="12.5" font-weight="700" fill="#041e49">notes_*.txt</text>
+    <text x="76" y="340" font-size="10.5" fill="#5f6368">free text · labeled fields · skills scan</text>
+    <text x="76" y="354" font-size="10.5" fill="#5f6368">“Title at Company since Jun 2021”</text>
+
+    <rect x="60" y="372" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="396" font-size="12.5" font-weight="700" fill="#041e49">resume_*.docx / .pdf</text>
+    <text x="76" y="414" font-size="10.5" fill="#5f6368">prose extracted (optional extras),</text>
+    <text x="76" y="428" font-size="10.5" fill="#5f6368">then the same rules as notes</text>
+
+    <rect x="60" y="446" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="470" font-size="12.5" font-weight="700" fill="#041e49">github_&lt;login&gt;.json</text>
+    <text x="76" y="488" font-size="10.5" fill="#5f6368">recorded API payload — replayed</text>
+    <text x="76" y="502" font-size="10.5" fill="#5f6368">deterministically forever</text>
+
+    <rect x="60" y="520" width="230" height="64" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="544" font-size="12.5" font-weight="700" fill="#041e49">linkedin_&lt;slug&gt;.json</text>
+    <text x="76" y="562" font-size="10.5" fill="#5f6368">recorded export — no sanctioned</text>
+    <text x="76" y="576" font-size="10.5" fill="#5f6368">live API exists</text>
+
+    <text x="60" y="608" font-size="10.5" font-style="italic" fill="#5f6368">tools/fetch_github.py calls the live API once, at the recording</text>
+    <text x="60" y="623" font-size="10.5" font-style="italic" fill="#5f6368">boundary — the pipeline itself never touches the network</text>
+  </g>
+
+  <!-- source → adapter arrows -->
+  <line x1="290" y1="182" x2="344" y2="190" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="290" y1="256" x2="344" y2="240" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="290" y1="330" x2="344" y2="290" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="290" y1="404" x2="344" y2="340" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="290" y1="478" x2="344" y2="390" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="290" y1="552" x2="344" y2="435" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- ================= adapters ================= -->
+  <g>
+    <rect x="350" y="150" width="250" height="310" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <text x="366" y="178" font-size="13" font-weight="700" fill="#041e49">Adapter registry</text>
+    <text x="366" y="198" font-size="10.5" fill="#5f6368" font-family="Consolas, Menlo, monospace">detect(path) → adapter</text>
+    <text x="366" y="216" font-size="10.5" fill="#5f6368">csv · ats · notes · resume · github · linkedin</text>
+    <text x="366" y="236" font-size="10.5" fill="#5f6368" font-family="Consolas, Menlo, monospace">decode: UTF-16 BOM → UTF-8 → cp1252</text>
+
+    <rect x="362" y="252" width="226" height="122" rx="10" fill="#fef7e0" stroke="#b06000"/>
+    <text x="376" y="276" font-size="11.5" font-weight="700" fill="#8f4c00">per-source fault boundary</text>
+    <text x="376" y="295" font-size="10.5" fill="#8f4c00">a bad source cannot crash the run:</text>
+    <text x="376" y="310" font-size="10.5" fill="#8f4c00">status = ok | partial | skipped</text>
+    <text x="376" y="325" font-size="10.5" fill="#8f4c00">+ the reason, verbatim, in the report</text>
+    <text x="376" y="344" font-size="10.5" fill="#8f4c00">unknown values → null, never invented</text>
+    <text x="376" y="359" font-size="10.5" fill="#8f4c00">unrecognized files → listed, not read</text>
+
+    <text x="366" y="398" font-size="10.5" fill="#5f6368">rule-based extractors only — every value</text>
+    <text x="366" y="413" font-size="10.5" fill="#5f6368">traceable to a named, versioned method;</text>
+    <text x="366" y="428" font-size="10.5" fill="#5f6368">no LLM, no NER in the pipeline</text>
+  </g>
+
+  <!-- adapter → evidence arrow -->
+  <line x1="600" y1="300" x2="646" y2="300" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="623" y="290" font-size="10" fill="#0b57d0" text-anchor="middle">Evidence[]</text>
+
+  <!-- ================= evidence spine ================= -->
+  <g>
+    <rect x="650" y="150" width="270" height="330" rx="12" fill="#0b57d0"/>
+    <text x="668" y="180" font-size="14.5" font-weight="700" fill="#ffffff">Evidence atom</text>
+    <text x="902" y="180" font-size="10" fill="#a8c7fa" text-anchor="end">models.py</text>
+    <g font-family="Consolas, Menlo, monospace" font-size="10.5">
+      <text x="668" y="210" fill="#d3e3fd">field_path   <tspan fill="#eef3ff">"experience.start"</tspan></text>
+      <text x="668" y="232" fill="#d3e3fd">value        <tspan fill="#eef3ff">normalized</tspan></text>
+      <text x="668" y="254" fill="#d3e3fd">raw_value    <tspan fill="#eef3ff">exactly as seen</tspan></text>
+      <text x="668" y="276" fill="#d3e3fd">source_id    <tspan fill="#eef3ff">"t1_ats.json#idx=3"</tspan></text>
+      <text x="668" y="298" fill="#d3e3fd">method       <tspan fill="#eef3ff">"regex:email_v1"</tspan></text>
+      <text x="668" y="320" fill="#d3e3fd">order_index  <tspan fill="#eef3ff">stable tiebreak</tspan></text>
+      <text x="668" y="342" fill="#d3e3fd">locator      <tspan fill="#eef3ff">span → UI grounding</tspan></text>
+    </g>
+    <line x1="668" y1="362" x2="902" y2="362" stroke="#3b76dd"/>
+    <text x="668" y="388" font-size="11" font-style="italic" fill="#d3e3fd">every extracted value is born here;</text>
+    <text x="668" y="405" font-size="11" font-style="italic" fill="#d3e3fd">merge is a pure function over the</text>
+    <text x="668" y="422" font-size="11" font-style="italic" fill="#d3e3fd">canonically sorted pool</text>
+    <text x="668" y="452" font-size="10.5" font-weight="700" fill="#a8c7fa">provenance free · confidence auditable</text>
+    <text x="668" y="468" font-size="10.5" font-weight="700" fill="#a8c7fa">determinism provable</text>
+  </g>
+
+  <!-- evidence → stage 1 elbow -->
+  <polyline points="920,300 944,300 944,198 964,198" fill="none" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+
+  <!-- ================= canonical stages ================= -->
+  <g>
+    <rect x="970" y="150" width="280" height="96" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="992" cy="174" r="11" fill="#0b57d0"/>
+    <text x="992" y="178" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="1010" y="178" font-size="12.5" font-weight="700" fill="#041e49">normalize — typed, pass 1</text>
+    <text x="986" y="200" font-size="10.5" fill="#5f6368">email · phone (E.164, 2-pass) · dates {year,</text>
+    <text x="986" y="215" font-size="10.5" fill="#5f6368">month?} — precision kept · country ISO-3166</text>
+    <text x="986" y="230" font-size="10.5" fill="#5f6368">skills alias dict (unknown ⇒ kept + flagged)</text>
+
+    <rect x="970" y="268" width="280" height="96" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="992" cy="292" r="11" fill="#0b57d0"/>
+    <text x="992" y="296" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="1010" y="296" font-size="12.5" font-weight="700" fill="#041e49">resolve identity</text>
+    <text x="986" y="318" font-size="10.5" fill="#5f6368">blocking keys: email · phone · profile-URL</text>
+    <text x="986" y="333" font-size="10.5" fill="#5f6368">→ union-find over records</text>
+    <text x="986" y="350" font-size="10.5" font-weight="700" fill="#8f4c00">guards refuse: contradictions, shared-id,</text>
+    <text x="986" y="364" font-size="10.5" font-weight="700" fill="#8f4c00">multi-identity files — refuse ≻ fuse</text>
+
+    <rect x="970" y="386" width="280" height="96" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="992" cy="410" r="11" fill="#0b57d0"/>
+    <text x="992" y="414" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="1010" y="414" font-size="12.5" font-weight="700" fill="#041e49">merge — survivorship</text>
+    <text x="986" y="436" font-size="10.5" fill="#5f6368">type-aware rules, total deterministic order ·</text>
+    <text x="986" y="451" font-size="10.5" fill="#5f6368">atomic location · interval-union years ·</text>
+    <text x="986" y="466" font-size="10.5" fill="#5f6368">phone pass 2 · losers kept as alternatives</text>
+
+    <rect x="970" y="504" width="280" height="96" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="992" cy="528" r="11" fill="#0b57d0"/>
+    <text x="992" y="532" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="1010" y="532" font-size="12.5" font-weight="700" fill="#041e49">score confidence</text>
+    <text x="986" y="554" font-size="10.5" fill="#5f6368">transparent noisy-OR corroboration:</text>
+    <text x="986" y="569" font-size="10.5" fill="#5f6368" font-family="Consolas, Menlo, monospace">source_trust × method_reliability</text>
+    <text x="986" y="586" font-size="10.5" fill="#5f6368">ordinal — orders trust, not a probability</text>
+  </g>
+
+  <line x1="1110" y1="246" x2="1110" y2="264" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1120" y="260" font-size="10" fill="#5f6368">normalized atoms</text>
+  <line x1="1110" y1="364" x2="1110" y2="382" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1120" y="378" font-size="10" fill="#5f6368">identity clusters</text>
+  <line x1="1110" y1="482" x2="1110" y2="500" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1120" y="496" font-size="10" fill="#5f6368">one profile / cluster</text>
+
+  <!-- reference data -->
+  <rect x="970" y="636" width="280" height="92" rx="12" fill="#ffffff" stroke="#c4c7c5"/>
+  <text x="986" y="660" font-size="12" font-weight="700" fill="#041e49">versioned reference data</text>
+  <text x="986" y="680" font-size="10.5" fill="#5f6368" font-family="Consolas, Menlo, monospace">data/scoring.json · alias dicts</text>
+  <text x="986" y="696" font-size="10.5" fill="#5f6368">checksummed; every version pinned into the</text>
+  <text x="986" y="711" font-size="10.5" fill="#5f6368">run report — the full reproducibility pin</text>
+  <line x1="1110" y1="636" x2="1110" y2="604" stroke="#5f6368" stroke-width="1.2" marker-end="url(#arr)"/>
+  <text x="1120" y="626" font-size="10" fill="#5f6368">trust tables + aliases</text>
+
+  <!-- ================= boundary ================= -->
+  <line x1="1300" y1="140" x2="1300" y2="810" stroke="#5f6368" stroke-width="2" stroke-dasharray="8 6"/>
+  <text transform="translate(1291 640) rotate(-90)" font-size="11" font-weight="700" letter-spacing="2" fill="#5f6368">THE LOAD-BEARING BOUNDARY</text>
+
+  <!-- score → project elbow crossing the boundary -->
+  <polyline points="1250,552 1276,552 1276,308 1344,308" fill="none" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1311" y="296" font-size="10" font-weight="700" fill="#0b57d0" text-anchor="middle">canonical record</text>
+  <text x="1311" y="326" font-size="9.5" fill="#5f6368" text-anchor="middle">the only thing that crosses</text>
+
+  <!-- ================= projection ================= -->
+  <g>
+    <rect x="1350" y="150" width="310" height="92" rx="12" fill="#fef7e0" stroke="#b06000"/>
+    <text x="1366" y="174" font-size="12.5" font-weight="700" fill="#8f4c00">runtime config.json — user-supplied</text>
+    <text x="1366" y="194" font-size="10.5" fill="#8f4c00">field subset · rename via from-paths · per-field</text>
+    <text x="1366" y="209" font-size="10.5" fill="#8f4c00">normalize · on_missing: null | omit | error</text>
+    <text x="1366" y="228" font-size="10.5" font-style="italic" fill="#8f4c00">the default schema ships as a config — one path</text>
+
+    <rect x="1350" y="286" width="310" height="72" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="1372" cy="310" r="11" fill="#0b57d0"/>
+    <text x="1372" y="314" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="1390" y="314" font-size="12.5" font-weight="700" fill="#041e49">project — path DSL, 4 constructs</text>
+    <text x="1366" y="336" font-size="10.5" fill="#5f6368" font-family="Consolas, Menlo, monospace">"emails[0]" · "skills[].name"</text>
+
+    <rect x="1350" y="394" width="310" height="80" rx="12" fill="#f0f4f9" stroke="#7fa8e8"/>
+    <circle cx="1372" cy="418" r="11" fill="#0b57d0"/>
+    <text x="1372" y="422" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+    <text x="1390" y="422" font-size="12.5" font-weight="700" fill="#041e49">validate</text>
+    <text x="1366" y="444" font-size="10.5" fill="#5f6368">against a JSON Schema generated from the config;</text>
+    <text x="1366" y="459" font-size="10.5" fill="#5f6368">on_missing:error excludes a record, never the batch</text>
+
+    <rect x="1350" y="510" width="310" height="56" rx="10" fill="#ffffff" stroke="#0b57d0" stroke-width="1.4"/>
+    <text x="1366" y="533" font-size="12" font-weight="700" fill="#0b57d0" font-family="Consolas, Menlo, monospace">profiles.json</text>
+    <text x="1366" y="551" font-size="10.5" fill="#5f6368">the result — CLI --out · UI download</text>
+
+    <rect x="1350" y="582" width="310" height="88" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="1366" y="605" font-size="12" font-weight="700" fill="#041e49" font-family="Consolas, Menlo, monospace">run_report.json</text>
+    <text x="1366" y="624" font-size="10.5" fill="#5f6368">source statuses · merges, refusals + flags ·</text>
+    <text x="1366" y="639" font-size="10.5" fill="#5f6368">validation errors · unparseable values —</text>
+    <text x="1366" y="654" font-size="10.5" fill="#5f6368">the machine-readable explanation of the run</text>
+
+    <rect x="1350" y="686" width="310" height="56" rx="10" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="1366" y="709" font-size="12" font-weight="700" fill="#041e49" font-family="Consolas, Menlo, monospace">explorer.html <tspan font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="400" fill="#5f6368">(--emit-ui)</tspan></text>
+    <text x="1366" y="727" font-size="10.5" fill="#5f6368">self-contained glass-box UI — grounded evidence</text>
+  </g>
+
+  <line x1="1505" y1="242" x2="1505" y2="282" stroke="#b06000" stroke-width="1.4" marker-end="url(#arro)"/>
+  <text x="1515" y="266" font-size="10" fill="#8f4c00">compile: all errors up front</text>
+  <polyline points="1660,196 1688,196 1688,430 1666,430" fill="none" stroke="#b06000" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arro)"/>
+  <text transform="translate(1700 380) rotate(-90)" font-size="9.5" fill="#8f4c00">schema derived from config</text>
+  <line x1="1505" y1="358" x2="1505" y2="390" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1515" y="379" font-size="10" fill="#5f6368">projected record</text>
+  <line x1="1505" y1="474" x2="1505" y2="506" stroke="#0b57d0" stroke-width="1.8" marker-end="url(#arrb)"/>
+  <text x="1515" y="495" font-size="10" fill="#5f6368">schema-valid</text>
+
+  <!-- ================= anomaly bus ================= -->
+  <rect x="350" y="768" width="940" height="46" rx="8" fill="#fef7e0" stroke="#b06000" stroke-dasharray="6 4"/>
+  <text x="820" y="787" font-size="10.5" font-weight="700" fill="#8f4c00" text-anchor="middle">anomaly bus — nothing fails silently, every stage reports:</text>
+  <text x="820" y="803" font-size="10.5" fill="#8f4c00" text-anchor="middle">skipped sources · partial rows · refused unions · multi-identity + soft-key flags · unparseable values · validation errors</text>
+  <polyline points="1290,791 1320,791 1320,626 1344,626" fill="none" stroke="#8f4c00" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arro)"/>
+
+  <!-- ================= surfaces ================= -->
+  <text x="60" y="872" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">ONE ENGINE · FOUR SURFACES — SAME WHEEL, BYTE-IDENTICAL OUTPUT EVERYWHERE</text>
+  <g>
+    <rect x="60" y="888" width="385" height="104" rx="12" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="76" y="912" font-size="13" font-weight="700" fill="#041e49">CLI</text>
+    <text x="76" y="932" font-size="10.5" fill="#0b57d0" font-family="Consolas, Menlo, monospace">python -m transformer run --input …</text>
+    <text x="76" y="947" font-size="10.5" fill="#0b57d0" font-family="Consolas, Menlo, monospace">  --config … [--as-of YYYY-MM]</text>
+    <text x="76" y="968" font-size="10.5" fill="#5f6368">exit 0 = profiles emitted · exit 2 = unusable run;</text>
+    <text x="76" y="982" font-size="10.5" fill="#5f6368">garbage is a reported condition, never a crash</text>
+
+    <rect x="465" y="888" width="385" height="104" rx="12" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="481" y="912" font-size="13" font-weight="700" fill="#041e49">Local workspace</text>
+    <text x="481" y="932" font-size="10.5" fill="#0b57d0" font-family="Consolas, Menlo, monospace">python -m transformer serve  → :8765</text>
+    <text x="481" y="951" font-size="10.5" fill="#5f6368">stdlib http · /api/run · /api/sample · /api/extract</text>
+    <text x="481" y="966" font-size="10.5" fill="#5f6368">stage corpora, preview files (resumes via the</text>
+    <text x="481" y="981" font-size="10.5" fill="#5f6368">engine’s own extractor), edit config, run, download</text>
+
+    <rect x="870" y="888" width="385" height="104" rx="12" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="886" y="912" font-size="13" font-weight="700" fill="#041e49">Docker</text>
+    <text x="886" y="932" font-size="10.5" fill="#0b57d0" font-family="Consolas, Menlo, monospace">docker compose up --build</text>
+    <text x="886" y="951" font-size="10.5" fill="#5f6368">→ 127.0.0.1:8765 — the same workspace on the</text>
+    <text x="886" y="966" font-size="10.5" fill="#5f6368">native engine · multi-stage build · non-root ·</text>
+    <text x="886" y="981" font-size="10.5" fill="#5f6368">healthcheck on /api/health</text>
+
+    <rect x="1275" y="888" width="385" height="104" rx="12" fill="#ffffff" stroke="#c4c7c5"/>
+    <text x="1291" y="912" font-size="13" font-weight="700" fill="#041e49">GitHub Pages — in-browser engine</text>
+    <text x="1291" y="932" font-size="10.5" fill="#5f6368">static explorer preloaded with the golden corpus +</text>
+    <text x="1291" y="947" font-size="10.5" fill="#5f6368">Pyodide loads the repo’s own wheel: uploads run</text>
+    <text x="1291" y="962" font-size="10.5" fill="#5f6368">client-side and never leave the tab; docx/pdf via</text>
+    <text x="1291" y="977" font-size="10.5" fill="#5f6368">pinned wasm extras — full six-source support</text>
+  </g>
+
+  <!-- ================= guarantees ================= -->
+  <text x="60" y="1032" font-size="11.5" font-weight="700" letter-spacing="1.5" fill="#5f6368">WHY YOU CAN TRUST A RUN</text>
+  <g>
+    <rect x="60" y="1048" width="785" height="110" rx="12" fill="#e6f4ea" stroke="#146c2e"/>
+    <text x="76" y="1074" font-size="13" font-weight="700" fill="#0d652d">deterministic by construction</text>
+    <text x="76" y="1096" font-size="10.5" fill="#0d652d">no clock — “now” is --as-of, or derived from the inputs · no network — recorded payloads only</text>
+    <text x="76" y="1112" font-size="10.5" fill="#0d652d">no LLM · sorted iteration everywhere order matters · content-derived candidate_id</text>
+    <text x="76" y="1132" font-size="10.5" font-weight="700" fill="#0d652d">⇒ same inputs, shuffled file order, touched mtimes → byte-identical output, forever</text>
+
+    <rect x="875" y="1048" width="785" height="110" rx="12" fill="#e6f4ea" stroke="#146c2e"/>
+    <text x="891" y="1074" font-size="13" font-weight="700" fill="#0d652d">proven continuously</text>
+    <text x="891" y="1096" font-size="10.5" fill="#0d652d">211 tests: 21 golden personas (pinned outputs) · hostile corpus · metamorphic invariants · scale gate</text>
+    <text x="891" y="1112" font-size="10.5" fill="#0d652d">CI gold-gate: committed outputs must match the code · docker smoke · ui-freshness</text>
+    <text x="891" y="1132" font-size="10.5" font-weight="700" fill="#0d652d">nightly canary re-runs the golden corpus and byte-compares — the dataset as a monitor</text>
+  </g>
+</svg>

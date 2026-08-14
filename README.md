@@ -107,6 +107,10 @@ production monitor.
 
 ## How it works
 
+<div align="center">
+    <img src="assets/architecture.svg" alt="North Star system architecture: sources → adapters with fault boundaries → Evidence atoms → normalize → identity → merge → confidence → the load-bearing boundary → config-driven projection and validation → profiles.json + run_report.json; one engine behind CLI, workspace, Docker, and the in-browser wasm build" width="980">
+</div>
+
 ```
 detect -> extract -> normalize (pass 1) -> resolve identity -> merge
        (+ phone pass 2) -> score confidence -> project (config) -> validate
