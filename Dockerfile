@@ -7,6 +7,8 @@ WORKDIR /build/ui
 COPY ui/package.json ui/package-lock.json ./
 RUN npm ci --no-fund --no-audit
 COPY ui/ ./
+# Workspace.jsx imports the shipped configs from the repo root as presets.
+COPY configs/ ../configs/
 RUN npm run build
 
 FROM python:3.12-slim
