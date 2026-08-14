@@ -524,10 +524,9 @@ function extractedView(ext, extracted) {
   const clipped = text.length > PREVIEW_TEXT_CAP;
   if (clipped) text = text.slice(0, PREVIEW_TEXT_CAP);
   return { kind: "text", text,
-           note: "text exactly as the engine scans it at run time"
-             + (clipped
-                ? ` · first ${PREVIEW_TEXT_CAP / 1000} K characters`
-                : "") };
+           note: clipped
+             ? `first ${PREVIEW_TEXT_CAP / 1000} K characters shown`
+             : null };
 }
 
 function buildPreview(file) {
