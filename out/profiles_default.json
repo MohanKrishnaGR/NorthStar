@@ -51,6 +51,7 @@
         "title": "Backend Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Rohan Mehta",
     "headline": null,
     "links": {
@@ -173,6 +174,9 @@
       "priya.sharma@nimbus.io"
     ],
     "experience": [],
+    "flags": [
+      "multi_identity_source"
+    ],
     "full_name": null,
     "headline": null,
     "links": {
@@ -246,15 +250,14 @@
         "title": "Data Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Alice Fern",
     "headline": null,
     "links": {
       "github": "https://github.com/alicefern",
       "linkedin": "https://www.linkedin.com/in/alicefern",
-      "other": [
-        "https://alicefern.dev"
-      ],
-      "portfolio": null
+      "other": [],
+      "portfolio": "https://alicefern.dev"
     },
     "location": {
       "city": "San Francisco",
@@ -314,6 +317,12 @@
         "field": "links.linkedin",
         "method": "direct_field",
         "source": "ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.portfolio",
+        "method": "regex:url_v1",
+        "source": "notes_alice.txt"
       },
       {
         "alternatives": [
@@ -431,6 +440,7 @@
         "title": "Product Analyst"
       }
     ],
+    "flags": [],
     "full_name": "Priya Sharma",
     "headline": null,
     "links": {

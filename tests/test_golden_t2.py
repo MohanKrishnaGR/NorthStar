@@ -32,10 +32,14 @@ def test_garbage_sources_skipped_with_errors(t2_run):
         assert src["errors"], f"{name} skipped silently — must carry a reason"
 
 
-def test_utf16_is_an_honest_miss_not_a_crash(t2_run):
-    # cp1252 fallback decodes NUL-riddled junk; extractors find nothing.
+def test_utf16_bom_decodes_and_extracts(t2_run):
+    # DEFECTS_PLAN D2: the right closure for an "honest miss" is to stop
+    # missing — the BOM is two unambiguous bytes, so decode, don't grade "ok
+    # with zero evidence".
     src = status_of(t2_run, "utf16.txt")
-    assert src["status"] == "ok" and src["evidence_emitted"] == 0
+    assert src["status"] == "ok" and src["evidence_emitted"] > 0
+    ute = [p for p in t2_run.profiles if p["full_name"] == "Ute Sechzehn"]
+    assert ute and ute[0]["emails"] == ["ute@example.com"]
 
 
 def test_unrecognized_file_is_named(t2_run):
@@ -44,10 +48,10 @@ def test_unrecognized_file_is_named(t2_run):
 
 def test_bom_csv_still_yields_its_profile(t2_run):
     assert status_of(t2_run, "bom.csv")["status"] == "ok"
-    assert len(t2_run.profiles) == 1
-    assert t2_run.profiles[0]["full_name"] == "Bo Marker"
+    assert any(p["full_name"] == "Bo Marker" for p in t2_run.profiles)
 
 
 def test_hostile_corpus_never_invents_candidates(t2_run):
-    # One profile from the single healthy file; nothing conjured from garbage.
-    assert len(t2_run.profiles) == 1
+    # Exactly the two healthy inputs produce people; garbage conjures none.
+    assert sorted(p["full_name"] for p in t2_run.profiles) == [
+        "Bo Marker", "Ute Sechzehn"]

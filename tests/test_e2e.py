@@ -47,7 +47,9 @@ def test_alice_profile_content(default_run):
     assert alice["location"] == {"city": "San Francisco", "region": "CA",
                                  "country": "US"}
     assert alice["links"]["github"] == "https://github.com/alicefern"
-    assert alice["links"]["other"] == ["https://alicefern.dev"]
+    # D4: her own-name domain earns the portfolio bucket at merge time.
+    assert alice["links"]["portfolio"] == "https://alicefern.dev"
+    assert alice["links"]["other"] == []
     assert alice["years_experience"] == 8.6
     comps = [(e["company"], e["start"], e["end"], e["is_current"])
              for e in alice["experience"]]

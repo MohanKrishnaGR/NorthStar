@@ -3,6 +3,7 @@
     "clusters": [
       {
         "cluster_id": "ats.json#idx=0",
+        "flags": [],
         "match_keys_used": [
           "email:alicefern@gmail.com"
         ],
@@ -16,6 +17,7 @@
       },
       {
         "cluster_id": "ats.json#idx=1",
+        "flags": [],
         "match_keys_used": [
           "email:rohan.mehta@outlook.com"
         ],
@@ -26,6 +28,7 @@
       },
       {
         "cluster_id": "ats.json#idx=2",
+        "flags": [],
         "match_keys_used": [
           "phone:+918765432109"
         ],
@@ -36,6 +39,9 @@
       },
       {
         "cluster_id": "notes_two_people.txt#file",
+        "flags": [
+          "multi_identity_source"
+        ],
         "match_keys_used": [],
         "record_ids": [
           "notes_two_people.txt#file"

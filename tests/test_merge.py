@@ -200,6 +200,58 @@ def test_invalid_plus_cc_phone_gets_honest_reason():
     assert notes[0]["reason"] == "invalid_number"  # not no_region_context
 
 
+def test_future_closed_range_dropped_from_years():
+    profile, notes = run([
+        ("ats.json#idx=0", "ats_json", None, [
+            ("experience", exp_entry("Solid Corp", "Analyst",
+                                     (2020, 1), (2020, 12), False), "direct_field"),
+            ("experience", exp_entry("Futura LLC", "Advisor",
+                                     (2030, 6), (2031, 2), False), "direct_field"),
+        ]),
+    ])  # as_of 2026-08: the closed 2030s range is aspiration, not history
+    assert profile["years_experience"] == 1.0
+    assert len(profile["experience"]) == 2  # still emitted, honestly dated
+    assert any(n["reason"] == "future_dated_range" for n in notes)
+
+
+def test_future_end_clamped_to_as_of():
+    profile, notes = run([
+        ("ats.json#idx=0", "ats_json", None, [
+            ("experience", exp_entry("Contract Co", "Engineer",
+                                     (2026, 1), (2027, 12), False), "direct_field"),
+        ]),
+    ])  # elapsed Jan..Aug 2026 = 8 months; the future tail must not count
+    assert profile["years_experience"] == 0.7
+    assert notes[0]["reason"] == "future_end_clamped"
+
+
+def test_portfolio_promoted_by_name_token():
+    def with_links(name, urls_):
+        atoms = [("full_name", name, "direct_field")] if name else []
+        atoms += [("links.other", u, "regex:url_v1") for u in urls_]
+        profile, _ = run([("n.txt#file", "notes_txt", None, atoms)])
+        return profile["links"]
+
+    links = with_links("Alice Fern", ["https://alicefern.dev",
+                                      "https://twitter.com/alicefern"])
+    assert links["portfolio"] == "https://alicefern.dev"  # name in host label
+    assert links["other"] == ["https://twitter.com/alicefern"]  # platform host
+
+    assert with_links("Al Bo", ["https://albo.dev"])["portfolio"] is None
+    # tokens under 4 chars never match — too collision-prone
+    assert with_links(None, ["https://alicefern.dev"])["portfolio"] is None
+
+
+def test_profile_carries_cluster_flags():
+    cluster, records = build([
+        ("n.txt#file", "notes_txt", None,
+         [("emails", "solo@x.com", "regex:email_v1")]),
+    ])
+    cluster["flags"] = ["multi_identity_source"]
+    profile, _ = merge_cluster(cluster, records, AS_OF)
+    assert profile["flags"] == ["multi_identity_source"]
+
+
 def test_candidate_id_is_content_derived_and_stable():
     spec = [("r.csv#row=1", "recruiter_csv", None,
              [("emails", "alice.fern@gmail.com", "direct_field")])]

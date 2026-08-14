@@ -3,6 +3,7 @@
     "clusters": [
       {
         "cluster_id": "github_averystone.json#user",
+        "flags": [],
         "match_keys_used": [
           "email:avery.stone@example.com",
           "link:github.com/averystone",
@@ -20,6 +21,7 @@
       },
       {
         "cluster_id": "github_rhoardley.json#user",
+        "flags": [],
         "match_keys_used": [
           "email:rhea.h@example.com",
           "link:github.com/rhoardley"
@@ -32,6 +34,7 @@
       },
       {
         "cluster_id": "linkedin_hanasuzuki.json#profile",
+        "flags": [],
         "match_keys_used": [
           "link:linkedin.com/in/hanasuzuki"
         ],
@@ -42,6 +45,7 @@
       },
       {
         "cluster_id": "notes_broken.txt#file",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "notes_broken.txt#file"
@@ -49,6 +53,7 @@
       },
       {
         "cluster_id": "notes_chain.txt#file",
+        "flags": [],
         "match_keys_used": [
           "email:casey.chen@example.com",
           "phone:+14155552673"
@@ -61,6 +66,7 @@
       },
       {
         "cluster_id": "notes_ghost.txt#file",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "notes_ghost.txt#file"
@@ -68,6 +74,9 @@
       },
       {
         "cluster_id": "notes_gossip.txt#file",
+        "flags": [
+          "multi_identity_source"
+        ],
         "match_keys_used": [],
         "record_ids": [
           "notes_gossip.txt#file"
@@ -75,6 +84,7 @@
       },
       {
         "cluster_id": "notes_p07.txt#file",
+        "flags": [],
         "match_keys_used": [
           "email:ishaan.verma@example.com"
         ],
@@ -85,6 +95,7 @@
       },
       {
         "cluster_id": "notes_p18.txt#file",
+        "flags": [],
         "match_keys_used": [
           "email:tomas.eder@example.com"
         ],
@@ -96,6 +107,7 @@
       },
       {
         "cluster_id": "resume_p03.docx#file",
+        "flags": [],
         "match_keys_used": [
           "email:carlos.nunez@example.com"
         ],
@@ -106,6 +118,7 @@
       },
       {
         "cluster_id": "resume_p21.pdf#file",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "resume_p21.pdf#file"
@@ -113,6 +126,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=10",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_ats.json#idx=10"
@@ -120,6 +134,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=13",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_ats.json#idx=13"
@@ -127,6 +142,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=2",
+        "flags": [],
         "match_keys_used": [
           "email:binarao@gmail.com"
         ],
@@ -137,6 +153,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=3",
+        "flags": [],
         "match_keys_used": [
           "email:devi.iyer@example.com"
         ],
@@ -147,6 +164,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=4",
+        "flags": [],
         "match_keys_used": [
           "email:grace.obi@example.com"
         ],
@@ -157,6 +175,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=6",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_ats.json#idx=6"
@@ -164,6 +183,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=7",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_ats.json#idx=7"
@@ -171,6 +191,7 @@
       },
       {
         "cluster_id": "t1_ats.json#idx=9",
+        "flags": [],
         "match_keys_used": [
           "email:blair.novak@example.com"
         ],
@@ -181,6 +202,7 @@
       },
       {
         "cluster_id": "t1_cp1252.csv#row=1",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_cp1252.csv#row=1"
@@ -188,6 +210,9 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=10",
+        "flags": [
+          "soft_key_merge"
+        ],
         "match_keys_used": [
           "soft:lena novak|brightpath"
         ],
@@ -198,6 +223,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=11",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=11"
@@ -205,6 +231,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=12",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=12"
@@ -212,6 +239,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=13",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=13"
@@ -219,6 +247,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=16",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=16"
@@ -226,6 +255,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=5",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=5"
@@ -233,6 +263,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=7",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=7"
@@ -240,6 +271,7 @@
       },
       {
         "cluster_id": "t1_roster.csv#row=8",
+        "flags": [],
         "match_keys_used": [],
         "record_ids": [
           "t1_roster.csv#row=8"
@@ -455,7 +487,7 @@
     },
     {
       "errors": [],
-      "evidence_emitted": 90,
+      "evidence_emitted": 91,
       "flags": [],
       "records_read": 14,
       "source_id": "t1_ats.json",
@@ -492,6 +524,12 @@
       "field": "experience",
       "raw_value": "Chrono Corp: 2022-05 -> 2021-01",
       "reason": "inverted_date_range",
+      "source_id": "t1_ats.json"
+    },
+    {
+      "field": "experience",
+      "raw_value": "Futura LLC: 2030-06 -> 2031-02",
+      "reason": "future_dated_range",
       "source_id": "t1_ats.json"
     },
     {

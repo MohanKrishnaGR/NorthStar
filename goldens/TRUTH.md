@@ -10,6 +10,12 @@ Run pin: `--as-of 2026-08`. Expected: **28 profiles** (default config),
 **24** under `recruiter_view` (4 excluded: Lena Novak and Priya Patel have no
 email, the gossip profile has no name, Noor Zaidi has neither).
 
+Defect-closure touches (DEFECTS_PLAN, 2026-08-14): every profile now carries
+a `flags` string[] (D3 — the gossip profile and the Lena soft-key merge are
+labeled in the output itself); own-name domains earn `links.portfolio` at
+merge (D4 — Avery, Tomas, and samples-Alice moved from `other`); UTF-16
+inputs decode via BOM sniff (D2 — T2's fixture became a working input).
+
 Fixture touches from RESUME_PLAN (2026-08-14): P01's resume gained a skills
 *table* (Terraform | Airflow — DOCX tables were previously invisible), P07's
 resume gained an education line, P18's resume first line became pipe-separated
@@ -38,7 +44,7 @@ one new assert each.
 | P16 田中太郎 / 田中 太郎 | CJK spacing limitation | Same email, spaced vs unspaced CJK name → token predicate sees no overlap → refusal → **two profiles** (false split, recoverable; DESIGN §5 row 19). Distinct ids via contested-key fallback to name+company. |
 | P17 Rhea Hoardley | skills gauntlet | Aliases fold (ReactJS/react.js → react once; Golang → go; K8s → kubernetes; TS → typescript); "MS Office" kept `canonical:false`; GitHub `yaml`/`jupyter notebook` at 0.45 below every ATS skill; bait prose adds no "spring"/"rest". GitHub `name: null` promotes nothing. |
 | P18 Tomas Eder | URL conflicts | Same-slug-with-tracking-params corroborates (match key ignores query); the alt-slug from notes loses and is preserved as an alternative; github + portfolio links captured. |
-| P19 Uma Reddy | degenerate dates | Future-dated current job (2030→) and inverted range (2022-05→2021-01) are dropped from the years sum with named reasons; all 3 entries still emitted; `years=0.1` (the one sane month). |
+| P19 Uma Reddy | degenerate dates | Future-dated current job (2030→), inverted range (2022-05→2021-01), and a fully-future *closed* range (Futura LLC 2030-06→2031-02, added by DEFECTS_PLAN D1a) are all dropped from the years sum with named reasons; all 4 entries still emitted; `years=0.1` (the one sane month). Past-to-future ranges clamp to as-of with reason `future_end_clamped` (unit-tested). |
 | P20 Renée Fontaine | encoding fallback | cp1252 bytes decode via the deterministic fallback; name and "Café Lumière" keep their accents; `+33` phone normalizes at pass 1. |
 | P21 Wale Adeyemi | the real-PDF path | A hand-rolled single-column PDF (tools `minimal_pdf`) through pdfplumber: pipe-split contact-line name, block-form experience ("Harmattan Cloud -- Platform Engineer" over a pure range line → 2022-03→present, `years=4.5`), education grammar ("B.Sc in Computer Science, University of Lagos, 2016"). Three mechanisms, three separate test functions. |
 

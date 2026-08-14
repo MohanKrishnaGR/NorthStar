@@ -1,6 +1,7 @@
 {
   "fields": [
     { "path": "candidate_id", "type": "string", "required": true },
+    { "path": "flags", "type": "string[]" },
     { "path": "full_name", "type": "string" },
     { "path": "emails", "type": "string[]" },
     { "path": "phones", "type": "string[]" },

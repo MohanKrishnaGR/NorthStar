@@ -47,8 +47,10 @@ python -m transformer serve
 #    txt/docx/pdf incl. github_*/linkedin_* recorded payloads), pick or edit
 #    the projection config in the UI (load-time errors shown verbatim), set
 #    as-of / default-region, run, then explore the grounded result.
-#    Tip: without an explicit as-of, the derived default is the latest date
-#    in YOUR inputs — a future-dated source shifts it (ADR-016: no clock).
+#    Tip: without an explicit as-of, the derived default prefers record
+#    timestamps (ATS updated_at) over employment-claim dates, so one
+#    future-dated claim can't drag "now"; a corpus with no timestamps
+#    falls back to claim dates and logs a WARN (ADR-016: still no clock).
 ```
 
 The `out/` directory contains exactly what these two commands produce on the

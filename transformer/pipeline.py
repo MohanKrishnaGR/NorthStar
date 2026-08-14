@@ -74,7 +74,13 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
         )
 
     if as_of is None:
-        as_of = _max_observed_date(records)  # content-derived (ADR-016)
+        as_of, tier = _derive_as_of(records)  # content-derived (ADR-016)
+        if as_of is not None and tier == "claims":
+            # No record timestamps exist, so "now" rests on employment
+            # claims — one future-dated claim can drag it (DEFECTS_PLAN D1b).
+            telemetry.event("as_of_derived_from_claims",
+                            _level=logging.WARNING, run_id=run_id,
+                            as_of=dates.render(as_of))
 
     resolution = identity.resolve(records)
     records_by_id = {r.record_id: r for r in records}
@@ -96,13 +102,21 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
 
     contested = resolution.contested_keys
     candidates_ui = []
+    clusters_out = []  # augmented clusters (with flags) for the report
     for cluster in resolution.clusters:
         cluster = dict(cluster)
         cluster["contested_keys"] = contested
-        cluster["flags"] = sorted({
+        flags = {
             f for rid in cluster["record_ids"]
             for f in resolution.record_flags.get(rid, [])
-        })
+        }
+        if len(cluster["record_ids"]) > 1 and any(
+            k.startswith("soft:") for k in cluster["match_keys_used"]
+        ):
+            # The weakest merge kind, visible everywhere a consumer looks (D3).
+            flags.add("soft_key_merge")
+        cluster["flags"] = sorted(flags)
+        clusters_out.append(cluster)
         profile, notes = merge.merge_cluster(cluster, records_by_id, as_of)
         debug = profile.pop("_debug", {})
         unparseable.extend(notes)
@@ -123,8 +137,7 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
                 "excluded": bool(errors),
                 "validation": errors,
             })
-        if any(k.startswith("soft:") for k in cluster["match_keys_used"]):
-            # The weakest merge kind, made loud (ledger defect #1).
+        if "soft_key_merge" in cluster["flags"]:
             telemetry.event("soft_key_merge", _level=logging.WARNING,
                             run_id=run_id,
                             candidate_id=profile["candidate_id"],
@@ -188,8 +201,9 @@ def run_pipeline(input_paths: list[Path], cfg: Config, *,
                     "cluster_id": c["cluster_id"],
                     "record_ids": c["record_ids"],
                     "match_keys_used": c["match_keys_used"],
+                    "flags": c["flags"],
                 }
-                for c in resolution.clusters
+                for c in clusters_out
             ],
             "refusals": resolution.refusals,
         },
@@ -269,15 +283,28 @@ def _source_content(path: Path | None) -> dict | None:
     return {"kind": kind, "text": text[:_CONTENT_CAP]}
 
 
-def _max_observed_date(records) -> dates.PartialDate | None:
-    """Latest date appearing anywhere in the inputs — the deterministic
-    default for as-of. If the inputs carry no dates at all, stays None and
-    open-ended durations stay null (no clock is ever consulted)."""
+def _derive_as_of(records) -> tuple[dates.PartialDate | None, str]:
+    """Two-tier derived as-of (DEFECTS_PLAN D1b), both tiers content-derived
+    so determinism holds and the clock stays untouched (ADR-016):
+
+    1. Record timestamps (ATS updated_at) — metadata about *when data was
+       recorded*, which is what "now" actually means.
+    2. Claim dates (experience/education) — the fallback, honest but
+       draggable by a future-dated claim; the caller logs a WARN.
+
+    No dates at all -> (None, ...) and open-ended durations stay null."""
+    ts_best = None
+    for rec in records:
+        if rec.updated_at:
+            d = dates.parse(rec.updated_at)
+            if d and (ts_best is None or dates.month_index(d, "end") >
+                      dates.month_index(ts_best, "end")):
+                ts_best = d
+    if ts_best is not None:
+        return ts_best, "timestamps"
     best = None
     for rec in records:
         candidates = []
-        if rec.updated_at:
-            candidates.append(dates.parse(rec.updated_at))
         for e in rec.evidence:
             if e.field_path == "experience" and isinstance(e.value, dict):
                 candidates.extend([e.value.get("start"), e.value.get("end")])
@@ -288,4 +315,4 @@ def _max_observed_date(records) -> dates.PartialDate | None:
             if d and (best is None or dates.month_index(d, "end") >
                       dates.month_index(best, "end")):
                 best = d
-    return best
+    return best, "claims"

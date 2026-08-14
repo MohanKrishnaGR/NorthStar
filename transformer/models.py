@@ -65,6 +65,7 @@ class SourceRecord:
 # vocabulary, so configs cannot project it.
 CANONICAL_TYPES: dict[str, str] = {
     "candidate_id": "string",
+    "flags": "string[]",  # cluster-level cautions, carried on the profile (D3)
     "full_name": "string",
     "headline": "string",
     "years_experience": "number",

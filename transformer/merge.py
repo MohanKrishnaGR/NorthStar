@@ -8,9 +8,10 @@ in a stable id comparison.
 from __future__ import annotations
 
 import hashlib
-from decimal import ROUND_HALF_UP, Decimal
-
 import json
+import re
+from decimal import ROUND_HALF_UP, Decimal
+from urllib.parse import urlparse
 
 from . import confidence
 from .constants import SOURCE_TRUST, method_reliability, strength
@@ -182,13 +183,36 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
         groups: dict[str, list[Evidence]] = {}
         for a in other_atoms:
             groups.setdefault(str(a.value), []).append(a)
+        # D4: a context-free classifier can't know "personal site", but the
+        # merge has the candidate's name — a domain carrying it earns the
+        # portfolio bucket. Explicit links.portfolio evidence (none of the
+        # current adapters emit it) would already own the slot and wins.
+        promoted = {v: g for v, g in groups.items()
+                    if _is_personal_site(v, full_name)}
+        if promoted and links["portfolio"] is None:
+            atoms_all = sorted((a for g in promoted.values() for a in g),
+                               key=Evidence.sort_key)
+            best = ordered(atoms_all)[0]
+            winners = [a for a in atoms_all if a.value == best.value]
+            alts = sorted(set(promoted) - {str(best.value)})
+            prov("links.portfolio", best, alts)
+            trace = confidence.scalar_trace(atoms_all, winners)
+            link_confs.append(trace["confidence"])
+            debug["links.portfolio"] = {
+                "kind": "scalar", "winner": best.value, "trace": trace,
+                "atoms": [atom_info(a) for a in ordered(atoms_all)],
+            }
+            links["portfolio"] = best.value
+            for v in promoted:
+                groups.pop(v)
         links["other"] = sorted(groups)
         link_confs.extend(confidence.element_confidence(g) for g in groups.values())
-        debug["links.other"] = {"kind": "set", "elements": [
-            {"value": v, "confidence": confidence.element_confidence(groups[v]),
-             "atoms": [atom_info(a) for a in ordered(groups[v])]}
-            for v in sorted(groups)
-        ]}
+        if groups:
+            debug["links.other"] = {"kind": "set", "elements": [
+                {"value": v, "confidence": confidence.element_confidence(groups[v]),
+                 "atoms": [atom_info(a) for a in ordered(groups[v])]}
+                for v in sorted(groups)
+            ]}
     if link_confs:
         field_conf["links"] = round(max(link_confs), 6)
 
@@ -267,6 +291,9 @@ def merge_cluster(cluster: dict, records_by_id: dict[str, SourceRecord],
 
     profile = {
         "candidate_id": candidate_id,
+        # Cluster-level cautions ride the profile itself (DEFECTS_PLAN D3):
+        # a consumer reading only profiles.json must see them.
+        "flags": list(cluster.get("flags", [])),
         "full_name": full_name,
         "emails": emails,
         "phones": phones,
@@ -356,20 +383,31 @@ def _merge_experience(atoms, ordered, as_of, prov, notes, debug, atom_info):
         if start and (end or (is_current and as_of)):
             s_idx = dates.month_index(start, "start")
             e_idx = dates.month_index(end or as_of, "end")
-            if e_idx >= s_idx:
-                intervals.append((s_idx, e_idx))
-            else:
-                # End-before-start would contribute *negative* months to
-                # years_experience — dropped from the sum, reported, but the
-                # entry itself is still emitted with its raw dates (honest).
+            as_of_idx = dates.month_index(as_of, "end") if as_of else None
+            raw_range = (f"{pick('company')}: {dates.render(start)}"
+                         f" -> {dates.render(end) or 'present'}")
+
+            def note(reason):
                 notes.append({
-                    "source_id": by_pref[0].source_id,
-                    "field": "experience",
-                    "raw_value": f"{pick('company')}: {dates.render(start)}"
-                                 f" -> {dates.render(end) or 'present'}",
-                    "reason": ("future_dated_range" if end is None
-                               else "inverted_date_range"),
+                    "source_id": by_pref[0].source_id, "field": "experience",
+                    "raw_value": raw_range, "reason": reason,
                 })
+
+            # "Future" only exists relative to as-of (DEFECTS_PLAN D1a):
+            # a clock-free engine judges claims against the pinned date.
+            if as_of_idx is not None and s_idx > as_of_idx:
+                note("future_dated_range")  # aspiration, not history
+            elif e_idx < s_idx:
+                # Negative months would corrupt the sum; entry still emitted.
+                note("inverted_date_range")
+            else:
+                if as_of_idx is not None and e_idx > as_of_idx:
+                    # "Contract through 2031": count only the elapsed part —
+                    # the same semantics open-ended jobs already have. A sum
+                    # not re-derivable from visible dates must say why.
+                    note("future_end_clamped")
+                    e_idx = as_of_idx
+                intervals.append((s_idx, e_idx))
         entries.append({
             "company": pick("company"),
             "title": pick("title"),
@@ -484,6 +522,20 @@ def _candidate_id(cluster, by_field, full_name):
         else:
             seed = f"record:{cluster['cluster_id']}"
     return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+
+def _is_personal_site(url: str, full_name: str | None) -> bool:
+    """DEFECTS_PLAN D4: a URL is a portfolio when an accent-stripped name
+    token (>= 4 chars) appears in the host's *registrable label* — first
+    label only, so TLDs like .dev can never match a candidate named Dev."""
+    if not full_name:
+        return False
+    host = urlparse(str(url)).netloc.lower()
+    host = host[4:] if host.startswith("www.") else host
+    label = host.split(".", 1)[0]
+    tokens = [t for t in re.split(r"[^a-z0-9]+", text.strip_accents(full_name))
+              if len(t) >= 4]
+    return any(t in label for t in tokens)
 
 
 def _unrepr(v: str):

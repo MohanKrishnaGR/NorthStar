@@ -31,10 +31,17 @@ class SourceResult:
 
 
 def read_text(path: Path) -> str:
+    blob = path.read_bytes()
+    # BOM sniff first (DEFECTS_PLAN D2): a UTF-16 BOM is two unambiguous
+    # bytes — decode properly instead of letting the cp1252 fallback "read"
+    # NUL-riddled junk. No content guessing beyond the BOM (that trap stays
+    # closed); the chain stays deterministic.
+    if blob.startswith(b"\xff\xfe") or blob.startswith(b"\xfe\xff"):
+        return blob.decode("utf-16")
     last_err: Exception | None = None
     for enc in _ENCODINGS:
         try:
-            return path.read_text(encoding=enc)
+            return blob.decode(enc)
         except UnicodeDecodeError as e:  # pragma: no cover - cp1252 rarely fails
             last_err = e
     raise last_err  # type: ignore[misc]

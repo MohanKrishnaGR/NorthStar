@@ -103,7 +103,9 @@ def test_p01_baseline_ceiling(default_run):
     assert avery["years_experience"] == 5.6
     assert avery["location"]["country"] == "US"
     assert avery["links"]["github"] == "https://github.com/averystone"
-    assert avery["links"]["other"] == ["https://averystone.dev"]
+    assert avery["links"]["portfolio"] == "https://averystone.dev"  # D4
+    assert avery["links"]["other"] == []
+    assert avery["flags"] == []  # clean clusters carry an empty flags list
     # GitHub-derived 'go' sits below every explicitly claimed skill.
     assert skill(avery, "go")["confidence"] < min(
         skill(avery, n)["confidence"] for n in ("python", "sql", "airflow"))
@@ -193,6 +195,7 @@ def test_p09_twins_with_strong_keys_stay_apart(default_run):
 def test_p10_twins_without_keys_soft_merge_documented(default_run):
     lenas = [p for p in default_run.profiles if p["full_name"] == "Lena Novak"]
     assert len(lenas) == 1  # the documented soft-key false-merge boundary
+    assert lenas[0]["flags"] == ["soft_key_merge"]  # D3: visible in output
 
 
 def test_p11_shared_inbox_refused_distinct_ids(default_run):
@@ -228,6 +231,8 @@ def test_p14_gossip_isolated(default_run):
     gossip = [p for p in default_run.profiles if p["full_name"] is None
               and len(p["emails"]) == 3]
     assert len(gossip) == 1
+    # D3: the caution rides the profile itself, not just the report.
+    assert gossip[0]["flags"] == ["multi_identity_source"]
     avery = prof(default_run, "Avery Stone")
     assert "avery.stone@example.com" in gossip[0]["emails"]  # named, not attached
     assert gossip[0]["candidate_id"] != avery["candidate_id"]
@@ -264,13 +269,15 @@ def test_p18_url_conflict_and_param_corroboration(default_run):
     alts = prov_entry(tomas, "links.linkedin")["alternatives"]
     assert any("tomas-eder-alt" in a for a in alts)
     assert tomas["links"]["github"] == "https://github.com/teder"
-    assert tomas["links"]["other"] == ["https://tomas.dev"]
+    assert tomas["links"]["portfolio"] == "https://tomas.dev"  # D4
+    assert tomas["links"]["other"] == []
 
 
 def test_p19_degenerate_dates(default_run):
     uma = prof(default_run, "Uma Reddy")
     assert uma["years_experience"] == 0.1  # only the sane one-month job
-    assert len(uma["experience"]) == 3  # entries still emitted honestly
+    assert len(uma["experience"]) == 4  # entries still emitted honestly
+    # D1a: the fully-future CLOSED range (Futura LLC) is dropped too now.
     reasons = [u["reason"] for u in default_run.report["unparseable"]]
     assert "future_dated_range" in reasons and "inverted_date_range" in reasons
 

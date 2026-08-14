@@ -27,6 +27,7 @@
         "title": "Senior Data Analyst"
       }
     ],
+    "flags": [],
     "full_name": "Bina Rao",
     "headline": null,
     "links": {
@@ -125,6 +126,7 @@
         "title": "Senior Platform Engineer"
       }
     ],
+    "flags": [],
     "full_name": "C. Chen",
     "headline": null,
     "links": {
@@ -197,6 +199,7 @@
     "education": [],
     "emails": [],
     "experience": [],
+    "flags": [],
     "full_name": "Noor Zaidi",
     "headline": null,
     "links": {
@@ -262,6 +265,7 @@
         "title": "Platform Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Wale Adeyemi",
     "headline": null,
     "links": {
@@ -364,6 +368,7 @@
         "title": "Copywriter"
       }
     ],
+    "flags": [],
     "full_name": "Sam Ortiz",
     "headline": null,
     "links": {
@@ -449,6 +454,7 @@
         "title": "Senior Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Hana Suzuki",
     "headline": "Engineering Manager at Kite Systems",
     "links": {
@@ -553,6 +559,7 @@
         "title": "SRE II"
       }
     ],
+    "flags": [],
     "full_name": "Blair Novak",
     "headline": null,
     "links": {
@@ -611,6 +618,14 @@
     ],
     "experience": [
       {
+        "company": "Futura LLC",
+        "end": "2031-02",
+        "is_current": false,
+        "start": "2030-06",
+        "summary": null,
+        "title": "Advisor"
+      },
+      {
         "company": "Tomorrow Inc",
         "end": null,
         "is_current": true,
@@ -635,6 +650,7 @@
         "title": "Analyst"
       }
     ],
+    "flags": [],
     "full_name": "Uma Reddy",
     "headline": null,
     "links": {
@@ -667,6 +683,12 @@
       {
         "alternatives": [],
         "field": "experience[2]",
+        "method": "direct_field",
+        "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "experience[3]",
         "method": "direct_field",
         "source": "t1_ats.json"
       },
@@ -711,6 +733,7 @@
         "title": "Chef de Projet"
       }
     ],
+    "flags": [],
     "full_name": "Renée Fontaine",
     "headline": null,
     "links": {
@@ -777,6 +800,7 @@
         "title": "Quant Developer"
       }
     ],
+    "flags": [],
     "full_name": "Jorge Silva",
     "headline": null,
     "links": {
@@ -856,15 +880,14 @@
         "title": "Staff Data Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Avery Stone",
     "headline": "Staff Data Engineer at Marigold Data",
     "links": {
       "github": "https://github.com/averystone",
       "linkedin": "https://www.linkedin.com/in/averystone",
-      "other": [
-        "https://averystone.dev"
-      ],
-      "portfolio": null
+      "other": [],
+      "portfolio": "https://averystone.dev"
     },
     "location": {
       "city": "San Francisco",
@@ -918,6 +941,12 @@
         "field": "links.linkedin",
         "method": "direct_field",
         "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.portfolio",
+        "method": "direct_field",
+        "source": "github_averystone.json"
       },
       {
         "alternatives": [],
@@ -1013,6 +1042,7 @@
         "title": "Backend Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Omar Haddad",
     "headline": null,
     "links": {
@@ -1078,6 +1108,7 @@
         "title": "Mobile Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Farid Khan",
     "headline": null,
     "links": {
@@ -1137,6 +1168,7 @@
         "title": "Analytics Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Rhea Hoardley",
     "headline": null,
     "links": {
@@ -1291,6 +1323,7 @@
         "title": "Lead Analyst"
       }
     ],
+    "flags": [],
     "full_name": "Grace Obi",
     "headline": null,
     "links": {
@@ -1376,15 +1409,14 @@
         "title": "Frontend Lead"
       }
     ],
+    "flags": [],
     "full_name": "Tomas Eder",
     "headline": null,
     "links": {
       "github": "https://github.com/teder",
       "linkedin": "https://linkedin.com/in/tomas-eder",
-      "other": [
-        "https://tomas.dev"
-      ],
-      "portfolio": null
+      "other": [],
+      "portfolio": "https://tomas.dev"
     },
     "location": null,
     "phones": [],
@@ -1421,6 +1453,12 @@
         "field": "links.linkedin",
         "method": "direct_field",
         "source": "t1_ats.json"
+      },
+      {
+        "alternatives": [],
+        "field": "links.portfolio",
+        "method": "regex:url_v1",
+        "source": "resume_p18.docx"
       },
       {
         "alternatives": [],
@@ -1465,6 +1503,7 @@
         "title": "QA Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Kiran Patel",
     "headline": null,
     "links": {
@@ -1539,6 +1578,7 @@
         "title": "Analyst"
       }
     ],
+    "flags": [],
     "full_name": "Ishaan Verma",
     "headline": null,
     "links": {
@@ -1614,6 +1654,7 @@
         "title": "Editor"
       }
     ],
+    "flags": [],
     "full_name": "Dana Kim",
     "headline": null,
     "links": {
@@ -1672,6 +1713,7 @@
         "title": "Data Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Petra Vogel",
     "headline": null,
     "links": {
@@ -1737,6 +1779,7 @@
         "title": "QA Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Kiran Patel",
     "headline": null,
     "links": {
@@ -1796,6 +1839,7 @@
         "title": "ML Engineer"
       }
     ],
+    "flags": [],
     "full_name": "田中太郎",
     "headline": null,
     "links": {
@@ -1880,6 +1924,7 @@
         "title": "Platform Engineer"
       }
     ],
+    "flags": [],
     "full_name": "Núñez, Carlos",
     "headline": null,
     "links": {
@@ -1950,6 +1995,7 @@
     "education": [],
     "emails": [],
     "experience": [],
+    "flags": [],
     "full_name": "Priya Patel",
     "headline": null,
     "links": {
@@ -2005,6 +2051,7 @@
         "title": "Data Scientist"
       }
     ],
+    "flags": [],
     "full_name": "Devi Iyer",
     "headline": null,
     "links": {
@@ -2071,6 +2118,9 @@
       "xavier.new@example.com"
     ],
     "experience": [],
+    "flags": [
+      "multi_identity_source"
+    ],
     "full_name": null,
     "headline": null,
     "links": {
@@ -2125,6 +2175,9 @@
         "title": "Designer"
       }
     ],
+    "flags": [
+      "soft_key_merge"
+    ],
     "full_name": "Lena Novak",
     "headline": null,
     "links": {
@@ -2176,6 +2229,7 @@
         "title": "ML Engineer"
       }
     ],
+    "flags": [],
     "full_name": "田中 太郎",
     "headline": null,
     "links": {

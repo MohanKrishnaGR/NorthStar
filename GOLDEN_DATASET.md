@@ -132,8 +132,9 @@ sheet).
 
 **Tier 2 hostile corpus** — truncated JSON; zero-byte file; `.csv` containing
 JSON; `.json` containing HTML (an error page saved by mistake); 50MB single-line
-text file (runtime guard); file with no extension; UTF-16 file; directory named
-`resume.pdf`.
+text file (runtime guard); file with no extension; UTF-16 file (originally an
+"honest miss" — since DEFECTS_PLAN D2 the BOM is sniffed and the file *works*,
+which is the right closure for an honest miss); directory named `resume.pdf`.
 
 ## 6. Truth sheet + assertion strategy
 

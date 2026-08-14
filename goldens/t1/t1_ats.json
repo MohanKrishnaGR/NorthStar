@@ -136,7 +136,8 @@
       "workHistory": [
         {"org": "Tomorrow Inc", "role": "Engineer", "from": "2030-01", "to": "Present"},
         {"org": "Chrono Corp", "role": "Analyst", "from": "2022-05", "to": "2021-01"},
-        {"org": "Solid Corp", "role": "Analyst", "from": "2020-03", "to": "2020-03"}
+        {"org": "Solid Corp", "role": "Analyst", "from": "2020-03", "to": "2020-03"},
+        {"org": "Futura LLC", "role": "Advisor", "from": "2030-06", "to": "2031-02"}
       ]
     }
   ]
