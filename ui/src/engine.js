@@ -77,6 +77,12 @@ def run_json(payload_json):
 
 let enginePromise = null;
 
+/** The informative tail of a Python/JS error, for compact UI notes. */
+function lastLine(e) {
+  const lines = String(e).split("\n").map((s) => s.trim()).filter(Boolean);
+  return (lines[lines.length - 1] ?? "unknown error").slice(0, 200);
+}
+
 export function loadBrowserEngine(onStatus) {
   if (!enginePromise) {
     enginePromise = boot(onStatus).catch((e) => {
@@ -105,20 +111,48 @@ async function boot(onStatus) {
   await micropip.install(["phonenumbers", "jsonschema"]);
   onStatus("installing the transformer wheel…");
   // micropip requires PEP 427 wheel filenames, so a manifest carries the
-  // real name instead of renaming the wheel.
+  // real name instead of renaming the wheel. no-store: the manifest is the
+  // deploy's version pointer — a stale cached copy means a stale engine.
   const manifest = await (await fetch(new URL("./engine_wheel.json",
-                                              window.location))).json();
+                                              window.location),
+                                      { cache: "no-store" })).json();
   await micropip.install(new URL(`./${manifest.wheel}`, window.location).href);
-  let resumeSupport = true;
+  // Resume extras, per format so one failure cannot take down the other;
+  // the adapters degrade unsupported sources to skipped+reason either way.
+  let docxSupport = false;
+  let pdfSupport = false;
+  const extrasFailed = {}; // ext -> last line of the real error
+  onStatus("installing resume extras (docx/pdf — optional)…");
   try {
-    onStatus("installing resume extras (docx/pdf — optional)…");
     // lxml and Pillow are Pyodide-built binaries; load them natively first
     // so micropip doesn't try (and fail) to build them from sdists.
     await pyodide.loadPackage(["lxml", "Pillow"]);
-    await micropip.install(["python-docx", "pdfplumber"]);
-  } catch {
-    resumeSupport = false; // adapters degrade those sources to skipped+reason
+  } catch (e) {
+    extrasFailed.docx = extrasFailed.pdf = lastLine(e);
   }
+  if (!extrasFailed.docx) {
+    try {
+      await micropip.install("python-docx");
+      docxSupport = true;
+    } catch (e) { extrasFailed.docx = lastLine(e); }
+  }
+  if (!extrasFailed.pdf) {
+    try {
+      // Current pdfplumber requires Pillow>=12 (Pyodide 0.26 ships 10.2)
+      // and pypdfium2 (no wasm build). Pin 0.11.4 with its exact pdfminer,
+      // and deps=False to skip pypdfium2 — it only backs to_image, which
+      // the pipeline never calls. Proven end-to-end in Node-Pyodide.
+      await micropip.install("pdfminer.six==20231228");
+      await micropip.install.callKwargs("pdfplumber==0.11.4", { deps: false });
+      pdfSupport = true;
+    } catch (e) { extrasFailed.pdf = lastLine(e); }
+  }
+  const missing = [!docxSupport && "docx", !pdfSupport && "pdf"]
+    .filter(Boolean);
+  const extrasNote = missing.length
+    ? ` · ${missing.join("/")} extras unavailable (those sources will be `
+      + "skipped with a reason)"
+    : "";
   onStatus("starting engine…");
   pyodide.runPython(GLUE);
   const info = JSON.parse(pyodide.runPython("engine_info()"));
@@ -126,16 +160,24 @@ async function boot(onStatus) {
   const extractor = pyodide.globals.get("extract_json");
   const engine = {
     ...info,
-    resumeSupport,
+    docxSupport,
+    pdfSupport,
+    extrasNote,
+    resumeSupport: docxSupport && pdfSupport,
     run(payload) {
       const out = JSON.parse(runner(JSON.stringify(payload)));
       if (!out.ok) return Promise.reject(out.errors);
       return Promise.resolve(out.bundle);
     },
     extractText(payload) {
-      if (!resumeSupport) {
-        return Promise.reject(["docx/pdf extras unavailable in this "
-          + "browser — the run will skip these sources with a reason"]);
+      const ext = String(payload.name ?? "").toLowerCase().split(".").pop();
+      const supported = ext === "docx" ? docxSupport : pdfSupport;
+      if (!supported) {
+        return Promise.reject([
+          `${ext} extras could not be installed in this browser — the run `
+            + "will skip these sources with a reason",
+          ...(extrasFailed[ext] ? [extrasFailed[ext]] : []),
+        ]);
       }
       const out = JSON.parse(extractor(JSON.stringify(payload)));
       if (!out.ok) return Promise.reject(out.errors);

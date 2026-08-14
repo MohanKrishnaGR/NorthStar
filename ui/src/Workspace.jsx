@@ -120,7 +120,7 @@ function browserBackend(engine, corpora) {
     kind: "browser",
     banner: `in-browser engine v${engine.engine_version} · scoring `
       + `${engine.scoring_version} · files never leave this tab`
-      + (engine.resumeSupport ? "" : " · docx/pdf extras unavailable (those sources will be skipped with a reason)"),
+      + engine.extrasNote,
     configs: STATIC_CONFIGS,
     canonicalTypes: engine.canonical_types,
     samples: Object.keys(corpora),
