@@ -37,6 +37,12 @@ jobs:
             --config configs/default.json \
             --out /tmp/p.json --report /tmp/r.json \
             --as-of 2026-08 --emit-ui _site/index.html
+      - name: build the engine wheel for the in-browser workspace
+        run: |
+          pip wheel . --no-deps -w /tmp/wheel
+          WHEEL=$(basename /tmp/wheel/candidate_transformer*.whl)
+          cp "/tmp/wheel/$WHEEL" "_site/$WHEEL"
+          echo "{\"wheel\": \"$WHEEL\"}" > _site/engine_wheel.json
       - uses: actions/configure-pages@v5
         with: { enablement: true }
       - uses: actions/upload-pages-artifact@v3

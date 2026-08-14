@@ -88,7 +88,7 @@ Feed inputs (drop files onto the dock), pick or edit the projection config, set 
 |---|---|---|---|
 | **Static self-contained HTML** (data inlined by `--emit-ui`) | zero install, works from the repo, nothing to break mid-interview, no server to defend | config playground limited to precomputed runs | **Tier A — build this** |
 | Thin FastAPI wrapper (`/run` endpoint) | live re-runs: upload + config edits truly interactive | a server to write, secure, and explain | Tier B, optional |
-| Pyodide (real engine in-browser) | spectacular "zero install, full engine" story | heavyweight, risky, hard to defend line-by-line | note as considered, rejected |
+| Pyodide (real engine in-browser) | spectacular "zero install, full engine" story | heavyweight, risky, hard to defend line-by-line | rejected for the take-home tiers — **then adopted for GitHub Pages** when the requirement changed to "a public live demo must accept uploads": no server exists there, the packaged wheel made the engine portable for free, and for candidate PII "files never leave the browser" beats any demo API. Decisions are contextual; this one's context moved. |
 
 No framework, or at most a micro-library: a single `explorer.html` with vanilla JS. In a take-home you own every line; 600 lines of readable vanilla beats a build chain.
 

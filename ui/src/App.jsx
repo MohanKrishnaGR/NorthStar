@@ -43,15 +43,10 @@ export default function App({ initialBundle }) {
         {bundle && view !== "batch" && (
           <button className="textbtn" onClick={goBatch}>← all candidates</button>
         )}
-        {serve && (
-          <button className={`textbtn${view === "workspace" ? " active" : ""}`}
-                  onClick={() => setView("workspace")}>
-            ⚙ workspace
-          </button>
-        )}
-        {!serve && !bundle && (
-          <span className="chip">start with: python -m transformer serve</span>
-        )}
+        <button className={`textbtn${view === "workspace" ? " active" : ""}`}
+                onClick={() => setView("workspace")}>
+          ⚙ workspace
+        </button>
         {bundle && (
           <>
             <span className="chip">as-of {bundle.run.as_of ?? "—"}</span>
@@ -60,7 +55,7 @@ export default function App({ initialBundle }) {
           </>
         )}
       </header>
-      {view === "workspace" && serve ? (
+      {view === "workspace" ? (
         <Workspace serve={serve}
                    onBundle={(b) => { setBundle(b); goBatch(); }} />
       ) : cand ? (
@@ -69,8 +64,7 @@ export default function App({ initialBundle }) {
         <BatchView bundle={bundle} onOpen={(id) => { setCandId(id); setView("cand"); }} />
       ) : (
         <div style={{ padding: 40 }} className="body-medium">
-          No run loaded. {serve ? "Open the workspace to upload sources and run."
-            : "Emit one with --emit-ui, or start `python -m transformer serve`."}
+          No run loaded — open the workspace to upload sources and run.
         </div>
       )}
     </div>
