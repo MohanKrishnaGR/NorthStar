@@ -61,6 +61,46 @@ export const SOURCE_ICONS = {
   github_json: "⌥", linkedin_json: "in", derived: "ƒ",
 };
 
+/** Download an object as JSON, mirroring report.write_json's conventions
+ *  (sorted keys, indent 2, trailing newline) so a UI download diffs cleanly
+ *  against CLI output. */
+export function downloadJson(obj, filename) {
+  const text = JSON.stringify(sortKeysDeep(obj), null, 2) + "\n";
+  const url = URL.createObjectURL(
+    new Blob([text], { type: "application/json" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function sortKeysDeep(v) {
+  if (Array.isArray(v)) return v.map(sortKeysDeep);
+  if (v && typeof v === "object") {
+    const out = {};
+    for (const k of Object.keys(v).sort()) out[k] = sortKeysDeep(v[k]);
+    return out;
+  }
+  return v;
+}
+
+/** Rebuild the CLI's run_report.json from a UI bundle by stripping the
+ *  bundle-only additions: run.profiles and each source's inlined content. */
+export function runReportOf(bundle) {
+  const { profiles: _count, ...run } = bundle.run;
+  return {
+    run,
+    sources: bundle.sources.map(({ content: _c, ...s }) => s),
+    unrecognized_files: bundle.unrecognized_files,
+    merges: bundle.merges,
+    validation: bundle.validation,
+    unparseable: bundle.unparseable,
+  };
+}
+
 /** Button semantics for clickable non-button elements (a11y + keyboard). */
 export function pressable(onActivate) {
   return {

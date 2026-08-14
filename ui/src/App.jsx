@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import CandidateView from "./CandidateView.jsx";
 import Workspace from "./Workspace.jsx";
 import { LOGO_SRC } from "./logo.js";
-import { clusterSourceIds, pct, pressable } from "./lib.js";
+import { clusterSourceIds, downloadJson, pct, pressable,
+         runReportOf } from "./lib.js";
 
 export default function App({ initialBundle }) {
   const [bundle, setBundle] = useState(initialBundle);
@@ -53,6 +54,16 @@ export default function App({ initialBundle }) {
             <span className="chip">as-of {bundle.run.as_of ?? "—"}</span>
             <span className="chip">{bundle.run.profiles} profiles</span>
             <span className="chip">{bundle.sources.length} sources</span>
+            <button className="textbtn"
+                    title="the projected result — what the CLI writes to --out"
+                    onClick={() => downloadJson(bundle.profiles, "profiles.json")}>
+              ⤓ profiles.json
+            </button>
+            <button className="textbtn"
+                    title="the run report — what the CLI writes to --report"
+                    onClick={() => downloadJson(runReportOf(bundle), "run_report.json")}>
+              ⤓ report
+            </button>
           </>
         )}
       </header>
