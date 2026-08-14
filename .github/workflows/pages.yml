@@ -1,8 +1,9 @@
 # GitHub Pages: the glass-box explorer, preloaded with the golden corpus.
 # Pure static hosting — the emitted file is self-contained, so the Pages
 # build needs Python only (the UI template is committed; no Node here).
-# On Pages the app runs in viewer mode: no /api, so the workspace hides
-# itself and the batch/grounding/inspector views carry the demo.
+# On Pages there is no /api; the workspace instead offers the in-browser
+# Pyodide engine, so the site also ships the engine wheel and the golden
+# corpus files (with a manifest) for the workspace's "▶ goldens/t1" button.
 name: pages
 
 on:
@@ -37,6 +38,13 @@ jobs:
             --config configs/default.json \
             --out /tmp/p.json --report /tmp/r.json \
             --as-of 2026-08 --emit-ui _site/index.html
+      - name: publish the golden corpus for the in-browser workspace
+        run: |
+          mkdir -p _site/goldens/t1
+          cp goldens/t1/* _site/goldens/t1/
+          python -c "import json, pathlib; d = pathlib.Path('goldens/t1'); \
+            pathlib.Path('_site/goldens/t1/manifest.json').write_text(json.dumps( \
+            {'files': sorted(p.name for p in d.iterdir() if p.is_file())}))"
       - name: build the engine wheel for the in-browser workspace
         run: |
           pip wheel . --no-deps -w /tmp/wheel

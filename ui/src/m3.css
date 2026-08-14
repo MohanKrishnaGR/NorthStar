@@ -319,6 +319,24 @@ button.textbtn.active { background: var(--md-primary-container);
 .stagedfile { display: flex; align-items: center; gap: 10px;
   padding: 6px 10px; border-radius: var(--shape-sm); font-size: 13px;
   background: var(--md-surface-container); margin-bottom: 4px; }
+.stagedfile .fname { flex: 1; cursor: pointer; }
+.stagedfile .fname:hover { color: var(--md-primary); }
+.filepreview {
+  margin: 2px 0 8px; padding: 10px 12px; max-height: 280px; overflow: auto;
+  border: 1px solid var(--md-outline-variant); border-radius: var(--shape-sm);
+  background: var(--md-surface-container-lowest);
+}
+.filepreview pre {
+  margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.5;
+  white-space: pre-wrap; word-break: break-word;
+}
+table.preview { border-collapse: collapse; font-size: 12px; }
+table.preview th, table.preview td {
+  border: 1px solid var(--md-outline-variant); padding: 3px 8px;
+  text-align: left; font-family: var(--mono); white-space: nowrap;
+}
+table.preview th { background: var(--md-surface-container);
+  color: var(--md-on-surface-variant); font-weight: 500; }
 .cfgedit {
   width: 100%; min-height: 260px; resize: vertical;
   font-family: var(--mono); font-size: 12.5px; line-height: 1.5;

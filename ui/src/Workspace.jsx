@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { loadBrowserEngine } from "./engine.js";
 import { SourceIcon } from "./icons.jsx";
 import { pressable } from "./lib.js";
@@ -16,12 +16,26 @@ export default function Workspace({ serve, onBundle }) {
   const [engine, setEngine] = useState(null);
   const [engineStatus, setEngineStatus] = useState("");
   const [engineError, setEngineError] = useState(null);
+  // Corpora published next to the page (Pages ships goldens/t1 + a manifest)
+  // so the in-browser engine gets the same "▶ goldens/t1" button as serve
+  // mode. Absent manifest (e.g. a file:// explorer.html) ⇒ no button.
+  const [corpora, setCorpora] = useState({});
+  useEffect(() => {
+    if (serve) return; // serve mode: the server lists its own samples
+    fetch(new URL("./goldens/t1/manifest.json", window.location))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m) => {
+        if (m && Array.isArray(m.files)) setCorpora({ "goldens/t1": m.files });
+      })
+      .catch(() => {});
+  }, [serve]);
 
   if (serve) {
     return <Workbench backend={serverBackend(serve)} onBundle={onBundle} />;
   }
   if (engine) {
-    return <Workbench backend={browserBackend(engine)} onBundle={onBundle} />;
+    return <Workbench backend={browserBackend(engine, corpora)}
+                      onBundle={onBundle} />;
   }
   return (
     <div className="workspace-grid" style={{ gridTemplateColumns: "1fr" }}>
@@ -85,7 +99,7 @@ function serverBackend(serve) {
   };
 }
 
-function browserBackend(engine) {
+function browserBackend(engine, corpora) {
   return {
     kind: "browser",
     banner: `in-browser engine v${engine.engine_version} · scoring `
@@ -93,8 +107,25 @@ function browserBackend(engine) {
       + (engine.resumeSupport ? "" : " · docx/pdf extras unavailable (those sources will be skipped with a reason)"),
     configs: STATIC_CONFIGS,
     canonicalTypes: engine.canonical_types,
-    samples: [],
-    run: (payload) => engine.run(payload),
+    samples: Object.keys(corpora),
+    async run(payload) {
+      if (payload.sample) {
+        // The wasm engine only takes files, so fetch the published corpus
+        // and stage it exactly as if the user had dropped the files in.
+        const files = await Promise.all(corpora[payload.sample].map(
+          async (name) => {
+            const resp = await fetch(
+              new URL(`./${payload.sample}/${name}`, window.location));
+            if (!resp.ok) {
+              throw [`${payload.sample}/${name}: fetch failed (${resp.status})`];
+            }
+            return { name,
+                     b64: bytesToB64(new Uint8Array(await resp.arrayBuffer())) };
+          }));
+        return engine.run({ ...payload, sample: undefined, files });
+      }
+      return engine.run(payload);
+    },
   };
 }
 
@@ -108,6 +139,7 @@ function Workbench({ backend, onBundle }) {
   const [region, setRegion] = useState("");
   const [running, setRunning] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [previewName, setPreviewName] = useState(null); // staged file open below
   const inputRef = useRef(null);
 
   const stage = (fileList) => {
@@ -226,14 +258,27 @@ function Workbench({ backend, onBundle }) {
           {files.length > 0 && (
             <div style={{ marginTop: 10 }}>
               {files.map((f) => (
-                <div key={f.name} className="stagedfile">
-                  <span style={{ flex: 1 }}>{f.name}</span>
-                  <span className="body-small">{(f.size / 1024).toFixed(1)} KB</span>
-                  <button className="textbtn"
-                          onClick={() =>
-                            setFiles((cur) => cur.filter((x) => x.name !== f.name))
-                          }>remove</button>
-                </div>
+                <React.Fragment key={f.name}>
+                  <div className="stagedfile">
+                    <span className="fname" title="click to preview"
+                          {...pressable(() => setPreviewName(
+                            (cur) => (cur === f.name ? null : f.name)))}>
+                      {f.name}
+                    </span>
+                    <span className="body-small">{(f.size / 1024).toFixed(1)} KB</span>
+                    <button className="textbtn"
+                            onClick={() => setPreviewName(
+                              (cur) => (cur === f.name ? null : f.name))}>
+                      {previewName === f.name ? "close" : "preview"}
+                    </button>
+                    <button className="textbtn"
+                            onClick={() => {
+                              setFiles((cur) => cur.filter((x) => x.name !== f.name));
+                              setPreviewName((cur) => (cur === f.name ? null : cur));
+                            }}>remove</button>
+                  </div>
+                  {previewName === f.name && <FilePreview file={f} />}
+                </React.Fragment>
               ))}
             </div>
           )}
@@ -250,7 +295,7 @@ function Workbench({ backend, onBundle }) {
               </div>
             </div>
           )}
-          <details style={{ marginTop: 14 }}>
+          <details open style={{ marginTop: 14 }}>
             <summary className="body-small" style={{ cursor: "pointer" }}>
               what belongs here? (all six source types — with sample templates)
             </summary>
@@ -373,4 +418,125 @@ function Workbench({ backend, onBundle }) {
 
 function safeParse(s) {
   try { return JSON.parse(s); } catch { return null; }
+}
+
+/* ---- staged-file preview ---------------------------------------------- */
+
+const PREVIEW_TEXT_CAP = 20000; // chars shown for text formats
+const PREVIEW_ROW_CAP = 30;     // data rows shown for CSV
+
+function FilePreview({ file }) {
+  const view = useMemo(() => buildPreview(file), [file]);
+  return (
+    <div className="filepreview">
+      {view.kind === "table" ? (
+        <div style={{ overflowX: "auto" }}>
+          <table className="preview">
+            <thead>
+              <tr>{view.head.map((h, i) => <th key={i}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {view.body.map((row, i) => (
+                <tr key={i}>{row.map((c, j) => <td key={j}>{c}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : view.kind === "text" ? (
+        <pre>{view.text}</pre>
+      ) : null}
+      {view.note && <div className="body-small" style={{ marginTop: 6 }}>{view.note}</div>}
+    </div>
+  );
+}
+
+function buildPreview(file) {
+  const ext = file.name.toLowerCase().split(".").pop();
+  if (ext === "docx" || ext === "pdf") {
+    return { kind: "binary",
+             note: `${ext} — binary source; the engine extracts its text at `
+               + `run time. ${(file.size / 1024).toFixed(1)} KB staged.` };
+  }
+  let text;
+  try {
+    text = decodeSourceBytes(b64ToBytes(file.b64));
+  } catch {
+    return { kind: "binary", note: "could not decode this file as text" };
+  }
+  const clipped = text.length > PREVIEW_TEXT_CAP;
+  if (clipped) text = text.slice(0, PREVIEW_TEXT_CAP);
+
+  if (ext === "csv") {
+    const rows = parseCsv(text);
+    if (!rows.length) return { kind: "text", text: "", note: "empty file" };
+    const [head, ...body] = rows;
+    const shown = body.slice(0, PREVIEW_ROW_CAP);
+    const notes = [`${body.length} row${body.length === 1 ? "" : "s"} × ${head.length} columns`];
+    if (body.length > shown.length) notes.push(`first ${shown.length} shown`);
+    if (clipped) notes.push("preview truncated");
+    return { kind: "table", head, body: shown, note: notes.join(" · ") };
+  }
+  if (ext === "json" && !clipped) {
+    try {
+      return { kind: "text",
+               text: JSON.stringify(JSON.parse(text), null, 2), note: null };
+    } catch (e) {
+      return { kind: "text", text,
+               note: `not valid JSON (${e.message}) — raw text shown` };
+    }
+  }
+  return { kind: "text", text,
+           note: clipped ? `first ${PREVIEW_TEXT_CAP / 1000} K characters shown` : null };
+}
+
+/** Decode ladder mirroring adapters/base.py: UTF-16 by BOM, else UTF-8
+ *  (BOM-stripping), else cp1252. No content guessing beyond the BOM. */
+function decodeSourceBytes(bytes) {
+  if (bytes.length >= 2
+      && ((bytes[0] === 0xff && bytes[1] === 0xfe)
+          || (bytes[0] === 0xfe && bytes[1] === 0xff))) {
+    const codec = bytes[0] === 0xff ? "utf-16le" : "utf-16be";
+    return new TextDecoder(codec).decode(bytes.subarray(2));
+  }
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return new TextDecoder("windows-1252").decode(bytes);
+  }
+}
+
+/** Minimal quote-aware CSV split — for preview only; the engine has its own. */
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cell = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+      } else cell += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell); rows.push(row); row = []; cell = "";
+    } else cell += c;
+  }
+  if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter((r) => r.length > 1 || r[0] !== "");
+}
+
+function b64ToBytes(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function bytesToB64(bytes) {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(bin);
 }
