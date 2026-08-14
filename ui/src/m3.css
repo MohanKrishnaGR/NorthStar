@@ -336,4 +336,8 @@ button.textbtn.active { background: var(--md-primary-container);
   font: inherit; font-size: 12.5px; border: none; background: transparent;
   color: var(--md-on-surface); }
 .runbar input:focus { outline: none; border-bottom: 1px solid var(--md-primary); }
-table.hints td { padding: 3px 10px 3px 0; vertical-align: top; }
+table.hints td { padding: 5px 10px 5px 0; vertical-align: top; }
+.srcicon { display: inline-flex; align-items: center;
+  color: var(--md-on-surface-variant); }
+table.hints td.srcicon { width: 26px; padding-top: 6px; }
+.dock-tab .srcicon { color: inherit; }

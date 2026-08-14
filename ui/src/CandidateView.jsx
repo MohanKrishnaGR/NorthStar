@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Inspector from "./Inspector.jsx";
+import { SourceIcon } from "./icons.jsx";
 import { CsvGrid, JsonPane, SkippedPane, TextPane } from "./renderers.jsx";
 import {
-  SOURCE_ICONS, atomsFor, clusterSourceIds, emptyReasons, pct, pressable,
+  atomsFor, clusterSourceIds, emptyReasons, pct, pressable,
   refusalsTouching, sourceOf, stable,
 } from "./lib.js";
 
@@ -44,7 +45,7 @@ export default function CandidateView({ bundle, cand }) {
             <button key={s.source_id}
                     className={`dock-tab${s.source_id === activeSrc ? " active" : ""}`}
                     onClick={() => setActiveSrc(s.source_id)}>
-              <span>{SOURCE_ICONS[s.source_type] ?? "•"}</span>
+              <span className="srcicon"><SourceIcon kind={s.source_type} size={14} /></span>
               {s.source_id}
               <span className={`srcstatus-${s.status}`}>●</span>
             </button>

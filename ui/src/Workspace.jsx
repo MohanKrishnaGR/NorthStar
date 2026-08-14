@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { loadBrowserEngine } from "./engine.js";
+import { SourceIcon } from "./icons.jsx";
 import { pressable } from "./lib.js";
+import { SOURCE_ROWS, textToB64 } from "./samples.js";
 import defaultConfig from "../../configs/default.json";
 import recruiterViewConfig from "../../configs/recruiter_view.json";
 
@@ -9,15 +11,6 @@ const STATIC_CONFIGS = {
   default: defaultConfig,
   recruiter_view: recruiterViewConfig,
 };
-
-const SOURCE_HINTS = [
-  ["recruiters.csv", "Recruiter CSV export — rows of name/email/phone/company/title"],
-  ["ats.json", "ATS JSON blob — its own field names, mapped by the adapter"],
-  ["notes_*.txt", "Recruiter notes — free text, rule-extracted"],
-  ["resume_*.docx / *.pdf", "Resumes — text extracted, then same rules as notes"],
-  ["github_<login>.json", "GitHub profile — recorded API payload (tools/fetch_github.py records it once; live fetch stays out of the pipeline, ADR-002/017)"],
-  ["linkedin_<slug>.json", "LinkedIn profile — recorded export payload (no sanctioned live API)"],
-];
 
 export default function Workspace({ serve, onBundle }) {
   const [engine, setEngine] = useState(null);
@@ -128,6 +121,20 @@ function Workbench({ backend, onBundle }) {
         ]);
       };
       reader.readAsDataURL(f);
+    });
+  };
+
+  const stageTemplates = (rows) => {
+    setFiles((cur) => {
+      let next = [...cur];
+      rows.forEach(({ template }) => {
+        next = [
+          ...next.filter((x) => x.name !== template.name),
+          { name: template.name, size: template.content.length,
+            b64: textToB64(template.content) },
+        ];
+      });
+      return next;
     });
   };
 
@@ -245,14 +252,33 @@ function Workbench({ backend, onBundle }) {
           )}
           <details style={{ marginTop: 14 }}>
             <summary className="body-small" style={{ cursor: "pointer" }}>
-              what belongs here? (all six source types)
+              what belongs here? (all six source types — with sample templates)
             </summary>
+            <div className="body-small" style={{ margin: "8px 0 4px" }}>
+              The samples are one coherent person, Sam Okafor — stage several,
+              hit run, and watch the sources merge into one profile.
+              <button className="textbtn" style={{ marginLeft: 8 }}
+                      onClick={() => stageTemplates(
+                        SOURCE_ROWS.filter((r) => r.template))}>
+                ⤓ stage all samples
+              </button>
+            </div>
             <table className="hints">
               <tbody>
-                {SOURCE_HINTS.map(([pat, why]) => (
-                  <tr key={pat}>
-                    <td><code>{pat}</code></td>
-                    <td className="body-small">{why}</td>
+                {SOURCE_ROWS.map((row) => (
+                  <tr key={row.pattern}>
+                    <td className="srcicon"><SourceIcon kind={row.icon} /></td>
+                    <td><code>{row.pattern}</code></td>
+                    <td className="body-small">{row.why}</td>
+                    <td>
+                      {row.template && (
+                        <button className="textbtn"
+                                title={`stage ${row.template.name}`}
+                                onClick={() => stageTemplates([row])}>
+                          use sample
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
