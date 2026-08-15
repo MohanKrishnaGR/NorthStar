@@ -8,8 +8,11 @@
 [![canary](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/canary.yml/badge.svg)](https://github.com/MohanKrishnaGR/NorthStar/actions/workflows/canary.yml)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
 
-A project by <em>Mohan Krishna G R</em> —
-[mohankrishnagr.github.io](https://mohankrishnagr.github.io)
+<div align="center">
+  A project by <strong>Mohan Krishna G R</strong> · 
+  <a href="https://mohankrishnagr.github.io">mohankrishnagr.github.io</a> · 
+  mohankrishnagr08@gmail.com
+</div><br>
 
 Messy candidate data in: recruiter CSV, ATS JSON, free-text notes, resumes
 (docx/pdf), recorded GitHub/LinkedIn payloads. One canonical, deduplicated
@@ -21,10 +24,9 @@ honestly-empty.** Every tie breaks toward `null` plus an explanation in the
 run report — never a guess.
 
 - **Live demo:** https://mohankrishnagr.github.io/NorthStar/
-<!-- - **Demo video (~2 min):** _[add link before submitting]_
-- **Design one-pager:** submitted separately (PDF) — the full decision
-  record behind this build covers every material choice with options and
-  trade-offs -->
+- **Demo video:**  [NorthStar Demo Video](https://drive.google.com/file/d/11ZJmDGkVb8ZBIDTUUg7cSPuhRXlv-NRn/view)
+- **Design one-pager:** [MohanKrishnaGR_mohankrishnagr08@gmail.com_Eightfold.pdf](assets/MohanKrishnaGR_mohankrishnagr08@gmail.com_Eightfold.pdf)
+- **Slides:** [Slides](https://docs.google.com/presentation/d/1r0QKbJALKxOFdwOfa98lccQsYS_6q9VBLZEv8Xyl7Bk/edit?usp=sharing)
 
 ## Contents
 - [Run it](#run-it) — [live site](#1--zero-install--the-live-site) ·
@@ -52,6 +54,8 @@ download `profiles.json` and the run report. Uploads never leave the tab.
 ### 2 · Docker
 
 ```bash
+git clone https://github.com/MohanKrishnaGR/NorthStar.git
+cd NorthStar
 docker compose up --build
 ```
 
@@ -61,6 +65,9 @@ docker compose up --build
 ### 3 · CLI
 
 ```bash
+git clone https://github.com/MohanKrishnaGR/NorthStar.git
+cd NorthStar
+
 pip install .            # Python 3.11+ · deps: phonenumbers, jsonschema
 pip install .[resume]    # optional: docx/pdf resume support
 
@@ -105,32 +112,9 @@ production monitor.
 ## How it works
 
 <div align="center">
-    <img src="assets/architecture.svg" alt="North Star system architecture: sources → adapters with fault boundaries → Evidence atoms → normalize → identity → merge → confidence → the load-bearing boundary → config-driven projection and validation → profiles.json + run_report.json; one engine behind CLI, workspace, Docker, and the in-browser wasm build" width="980">
+    <img src="assets/architecture.png" alt="North Star Architecture" width="1100">
+    <h4>Fig. 1: North Star (Multi-Source Candidate Data Transformer) Architecture</h4>
 </div>
-
-```
-detect -> extract -> normalize (pass 1) -> resolve identity -> merge
-       (+ phone pass 2) -> score confidence -> project (config) -> validate
-```
-
-- Every extracted value is born an **Evidence atom**
-  `{field, value, raw_value, source, method}`; merging is a pure function
-  over the canonically sorted pool. That one decision makes provenance free,
-  confidence auditable, and determinism provable.
-- **Identity:** deterministic blocking (email / phone / profile-URL keys) +
-  union-find, with contradiction and multi-identity guards that *refuse* a
-  merge rather than fuse two people. A file naming two people loses its
-  identity keys and is flagged (`multi_identity_source`).
-- **Confidence:** transparent noisy-OR over source-trust ×
-  method-reliability (tables with rationale in `transformer/constants.py`).
-  Scores are ordinal — they order trust, they are not probabilities.
-- **Projection:** the default schema is itself a shipped config, so default
-  and custom outputs exercise the same projection + validation path; output
-  is validated against a JSON Schema *generated from the config*.
-- **No clock, no network, no LLM in the pipeline.** `--as-of` pins "now"
-  (default derives from the inputs); GitHub's API is exercised once at the
-  recording boundary (`tools/fetch_github.py`) and replayed forever; rule
-  extractors keep every value traceable to a named method.
 
 ### CLI flags
 
